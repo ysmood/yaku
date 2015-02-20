@@ -1,0 +1,5 @@
+dist
+*.sublime-*
+.coffee
+.nokit
+.nobone
