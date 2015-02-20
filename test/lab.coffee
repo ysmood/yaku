@@ -1,0 +1,1 @@
+Promise = require '../src/main'
