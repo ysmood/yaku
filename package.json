@@ -1,0 +1,24 @@
+{
+  "name": "yaku",
+  "version": "0.0.1",
+  "description": "A pure ES6 Promise/A+ that doesn't hurts.",
+  "main": "main.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ysmood/yaku.git"
+  },
+  "keywords": [
+    "promise",
+    "es6",
+    "shim"
+  ],
+  "author": "http://ysmood.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ysmood/yaku/issues"
+  },
+  "homepage": "https://github.com/ysmood/yaku"
+}
