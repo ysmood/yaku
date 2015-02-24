@@ -4,7 +4,8 @@
   "description": "A pure ES6 Promise/A+ that doesn't hurts.",
   "main": "dist/main.js",
   "scripts": {
-    "test": "npm test"
+    "no": "no",
+    "test": "no test"
   },
   "repository": {
     "type": "git",
@@ -25,8 +26,10 @@
     "dist"
   ],
   "devDependencies": {
-    "coffee-script": "^1.9.1",
-    "coffeelint": "^1.8.1",
-    "nokit": "^0.5.4"
+    "bluebird": "2.9.12",
+    "coffee-script": "1.9.1",
+    "coffeelint": "1.9.2",
+    "commander": "2.6.0",
+    "nokit": "0.5.4"
   }
 }
