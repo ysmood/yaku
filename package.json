@@ -26,10 +26,10 @@
     "dist"
   ],
   "devDependencies": {
-    "bluebird": "2.9.12",
+    "bluebird": "2.9.14",
     "coffee-script": "1.9.1",
     "coffeelint": "1.9.2",
-    "commander": "2.6.0",
-    "nokit": "0.5.4"
+    "commander": "2.7.1",
+    "nokit": "0.5.8"
   }
 }
