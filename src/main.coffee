@@ -25,6 +25,11 @@ class Promise
 
 # ********************** Private **********************
 
+	###
+		'Function.prototype.bind' is slow, so we use Python
+		style "self" with curry and closure.
+	###
+
 	# These are some static symbols.
 	$pending = 0
 	$resolved = 1
