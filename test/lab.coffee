@@ -11,4 +11,6 @@ p
 	console.log v
 .then ->
 	console.log 'OK'
+.then ->
+	console.log 'OK1'
 

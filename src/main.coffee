@@ -1,52 +1,60 @@
 
-module.exports = class Promise
-	statePending = 0
-	stateResolved = 1
-	stateRejected = 2
+class Promise
+
+	constructor: (executor) ->
+		@_value = null
+		@_fulfillHandlers = []
+		@_rejectHandlers = []
+
+		run @, executor
+
+	then: (onFulfilled, onRejected) ->
+		@_fulfillHandlers.push onFulfilled
+
+		newPromise @
+
+	catch: (onRejected) ->
+
+	@all = (iterable) ->
+
+	@race = (iterable) ->
+
+	@reject = (reason) ->
+
+	@resolve = (value) ->
+
+# ********************** Private **********************
+
+	# These are some static symbols.
+	$pending = 0
+	$resolved = 1
+	$rejected = 2
+
+	_state: $pending
+	_value: null
+	_fulfillHandlers: []
+	_rejectHandlers: []
 
 	nextTick = (fn) ->
 		process.nextTick fn
 
-	constructor: (executor) ->
-		self = @
-		@_state = statePending
-		@_value = null
+	run = (self, executor) -> nextTick ->
+		executor resolve(self), reject(self)
 
-		@_fulfillHandlers = []
-		@_rejectHandlers =[]
+	newPromise = (self) -> new Promise (resolve, reject) ->
+		self._fulfillHandlers.push resolve
 
-		nextTick ->
-			executor self._resolve.bind(self),
-				self._reject.bind(self)
+	reject = (self) -> (reason) ->
+		self._state = $rejected
+		self._value = reason
 
-	then: (onFulfilled, onRejected) ->
-		self = @
-		@_fulfillHandlers.push onFulfilled
+	resolve = (self) -> (result) ->
+		self._state = $resolved
+		self._value = result
 
-		new Promise (resolve, reject) ->
-			self._fulfillHandlers.push resolve
-
-	catch: (onRejected) ->
-
-	@all: (iterable) ->
-
-	@race: (iterable) ->
-
-	@reject: (reason) ->
-
-	@resolve: (value) ->
-
-# ********************** Private **********************
-
-	_reject: (reason) ->
-		@_state = stateRejected
-		@_value = reason
-
-	_resolve: (result) ->
-		@_state = stateResolved
-		@_value = result
-
-		for handler in @_fulfillHandlers
+		for handler in self._fulfillHandlers
 			handler result
 
 		return
+
+module.exports = Promise
