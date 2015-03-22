@@ -1,5 +1,6 @@
 
-class Promise
+
+module.exports = class Promise
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
@@ -57,8 +58,9 @@ class Promise
 	_fulfillHandlers: []
 	_rejectHandlers: []
 
-	nextTick = (fn) ->
-		process.nextTick fn
+	nextTick = do ->
+		(fn) ->
+			process.nextTick fn
 
 	run = (self, executor) -> nextTick ->
 		executor genTrigger(self, $resolved),
@@ -81,5 +83,3 @@ class Promise
 			handler result
 
 		return
-
-module.exports = Promise
