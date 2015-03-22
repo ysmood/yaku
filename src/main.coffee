@@ -26,8 +26,7 @@ module.exports = class Promise
 	 * the current Promise.
 	###
 	then: (onFulfilled, onRejected) ->
-		@_fulfillHandlers.push onFulfilled
-		@_rejectHandlers.push onRejected
+		addTrigger @, onFulfilled, onRejected
 
 		newPromise @
 
@@ -44,8 +43,9 @@ module.exports = class Promise
 # ********************** Private **********************
 
 	###
-		'Function.prototype.bind' is slow, so we use Python
+		'bind' and 'call' is slow, so we use Python
 		style "self" with curry and closure.
+		See: http://jsperf.com/call-vs-arguments
 	###
 
 	# These are some static symbols.
@@ -66,9 +66,12 @@ module.exports = class Promise
 		executor genTrigger(self, $resolved),
 			genTrigger(self, $rejected)
 
+	addTrigger = (self, onFulfilled, onRejected) ->
+		self._fulfillHandlers.push onFulfilled
+		self._rejectHandlers.push onRejected
+
 	newPromise = (self) -> new Promise (resolve, reject) ->
-		self._fulfillHandlers.push resolve
-		self._rejectHandlers.push reject
+		addTrigger self, resolve, reject
 
 	genTrigger = (self, state) -> (result) ->
 		self._state = state
