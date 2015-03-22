@@ -2,7 +2,9 @@
 class Promise
 
 	###*
-	 * Recieve a callback.
+	 * This class follows the [Promises/A+](https://promisesaplus.com) and
+	 * [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
+	 * with some extra helpers.
 	 * @param  {Function} executor Function object with two arguments resolve and reject.
 	 * The first argument fulfills the promise, the second argument rejects it.
 	 * We can call these functions, once our operation is completed.
@@ -24,6 +26,7 @@ class Promise
 	###
 	then: (onFulfilled, onRejected) ->
 		@_fulfillHandlers.push onFulfilled
+		@_rejectHandlers.push onRejected
 
 		newPromise @
 
@@ -58,20 +61,23 @@ class Promise
 		process.nextTick fn
 
 	run = (self, executor) -> nextTick ->
-		executor resolve(self), reject(self)
+		executor genTrigger(self, $resolved),
+			genTrigger(self, $rejected)
 
 	newPromise = (self) -> new Promise (resolve, reject) ->
 		self._fulfillHandlers.push resolve
+		self._rejectHandlers.push reject
 
-	reject = (self) -> (reason) ->
-		self._state = $rejected
-		self._value = reason
-
-	resolve = (self) -> (result) ->
-		self._state = $resolved
+	genTrigger = (self, state) -> (result) ->
+		self._state = state
 		self._value = result
 
-		for handler in self._fulfillHandlers
+		handlers = if state == $resolved
+			self._fulfillHandlers
+		else
+			self._rejectHandlers
+
+		for handler in handlers
 			handler result
 
 		return
