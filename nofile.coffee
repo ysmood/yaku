@@ -20,10 +20,13 @@ module.exports = (task, option) ->
 		.load kit.drives.auto 'compile'
 		.run 'dist'
 
+	option '--debug', 'Run with remote debug server'
+	option '--port <8219>', 'Remote debug server port', 8219
 	task 'lab l', 'run and monitor "test/lab.coffee"', (opts) ->
 		args = ['test/lab.coffee']
 
 		if opts.debug
+			kit.log opts.debug
 			args.splice 0, 0, '--nodejs', '--debug-brk=' + opts.port
 
 		kit.monitorApp { bin: 'coffee', args }
