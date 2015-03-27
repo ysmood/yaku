@@ -74,25 +74,38 @@ module.exports = class Promise
 			genTrigger(self, $rejected)
 
 	addTrigger = (self, onFulfilled, resolve, onRejected, reject) ->
-		self._thenCount++
-		self._handlers.splice self._handlers - 1, 0,
-			onFulfilled, resolve, onRejected, reject
+		switch self._state
+			when $pending
+				self._thenCount++
+				self._handlers.splice self._handlers - 1, 0,
+					onFulfilled, resolve, onRejected, reject
 
-	genTrigger = (self, state) -> (result) ->
+			when $resolved
+				chainHandler self._value, onFulfilled, resolve
+
+			when $rejected
+				chainHandler self._value, onRejected, reject
+
+	chainHandler = (value, handler, thenHandler) ->
+		out = handler value
+
+		if out and typeof out.then == 'function'
+			out.then thenHandler
+		else
+			thenHandler out
+
+	genTrigger = (self, state) -> (value) ->
+		if self._state != $pending
+			return
+
 		self._state = state
-		self._value = result
+		self._value = value
 		i = 0
 
 		while i < self._thenCount
 			# Trick: we reuse the value of state as the handler selector.
 			k = i++ * 4 + state
 
-			out = self._handlers[k] result
-
-			# Whether the out is promise.
-			if out and typeof out.then == 'function'
-				out.then self._handlers[k + 1]
-			else
-				self._handlers[k + 1] out
+			chainHandler value, self._handlers[k], self._handlers[k + 1]
 
 		return
