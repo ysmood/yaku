@@ -12,8 +12,7 @@ module.exports = class Promise
 	###
 	constructor: (executor) ->
 		@_value = null
-		@_fulfillHandlers = []
-		@_rejectHandlers = []
+		@_handlers = []
 
 		run @, executor
 
@@ -26,9 +25,10 @@ module.exports = class Promise
 	 * the current Promise.
 	###
 	then: (onFulfilled, onRejected) ->
-		addTrigger @, onFulfilled, onRejected
+		self = @
 
-		newPromise @
+		new Promise (resolve, reject) ->
+			addTrigger self, onFulfilled, resolve, onRejected, reject
 
 	catch: (onRejected) ->
 
@@ -49,14 +49,21 @@ module.exports = class Promise
 	###
 
 	# These are some static symbols.
-	$pending = 0
-	$resolved = 1
+	# The state value is designed to be 0, 1, 2. Not by chance.
+	# See the genTrigger part's selector.
+	$resolved = 0
+	$pending = 1
 	$rejected = 2
 
 	_state: $pending
 	_value: null
-	_fulfillHandlers: []
-	_rejectHandlers: []
+
+	# For better performance, the array is like below,
+	# every four callback are paired together as a group:
+	# [ onFulfilled, resolve, onRejected, reject, ... ]
+	_handlers: []
+
+	_thenCount: 0
 
 	nextTick = do ->
 		(fn) ->
@@ -66,23 +73,26 @@ module.exports = class Promise
 		executor genTrigger(self, $resolved),
 			genTrigger(self, $rejected)
 
-	addTrigger = (self, onFulfilled, onRejected) ->
-		self._fulfillHandlers.push onFulfilled
-		self._rejectHandlers.push onRejected
-
-	newPromise = (self) -> new Promise (resolve, reject) ->
-		addTrigger self, resolve, reject
+	addTrigger = (self, onFulfilled, resolve, onRejected, reject) ->
+		self._thenCount++
+		self._handlers.splice self._handlers - 1, 0,
+			onFulfilled, resolve, onRejected, reject
 
 	genTrigger = (self, state) -> (result) ->
 		self._state = state
 		self._value = result
+		i = 0
 
-		handlers = if state == $resolved
-			self._fulfillHandlers
-		else
-			self._rejectHandlers
+		while i < self._thenCount
+			# Trick: we reuse the value of state as the handler selector.
+			k = i++ * 4 + state
 
-		for handler in handlers
-			handler result
+			out = self._handlers[k] result
+
+			# Whether the out is promise.
+			if out and typeof out.then == 'function'
+				out.then self._handlers[k + 1]
+			else
+				self._handlers[k + 1] out
 
 		return
