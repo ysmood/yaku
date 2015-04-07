@@ -27,8 +27,15 @@ module.exports = class Promise
 	then: (onFulfilled, onRejected) ->
 		self = @
 
+		if @_state == $pending
+			@_thenIndex++
+
+		thenIndex = @_thenIndex
+
+		addHandler self, thenIndex, onFulfilled, onRejected
+
 		new Promise (resolve, reject) ->
-			addTrigger self, onFulfilled, resolve, onRejected, reject
+			chainHandlers self, thenIndex, resolve, reject
 
 	catch: (onRejected) ->
 
@@ -48,22 +55,23 @@ module.exports = class Promise
 		See: http://jsperf.com/call-vs-arguments
 	###
 
-	# These are some static symbols.
+	# These are some static symbolys.
 	# The state value is designed to be 0, 1, 2. Not by chance.
 	# See the genTrigger part's selector.
 	$resolved = 0
-	$pending = 1
-	$rejected = 2
+	$rejected = 1
+	$pending = 2
 
 	_state: $pending
 	_value: null
 
 	# For better performance, the array is like below,
-	# every four callback are paired together as a group:
-	# [ onFulfilled, resolve, onRejected, reject, ... ]
+	# every 6 entities are paired together as a group:
+	#   0            1           2        3
+	# [ onFulfilled, onRejected, resolve, reject, ... ]
 	_handlers: []
 
-	_thenCount: 0
+	_thenIndex: 0
 
 	nextTick = do ->
 		(fn) ->
@@ -72,27 +80,43 @@ module.exports = class Promise
 	run = (self, executor) -> nextTick ->
 		executor genTrigger(self, $resolved),
 			genTrigger(self, $rejected)
+		return
 
-	addTrigger = (self, onFulfilled, resolve, onRejected, reject) ->
+	addHandler = (self, thenIndex, onFulfilled, onRejected) ->
 		switch self._state
 			when $pending
-				self._thenCount++
-				self._handlers.splice self._handlers - 1, 0,
-					onFulfilled, resolve, onRejected, reject
+				self._handlers.splice self._handlers.length - 1, 0,
+					onFulfilled, onRejected
 
 			when $resolved
-				chainHandler self._value, onFulfilled, resolve
+				self._handlers.splice thenIndex * 4, 0,
+					onFulfilled(self._value)
 
 			when $rejected
-				chainHandler self._value, onRejected, reject
+				self._handlers.splice thenIndex * 4 + 1, 0,
+					onRejected(self._value)
+		return
 
-	chainHandler = (value, handler, thenHandler) ->
-		out = handler value
+	chainHandlers = (self, thenIndex, resolve, reject) ->
+		switch self._state
+			when $pending
+				self._handlers.splice thenIndex * 4 + 2, 0,
+					resolve, reject
 
-		if out and typeof out.then == 'function'
-			out.then thenHandler
+			when $resolved
+				chainHandler self._handlers[thenIndex * 4], 0, resolve
+
+			when $rejected
+				chainHandler self._handlers[thenIndex * 4 + 1], 0, reject
+
+		return
+
+	chainHandler = (value, handler) ->
+		if value and typeof value.then == 'function'
+			value.then handler
 		else
-			thenHandler out
+			handler value
+		return
 
 	genTrigger = (self, state) -> (value) ->
 		if self._state != $pending
@@ -101,11 +125,17 @@ module.exports = class Promise
 		self._state = state
 		self._value = value
 		i = 0
+		len = self._thenIndex
 
-		while i < self._thenCount
-			# Trick: we reuse the value of state as the handler selector.
+		while i < len
+			# Trick: Reuse the value of state as the handler selector.
 			k = i++ * 4 + state
 
-			chainHandler value, self._handlers[k], self._handlers[k + 1]
+			thenHandler = self._handlers[k + 2]
+
+			if thenHandler
+				chainHandler self._handlers[k](value), thenHandler
+			else
+				self._handlers[k] = self._handlers[k] value
 
 		return
