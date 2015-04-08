@@ -115,11 +115,11 @@ module.exports = class Promise
 		return
 
 	genTrigger = (self, state) -> (value) ->
-		if self._state != $pending
-			return
+		return if self._state != $pending
 
 		self._state = state
 		self._value = value
+
 		i = 0
 		len = self._thenIndex
 
@@ -130,10 +130,7 @@ module.exports = class Promise
 			handler = self._handlers[k]
 			thenHandler = self._handlers[k + 2]
 
-			out = if handler
-				handler value
-			else
-				value
+			out = if handler then handler value else value
 
 			if thenHandler
 				chainHandler out, thenHandler
