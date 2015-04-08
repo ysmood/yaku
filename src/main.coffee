@@ -34,16 +34,6 @@ module.exports = class Promise
 		new Promise (resolve, reject) ->
 			chainHandlers self, offset, resolve, reject
 
-	catch: (onRejected) ->
-
-	@all = (iterable) ->
-
-	@race = (iterable) ->
-
-	@reject = (reason) ->
-
-	@resolve = (value) ->
-
 # ********************** Private **********************
 
 	###
