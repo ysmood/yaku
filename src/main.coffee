@@ -62,10 +62,16 @@ module.exports = class Promise
 	_state: $pending
 	_value: null
 
+	# This is one of the most tricky part.
+	#
 	# For better performance both memory and speed, the array is like below,
 	# every 6 entities are paired together as a group:
+	# ```
 	#   0            1           2        3       ...
 	# [ onFulfilled, onRejected, resolve, reject, ... ]
+	# ```
+	# To save memory the position of 0 and 1 may be replaced with their returned values,
+	# then these values will be passed to 2 and 3.
 	_handlers: []
 
 	_thenIndex: 0
