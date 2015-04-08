@@ -130,11 +130,14 @@ module.exports = class Promise
 			handler = self._handlers[k]
 			thenHandler = self._handlers[k + 2]
 
-			continue if not handler
+			out = if handler
+				handler value
+			else
+				value
 
 			if thenHandler
-				chainHandler handler(value), thenHandler
+				chainHandler out, thenHandler
 			else
-				self._handlers[k] = handler value
+				self._handlers[k] = out
 
 		return
