@@ -85,16 +85,14 @@ module.exports = class Promise
 	addHandler = (self, thenIndex, onFulfilled, onRejected) ->
 		switch self._state
 			when $pending
-				self._handlers.splice self._handlers.length - 1, 0,
+				self._handlers.splice self._handlers.length, 0,
 					onFulfilled, onRejected
 
 			when $resolved
-				self._handlers.splice thenIndex * 4, 0,
-					onFulfilled(self._value)
+				self._handlers[thenIndex * 4] = onFulfilled self._value
 
 			when $rejected
-				self._handlers.splice thenIndex * 4 + 1, 0,
-					onRejected(self._value)
+				self._handlers[thenIndex * 4 + 1] = onRejected self._value
 		return
 
 	chainHandlers = (self, thenIndex, resolve, reject) ->
@@ -131,11 +129,12 @@ module.exports = class Promise
 			# Trick: Reuse the value of state as the handler selector.
 			k = i++ * 4 + state
 
+			handler = self._handlers[k]
 			thenHandler = self._handlers[k + 2]
 
 			if thenHandler
-				chainHandler self._handlers[k](value), thenHandler
+				chainHandler handler(value), thenHandler
 			else
-				self._handlers[k] = self._handlers[k] value
+				self._handlers[k] = handler value
 
 		return
