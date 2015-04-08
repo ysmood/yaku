@@ -27,15 +27,12 @@ module.exports = class Promise
 	then: (onFulfilled, onRejected) ->
 		self = @
 
-		if @_state == $pending
-			@_thenIndex++
+		offset = @_thenIndex * 4
 
-		thenIndex = @_thenIndex
-
-		addHandler self, thenIndex, onFulfilled, onRejected
+		addHandler self, offset, onFulfilled, onRejected
 
 		new Promise (resolve, reject) ->
-			chainHandlers self, thenIndex, resolve, reject
+			chainHandlers self, offset, resolve, reject
 
 	catch: (onRejected) ->
 
@@ -82,30 +79,31 @@ module.exports = class Promise
 			genTrigger(self, $rejected)
 		return
 
-	addHandler = (self, thenIndex, onFulfilled, onRejected) ->
+	addHandler = (self, offset, onFulfilled, onRejected) ->
 		switch self._state
 			when $pending
-				self._handlers.splice self._handlers.length, 0,
-					onFulfilled, onRejected
+				self._handlers[offset] = onFulfilled
+				self._handlers[offset + 1] = onRejected
+				self._thenIndex++
 
 			when $resolved
-				self._handlers[thenIndex * 4] = onFulfilled self._value
+				self._handlers[offset] = onFulfilled self._value
 
 			when $rejected
-				self._handlers[thenIndex * 4 + 1] = onRejected self._value
+				self._handlers[offset + 1] = onRejected self._value
 		return
 
-	chainHandlers = (self, thenIndex, resolve, reject) ->
+	chainHandlers = (self, offset, resolve, reject) ->
 		switch self._state
 			when $pending
-				self._handlers.splice thenIndex * 4 + 2, 0,
-					resolve, reject
+				self._handlers[offset + 2] = resolve
+				self._handlers[offset + 3] = reject
 
 			when $resolved
-				chainHandler self._handlers[thenIndex * 4], 0, resolve
+				chainHandler self._handlers[offset], 0, resolve
 
 			when $rejected
-				chainHandler self._handlers[thenIndex * 4 + 1], 0, reject
+				chainHandler self._handlers[offset + 1], 0, reject
 
 		return
 
@@ -131,6 +129,8 @@ module.exports = class Promise
 
 			handler = self._handlers[k]
 			thenHandler = self._handlers[k + 2]
+
+			continue if not handler
 
 			if thenHandler
 				chainHandler handler(value), thenHandler
