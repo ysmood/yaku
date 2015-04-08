@@ -3,9 +3,7 @@ kit.require 'drives'
 
 module.exports = (task, option) ->
 
-	task 'default', ['build']
-
-	task 'build', ['doc', 'code'], ->
+	task 'default build', ['doc', 'code']
 
 	task 'doc', ->
 		kit.warp ''
@@ -18,6 +16,7 @@ module.exports = (task, option) ->
 		kit.warp 'src/**/*.coffee'
 		.load kit.drives.auto 'lint'
 		.load kit.drives.auto 'compile'
+		.load kit.drives.auto 'compress'
 		.run 'dist'
 
 	option '--debug', 'Run with remote debug server'

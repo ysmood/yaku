@@ -31,5 +31,8 @@
     "coffeelint": "1.9.2",
     "commander": "2.7.1",
     "nokit": "0.5.8"
+  },
+  "dependencies": {
+    "uglify-js": "^2.4.19"
   }
 }

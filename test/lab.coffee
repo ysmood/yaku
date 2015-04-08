@@ -1,16 +1,20 @@
-Promise = require '../src/main'
+yaku = require '../src/main'
+bluebird = require 'bluebird'
 
-p = new Promise (r) ->
-	setTimeout ->
-		r 0
-	, 100
+create = (lib) ->
+	new lib (r, rr) ->
+		setTimeout ->
+			rr 0
+		, 100
 
+test = (p) ->
+	p
+	.then undefined, ->
+		console.log 'ok'
+		1
+	.then (v) ->
+		console.log v
 
-p
-.then (v) ->
-	console.log v
-.then ->
-	console.log 'OK'
-.then ->
-	console.log 'OK1'
+test create yaku
 
+# test create bluebird

@@ -27,7 +27,7 @@ module.exports = class Promise
 	then: (onFulfilled, onRejected) ->
 		self = @
 
-		offset = @_thenIndex * 4
+		offset = @_thenCount * 4
 
 		addHandler self, offset, onFulfilled, onRejected
 
@@ -65,7 +65,7 @@ module.exports = class Promise
 	# This is one of the most tricky part.
 	#
 	# For better performance, both memory and speed, the array is like below,
-	# every 6 entities are paired together as a group:
+	# every 4 entities are paired together as a group:
 	# ```
 	#   0            1           2        3       ...
 	# [ onFulfilled, onRejected, resolve, reject, ... ]
@@ -74,7 +74,8 @@ module.exports = class Promise
 	# then these values will be passed to 2 and 3.
 	_handlers: []
 
-	_thenIndex: 0
+	# It only counts when the current promise is on pending state.
+	_thenCount: 0
 
 	nextTick = do ->
 		(fn) ->
@@ -90,7 +91,7 @@ module.exports = class Promise
 			when $pending
 				self._handlers[offset] = onFulfilled
 				self._handlers[offset + 1] = onRejected
-				self._thenIndex++
+				self._thenCount++
 
 			when $resolved
 				self._handlers[offset] = onFulfilled self._value
@@ -127,7 +128,7 @@ module.exports = class Promise
 		self._value = value
 
 		i = 0
-		len = self._thenIndex
+		len = self._thenCount
 
 		while i < len
 			# Trick: Reuse the value of state as the handler selector.
