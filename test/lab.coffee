@@ -12,6 +12,11 @@ test = (p) ->
 	.then undefined, ->
 		console.log 'ok'
 		1
+	.then undefined, ->
+		console.log 'ok'
+		1
+	.then (v) ->
+		console.log v
 	.then (v) ->
 		console.log v
 

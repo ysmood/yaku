@@ -103,7 +103,8 @@ module.exports = class Promise
 				chainHandler self._handlers[offset], 0, resolve
 
 			when $rejected
-				chainHandler self._handlers[offset + 1], 0, reject
+				# TODO: Decide when to use reject of chained promise.
+				chainHandler self._handlers[offset + 1], 0, resolve
 
 		return
 
@@ -124,20 +125,23 @@ module.exports = class Promise
 		self._value = value
 
 		i = 0
-		len = self._thenCount
+		len = self._thenCount * 4
 
 		while i < len
 			# Trick: Reuse the value of state as the handler selector.
-			k = i++ * 4 + state
+			# The "i + state" shows the math nature of promise.
+			handler = self._handlers[i + state]
 
-			handler = self._handlers[k]
-			thenHandler = self._handlers[k + 2]
+			# TODO: Decide when to use reject of chained promise.
+			thenHandler = self._handlers[i + 2]
 
 			out = if handler then handler value else value
 
 			if thenHandler
 				chainHandler out, thenHandler
 			else
-				self._handlers[k] = out
+				self._handlers[i] = out
+
+			i += 4
 
 		return
