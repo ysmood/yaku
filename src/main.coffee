@@ -64,7 +64,7 @@ module.exports = class Promise
 
 	# This is one of the most tricky part.
 	#
-	# For better performance both memory and speed, the array is like below,
+	# For better performance, both memory and speed, the array is like below,
 	# every 6 entities are paired together as a group:
 	# ```
 	#   0            1           2        3       ...
