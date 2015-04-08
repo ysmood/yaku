@@ -86,6 +86,7 @@ module.exports = class Promise
 			genTrigger(self, $rejected)
 		return
 
+	# Push new handler to current promise.
 	addHandler = (self, offset, onFulfilled, onRejected) ->
 		switch self._state
 			when $pending
@@ -100,6 +101,8 @@ module.exports = class Promise
 				self._handlers[offset + 1] = onRejected self._value
 		return
 
+	# A new promsie created by then will use it to chain the current promise
+	# to the new promise.
 	chainHandlers = (self, offset, resolve, reject) ->
 		switch self._state
 			when $pending
@@ -114,6 +117,7 @@ module.exports = class Promise
 
 		return
 
+	# Chain value to a handler, then handler may be a promise or a function.
 	chainHandler = (value, handler) ->
 		if value and typeof value.then == 'function'
 			value.then handler
@@ -121,6 +125,8 @@ module.exports = class Promise
 			handler value
 		return
 
+	# It will produce a trigger function to user.
+	# Such as the resolve and reject in this `new Promise (resolve, reject) ->`.
 	genTrigger = (self, state) -> (value) ->
 		return if self._state != $pending
 
