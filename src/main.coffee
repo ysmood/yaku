@@ -10,11 +10,12 @@ module.exports = class Promise
 	 * The first argument fulfills the promise, the second argument rejects it.
 	 * We can call these functions, once our operation is completed.
 	###
-	constructor: (executor) ->
+	constructor: (executor, _isRunImmediately) ->
 		@_value = null
 		@_handlers = []
 
-		run @, executor
+		# "_isRunImmediately" is only used by then internally.
+		run @, executor, _isRunImmediately
 
 	###*
 	 * Appends fulfillment and rejection handlers to the promise,
@@ -29,6 +30,7 @@ module.exports = class Promise
 
 		new Promise (resolve, reject) ->
 			addHandler self, onFulfilled, onRejected, resolve, reject
+		, true
 
 # ********************** Private **********************
 
@@ -67,9 +69,16 @@ module.exports = class Promise
 		(fn) ->
 			process.nextTick fn
 
-	run = (self, executor) -> nextTick ->
-		executor genTrigger(self, $resolved),
-			genTrigger(self, $rejected)
+	run = (self, executor, _isRunImmediately) ->
+		if _isRunImmediately
+			# For the Promise created by "then", we don't have to run the
+			# executor after the next tick.
+			executor genTrigger(self, $resolved),
+				genTrigger(self, $rejected)
+		else
+			nextTick ->
+				executor genTrigger(self, $resolved),
+					genTrigger(self, $rejected)
 		return
 
 	# Push new handler to current promise.
