@@ -27,12 +27,8 @@ module.exports = class Promise
 	then: (onFulfilled, onRejected) ->
 		self = @
 
-		offset = @_thenCount * 4
-
-		addHandler self, offset, onFulfilled, onRejected
-
 		new Promise (resolve, reject) ->
-			chainHandlers self, offset, resolve, reject
+			addHandler self, onFulfilled, onRejected, resolve, reject
 
 # ********************** Private **********************
 
@@ -77,43 +73,30 @@ module.exports = class Promise
 		return
 
 	# Push new handler to current promise.
-	addHandler = (self, offset, onFulfilled, onRejected) ->
+	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
+		offset = self._thenCount * 4
+
 		switch self._state
 			when $pending
 				self._handlers[offset] = onFulfilled
 				self._handlers[offset + 1] = onRejected
+				self._handlers[offset + 2] = resolve
+				self._handlers[offset + 3] = reject
 				self._thenCount++
 
 			when $resolved
-				self._handlers[offset] = onFulfilled self._value
+				chainHandler self._value, onFulfilled, resolve
 
 			when $rejected
-				self._handlers[offset + 1] = onRejected self._value
-		return
-
-	# A new promsie created by then will use it to chain the current promise
-	# to the new promise.
-	chainHandlers = (self, offset, resolve, reject) ->
-		switch self._state
-			when $pending
-				self._handlers[offset + 2] = resolve
-				self._handlers[offset + 3] = reject
-
-			when $resolved
-				chainHandler self._handlers[offset], 0, resolve
-
-			when $rejected
-				# TODO: Decide when to use reject of chained promise.
-				chainHandler self._handlers[offset + 1], 0, resolve
-
+				chainHandler self._value, onRejected, reject
 		return
 
 	# Chain value to a handler, then handler may be a promise or a function.
-	chainHandler = (value, handler) ->
+	chainHandler = (value, onFulfilled, onRejected) ->
 		if value and typeof value.then == 'function'
-			value.then handler
+			value.then onFulfilled, onRejected
 		else
-			handler value
+			onFulfilled value
 		return
 
 	# It will produce a trigger function to user.
