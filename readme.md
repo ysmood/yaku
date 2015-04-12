@@ -13,15 +13,15 @@ I will only implement these basic functions.
 
 - [x] `then: (onFulfilled, onRejected) ->`
 
-- [ ] `catch: (onRejected) ->`
+- [x] `catch: (onRejected) ->`
 
-- [ ] `@all: (iterable) ->`
+- [x] `@all: (iterable) ->`
 
-- [ ] `@race: (iterable) ->`
+- [x] `@race: (iterable) ->`
 
-- [ ] `@reject: (reason) ->`
+- [x] `@reject: (reason) ->`
 
-- [ ] `@resolve: (value) ->`
+- [x] `@resolve: (value) ->`
 
 - [x] Cross platform
 

@@ -32,15 +32,52 @@ do -> class Promise
 			addHandler self, onFulfilled, onRejected, resolve, reject
 		, true
 
+	###*
+	 * The catch() method returns a Promise and deals with rejected cases only.
+	 * It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
+	 * @param  {Function} onRejected A Function called when the Promise is rejected.
+	 * This function has one argument, the rejection reason.
+	 * @return {Promise} A Promise that deals with rejected cases only.
+	###
 	catch: (onRejected) ->
 		@then undefined, onRejected
 
+	###*
+	 * The Promise.resolve(value) method returns a Promise object that is resolved with the given value.
+	 * If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
+	 * adopting its eventual state; otherwise the returned promise will be fulfilled with the value.
+	 * @param  {Any} value Argument to be resolved by this Promise.
+	 * Can also be a Promise or a thenable to resolve.
+	 * @return {Promise}
+	###
 	@resolve: (value) ->
-		new Promise (resolve) -> resolve value
+		new Promise (resolve, reject) ->
+			if isThenable value
+				value.then resolve, reject
+			else
+				resolve value
 
+			return
+
+	###*
+	 * The Promise.reject(reason) method returns a Promise object that is rejected with the given reason.
+	 * @param  {Any} reason Reason why this Promise rejected.
+	 * @return {Promise}
+	###
 	@reject: (reason) ->
-		new Promise (nil, reject) -> reject reason
+		new Promise (nil, reject) ->
+			reject reason
+			return
 
+	###*
+	 * The Promise.race(iterable) method returns a promise that resolves or rejects
+	 * as soon as one of the promises in the iterable resolves or rejects,
+	 * with the value or reason from that promise.
+	 * @param  {iterable} iterable An iterable object, such as an Array.
+	 * @return {Promise} The race function returns a Promise that is settled
+	 * the same way as the first passed promise to settle.
+	 * It resolves or rejects, whichever happens first.
+	###
 	@race: (iterable) ->
 		new Promise (resolve, reject) ->
 			for x in iterable
@@ -53,6 +90,18 @@ do -> class Promise
 
 			return
 
+	###*
+	 * The `Promise.all(iterable)` method returns a promise that resolves when
+	 * all of the promises in the iterable argument have resolved.
+	 *
+	 * The result is passed as an array of values from all the promises.
+	 * If something passed in the iterable array is not a promise,
+	 * it's converted to one by Promise.resolve. If any of the passed in promises rejects,
+	 * the all Promise immediately rejects with the value of the promise that rejected,
+	 * discarding all the other promises whether or not they have resolved.
+	 * @param  {iterable} iterable An iterable object, such as an Array.
+	 * @return {Promise}
+	###
 	@all: (iterable) ->
 		new Promise (resolve, reject) ->
 			res = []
