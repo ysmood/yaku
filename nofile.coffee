@@ -30,8 +30,11 @@ module.exports = (task, option) ->
 
 		kit.monitorApp { bin: 'coffee', args }
 
-	task 'test', 'run promise/A+ tests', ->
-		kit.spawn 'coffee', ['test/compliance.coffee']
+	option '--grep <pattern>', 'run test that match the pattern', '*'
+	task 'test', 'run promise/A+ tests', (opts) ->
+		require('./test/compliance.coffee') {
+			grep: opts.grep
+		}
 
 	task 'benchmark', 'compare performance between different libraries', ->
 		kit.globSync 'benchmark/*.coffee'

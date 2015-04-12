@@ -1,21 +1,23 @@
 promisesAplusTests = require 'promises-aplus-tests'
 Promise = require '../src/yaku'
 
-adapter = {
-	resolved: Promise.resolve
+module.exports = (opts) ->
 
-	rejected: Promise.reject
+	adapter = {
+		resolved: Promise.resolve
 
-	deferred: ->
-		defer = {}
+		rejected: Promise.reject
 
-		defer.promise = new Promise (resolve, reject) ->
-			defer.resolve = resolve
-			defer.reject = reject
+		deferred: ->
+			defer = {}
 
-		defer
-}
+			defer.promise = new Promise (resolve, reject) ->
+				defer.resolve = resolve
+				defer.reject = reject
 
-promisesAplusTests adapter, (err) ->
-	if err
-		process.exit 1
+			defer
+	}
+
+	promisesAplusTests adapter, opts, (err) ->
+		if err
+			process.exit 1
