@@ -26,13 +26,12 @@
     "dist"
   ],
   "devDependencies": {
-    "bluebird": "2.9.14",
+    "bluebird": "2.9.24",
     "coffee-script": "1.9.1",
-    "coffeelint": "1.9.2",
+    "coffeelint": "1.9.3",
     "commander": "2.7.1",
-    "nokit": "0.5.8"
-  },
-  "dependencies": {
-    "uglify-js": "^2.4.19"
+    "nokit": "0.5.9",
+    "promises-aplus-tests": "2.1.0",
+    "uglify-js": "2.4.19"
   }
 }

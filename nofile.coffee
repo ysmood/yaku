@@ -19,8 +19,8 @@ module.exports = (task, option) ->
 		.load kit.drives.auto 'compress'
 		.run 'dist'
 
-	option '--debug', 'Run with remote debug server'
-	option '--port <8219>', 'Remote debug server port', 8219
+	option '--debug', 'run with remote debug server'
+	option '--port <8219>', 'remote debug server port', 8219
 	task 'lab l', 'run and monitor "test/lab.coffee"', (opts) ->
 		args = ['test/lab.coffee']
 
@@ -30,7 +30,10 @@ module.exports = (task, option) ->
 
 		kit.monitorApp { bin: 'coffee', args }
 
-	task 'benchmark', 'Compare performance between different libraries', ->
+	task 'test', 'run promise/A+ tests', ->
+		kit.spawn 'coffee', ['test/compliance.coffee']
+
+	task 'benchmark', 'compare performance between different libraries', ->
 		kit.globSync 'benchmark/*.coffee'
 		.map (path) ->
 			kit.spawn 'coffee', [path]

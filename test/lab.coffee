@@ -3,22 +3,23 @@ bluebird = require 'bluebird'
 
 create = (lib) ->
 	new lib (r, rr) ->
+		t = Math.random() * 100
+		console.log 'time', t
 		setTimeout ->
-			r 0
-		, 100
+			console.log 'done', t
+			r t
+		, t
 
 test = (lib, p) ->
-	p
-	.then()
-	.then (v) ->
-		new lib (r, rr) ->
-			console.log v
-			rr v + 1
-	.then (v) ->
-		console.log v
-	, (v) ->
+	lib.all [
+		lib.resolve create yaku
+		create yaku
+	]
+	.then (res) ->
+		console.log res
+	.catch (v) ->
 		console.log 'reject', v
 
-test yaku, create yaku
+test yaku
 
 # test bluebird, create bluebird
