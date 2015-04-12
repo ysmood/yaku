@@ -173,13 +173,13 @@ do -> class Promise
 	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
 		offset = self._thenCount * 4
 
-		if $pending
-			self._handlers[offset] = onFulfilled
-			self._handlers[offset + 1] = onRejected
-			self._handlers[offset + 2] = resolve
-			self._handlers[offset + 3] = reject
-			self._thenCount++
-		else
+		self._handlers[offset] = onFulfilled
+		self._handlers[offset + 1] = onRejected
+		self._handlers[offset + 2] = resolve
+		self._handlers[offset + 3] = reject
+		self._thenCount++
+
+		if self._state != $pending
 			chainHandler self, offset
 
 		return
