@@ -32,6 +32,50 @@ do -> class Promise
 			addHandler self, onFulfilled, onRejected, resolve, reject
 		, true
 
+	catch: (onRejected) ->
+		@then undefined, onRejected
+
+	@resolve: (value) ->
+		new Promise (resolve) -> resolve value
+
+	@reject: (reason) ->
+		new Promise (nil, reject) -> reject reason
+
+	@race: (iterable) ->
+		new Promise (resolve, reject) ->
+			for x in iterable
+				if not isThenable x
+					x = Promise.resolve x
+
+				# TODO: We don't have to return promise here,
+				# performance can be optimizated.
+				x.then resolve, reject
+
+			return
+
+	@all: (iterable) ->
+		new Promise (resolve, reject) ->
+			res = []
+			countDown = iterable.length
+
+			iter = (i) ->
+				# TODO: We don't have to return promise here,
+				# performance can be optimizated.
+				x.then (v) ->
+					res[i] = v
+					if --countDown == 0
+						resolve res
+				, reject
+
+				return
+
+			for x, i in iterable
+				if not isThenable x
+					x = Promise.resolve x
+				iter i
+
+			return
+
 # ********************** Private **********************
 
 	###
@@ -88,6 +132,9 @@ do -> class Promise
 
 		return
 
+	isThenable = (x) ->
+		x and typeof x.then == 'function'
+
 	# Push new handler to current promise.
 	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
 		offset = self._thenCount * 4
@@ -119,7 +166,7 @@ do -> class Promise
 			if x == self
 				return self._handlers[offset + 3] new TypeError $resolveSelf
 
-			if x and typeof x.then == 'function'
+			if isThenable x
 				# If the promise is a Yaku instance
 				# (not some thing like the Bluebird or jQuery Defer),
 				# we can do some performance optimization.
