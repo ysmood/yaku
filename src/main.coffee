@@ -68,8 +68,7 @@ module.exports = class Promise
 	$resolveSelf = 'Promise cannot resolve itself.'
 
 	nextTick = do ->
-		(fn) ->
-			process.nextTick fn
+		(fn) -> process.nextTick fn
 
 	run = (self, executor, _isRunImmediately) ->
 		if _isRunImmediately
@@ -111,19 +110,21 @@ module.exports = class Promise
 				return
 
 			if x == self
-				self._handlers[offset + 3] new TypeError $resolveSelf
-			else
-				# If x is a promise.
-				if x and typeof x.then == 'function'
-					if x._state == $pending
-						x.then self._handlers[offset + 2],
-							self._handlers[offset + 3]
-					else
-						self._handlers[offset + 2 + self._state] x._value
+				return self._handlers[offset + 3] new TypeError $resolveSelf
+
+			if x and typeof x.then == 'function'
+				if x._state == $pending
+					addHandler x, self._handlers[offset + 2],
+						self._handlers[offset + 3]
 				else
-					self._handlers[offset + 2] x
+					self._handlers[offset + 2 + self._state] x._value
+			else
+				resolve = self._handlers[offset + 2]
+				resolve x if resolve
 		else
 			self._handlers[offset + 2 + self._state] self._value
+
+		return
 
 	# It will produce a trigger function to user.
 	# Such as the resolve and reject in this `new Promise (resolve, reject) ->`.
