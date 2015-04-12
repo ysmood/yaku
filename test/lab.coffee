@@ -4,22 +4,18 @@ bluebird = require 'bluebird'
 create = (lib) ->
 	new lib (r, rr) ->
 		setTimeout ->
-			rr 0
+			r 0
 		, 100
 
-test = (p) ->
+test = (lib, p) ->
 	p
-	.then undefined, ->
-		console.log 'ok'
-		1
-	.then undefined, ->
-		console.log 'ok'
-		1
 	.then (v) ->
-		console.log v
+		new lib (r) ->
+			console.log v
+			r v + 1
 	.then (v) ->
 		console.log v
 
-test create yaku
+test yaku, create yaku
 
-# test create bluebird
+# test bluebird, create bluebird
