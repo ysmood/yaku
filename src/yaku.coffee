@@ -1,6 +1,6 @@
 
 
-module.exports = class Promise
+do -> class Promise
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
@@ -159,3 +159,12 @@ module.exports = class Promise
 			offset += 4
 
 		return
+
+	# AMD Support
+	if typeof module == "object" and typeof module.exports == "object"
+		module.exports = Promise
+	else
+		if typeof define == "function" and define.amd
+			define -> Promise
+		else
+			window?.Promise = Promise
