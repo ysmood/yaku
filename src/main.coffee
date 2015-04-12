@@ -65,6 +65,8 @@ module.exports = class Promise
 	# It only counts when the current promise is on pending state.
 	_thenCount: 0
 
+	$resolveSelf = 'Promise cannot resolve itself.'
+
 	nextTick = do ->
 		(fn) ->
 			process.nextTick fn
@@ -85,28 +87,43 @@ module.exports = class Promise
 	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
 		offset = self._thenCount * 4
 
-		switch self._state
-			when $pending
+		if $pending
 				self._handlers[offset] = onFulfilled
 				self._handlers[offset + 1] = onRejected
 				self._handlers[offset + 2] = resolve
 				self._handlers[offset + 3] = reject
 				self._thenCount++
-
-			when $resolved
-				chainHandler self._value, onFulfilled, resolve
-
-			when $rejected
-				chainHandler self._value, onRejected, reject
+		else
+			chainHandler self, offset
 		return
 
 	# Chain value to a handler, then handler may be a promise or a function.
-	chainHandler = (value, onFulfilled, onRejected) ->
-		if value and typeof value.then == 'function'
-			value.then onFulfilled, onRejected
+	chainHandler = (self, offset) ->
+		# Trick: Reuse the value of state as the handler selector.
+		# The "i + state" shows the math nature of promise.
+		handler = self._handlers[offset + self._state]
+
+		if handler
+			try
+				x = handler self._value
+			catch e
+				self._handlers[offset + 3] e
+				return
+
+			if x == self
+				self._handlers[offset + 3] new TypeError $resolveSelf
+			else
+				# If x is a promise.
+				if x and typeof x.then == 'function'
+					if x._state == $pending
+						x.then self._handlers[offset + 2],
+							self._handlers[offset + 3]
+					else
+						self._handlers[offset + 2 + self._state] x._value
+				else
+					self._handlers[offset + 2] x
 		else
-			onFulfilled value
-		return
+			self._handlers[offset + 2 + self._state] self._value
 
 	# It will produce a trigger function to user.
 	# Such as the resolve and reject in this `new Promise (resolve, reject) ->`.
@@ -116,24 +133,12 @@ module.exports = class Promise
 		self._state = state
 		self._value = value
 
-		i = 0
+		offset = 0
 		len = self._thenCount * 4
 
-		while i < len
-			# Trick: Reuse the value of state as the handler selector.
-			# The "i + state" shows the math nature of promise.
-			handler = self._handlers[i + state]
+		while offset < len
+			chainHandler self, offset
 
-			# TODO: Decide when to use reject of chained promise.
-			thenHandler = self._handlers[i + 2]
-
-			out = if handler then handler value else value
-
-			if thenHandler
-				chainHandler out, thenHandler
-			else
-				self._handlers[i] = out
-
-			i += 4
+			offset += 4
 
 		return
