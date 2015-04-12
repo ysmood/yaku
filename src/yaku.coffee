@@ -204,7 +204,7 @@ do -> class Promise
 				# If the promise is a Yaku instance
 				# (not some thing like the Bluebird or jQuery Defer),
 				# we can do some performance optimization.
-				if x instanceof self.constructor
+				if x instanceof Promise
 					# If the promise is pending, we don't have to create
 					# new promise instance to chain the process.
 					if x._state == $pending
