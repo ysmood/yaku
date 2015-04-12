@@ -9,9 +9,9 @@ Why another Promise lib?
 
 I will only implement these basic functions.
 
-- [ ] `constructor: (executor) ->`
+- [x] `constructor: (executor) ->`
 
-- [ ] `then: (onFulfilled, onRejected) ->`
+- [x] `then: (onFulfilled, onRejected) ->`
 
 - [ ] `catch: (onRejected) ->`
 
@@ -22,6 +22,8 @@ I will only implement these basic functions.
 - [ ] `@reject: (reason) ->`
 
 - [ ] `@resolve: (value) ->`
+
+- [x] Cross platform
 
 - [ ] Long stack trace
 

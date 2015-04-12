@@ -23,6 +23,8 @@ I will only implement these basic functions.
 
 - [ ] `@resolve: (value) ->`
 
+- [x] Cross platform
+
 - [ ] Long stack trace
 
 - [ ] Possibly unhandled error
