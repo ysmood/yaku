@@ -1,14 +1,14 @@
 bluebird = require 'bluebird'
 
-count = 10 ** 6
+count = 10 ** 5
 asyncTask = ->
 	setTimeout ->
 		null
 	, 1
 
-console.time()
+console.time 'callback'
 process.on 'exit', ->
-	console.timeEnd()
+	console.timeEnd 'callback'
 
 while count--
 	asyncTask()

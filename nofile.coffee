@@ -29,3 +29,8 @@ module.exports = (task, option) ->
 			args.splice 0, 0, '--nodejs', '--debug-brk=' + opts.port
 
 		kit.monitorApp { bin: 'coffee', args }
+
+	task 'benchmark', 'Compare performance between different libraries', ->
+		kit.globSync 'benchmark/*.coffee'
+		.map (path) ->
+			kit.spawn 'coffee', [path]

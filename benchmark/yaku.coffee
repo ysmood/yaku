@@ -1,15 +1,15 @@
-bluebird = require 'bluebird'
+yaku = require '../dist/yaku'
 
 count = 10 ** 5
 asyncTask = ->
-	new bluebird (resolve) ->
+	new yaku (resolve) ->
 		setTimeout ->
 			resolve()
 		, 1
 
-console.time 'bluebird'
+console.time 'yaku'
 process.on 'exit', ->
-	console.timeEnd 'bluebird'
+	console.timeEnd 'yaku'
 
 while count--
 	asyncTask()
