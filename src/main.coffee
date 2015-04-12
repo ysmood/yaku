@@ -68,7 +68,12 @@ module.exports = class Promise
 	$resolveSelf = 'Promise cannot resolve itself.'
 
 	nextTick = do ->
-		(fn) -> process.nextTick fn
+		if process? and process.nextTick
+			process.nextTick
+		else if setImmediate?
+			setImmediate
+		else
+			setTimeout
 
 	run = (self, executor, _isRunImmediately) ->
 		if _isRunImmediately
@@ -113,11 +118,20 @@ module.exports = class Promise
 				return self._handlers[offset + 3] new TypeError $resolveSelf
 
 			if x and typeof x.then == 'function'
-				if x._state == $pending
-					addHandler x, self._handlers[offset + 2],
-						self._handlers[offset + 3]
+				# If the promise is a Yaku instance
+				# (not some thing like the Bluebird or jQuery Defer),
+				# we can do some performance optimization.
+				if x instanceof self.constructor
+					# If the promise is pending, we don't have to create
+					# new promise instance to chain the process.
+					if x._state == $pending
+						addHandler x, self._handlers[offset + 2],
+							self._handlers[offset + 3]
+					else
+						self._handlers[offset + 2 + self._state] x._value
 				else
-					self._handlers[offset + 2 + self._state] x._value
+					x.then self._handlers[offset + 2],
+						self._handlers[offset + 3]
 			else
 				resolve = self._handlers[offset + 2]
 				resolve x if resolve
