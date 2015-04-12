@@ -30,7 +30,7 @@ module.exports = (task, option) ->
 
 		kit.monitorApp { bin: 'coffee', args }
 
-	option '--grep <pattern>', 'run test that match the pattern', '*'
+	option '--grep <pattern>', 'run test that match the pattern', '.'
 	task 'test', 'run promise/A+ tests', (opts) ->
 		require('./test/compliance.coffee') {
 			grep: opts.grep

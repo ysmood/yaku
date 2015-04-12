@@ -10,12 +10,11 @@ do -> class Promise
 	 * The first argument fulfills the promise, the second argument rejects it.
 	 * We can call these functions, once our operation is completed.
 	###
-	constructor: (executor, _isRunImmediately) ->
+	constructor: (executor) ->
 		@_value = null
 		@_handlers = []
 
-		# "_isRunImmediately" is only used by then internally.
-		run @, executor, _isRunImmediately
+		executor genTrigger(@, $resolved), genTrigger(@, $rejected)
 
 	###*
 	 * Appends fulfillment and rejection handlers to the promise,
@@ -30,7 +29,6 @@ do -> class Promise
 
 		new Promise (resolve, reject) ->
 			addHandler self, onFulfilled, onRejected, resolve, reject
-		, true
 
 	###*
 	 * The catch() method returns a Promise and deals with rejected cases only.
@@ -167,19 +165,6 @@ do -> class Promise
 			setImmediate
 		else
 			setTimeout
-
-	run = (self, executor, _isRunImmediately) ->
-		if _isRunImmediately
-			# For the Promise created by "then", we don't have to run the
-			# executor after the next tick.
-			executor genTrigger(self, $resolved),
-				genTrigger(self, $rejected)
-		else
-			nextTick ->
-				executor genTrigger(self, $resolved),
-					genTrigger(self, $rejected)
-
-		return
 
 	isThenable = (x) ->
 		x and typeof x.then == 'function'

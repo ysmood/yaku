@@ -11,15 +11,15 @@ create = (lib) ->
 		, t
 
 test = (lib, p) ->
-	lib.all [
-		lib.resolve create yaku
-		create yaku
-	]
-	.then (res) ->
-		console.log res
-	.catch (v) ->
-		console.log 'reject', v
+	defer = {}
+
+	defer.promise = new lib (resolve, reject) ->
+		defer.resolve = resolve
+		defer.reject = reject
+
+	console.log defer
+	defer
 
 test yaku
 
-# test bluebird, create bluebird
+# test bluebird
