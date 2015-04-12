@@ -85,6 +85,7 @@ module.exports = class Promise
 			nextTick ->
 				executor genTrigger(self, $resolved),
 					genTrigger(self, $rejected)
+
 		return
 
 	# Push new handler to current promise.
@@ -92,13 +93,14 @@ module.exports = class Promise
 		offset = self._thenCount * 4
 
 		if $pending
-				self._handlers[offset] = onFulfilled
-				self._handlers[offset + 1] = onRejected
-				self._handlers[offset + 2] = resolve
-				self._handlers[offset + 3] = reject
-				self._thenCount++
+			self._handlers[offset] = onFulfilled
+			self._handlers[offset + 1] = onRejected
+			self._handlers[offset + 2] = resolve
+			self._handlers[offset + 3] = reject
+			self._thenCount++
 		else
 			chainHandler self, offset
+
 		return
 
 	# Chain value to a handler, then handler may be a promise or a function.
