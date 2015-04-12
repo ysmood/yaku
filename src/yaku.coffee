@@ -185,7 +185,7 @@ do -> class Promise
 		return
 
 	# Chain value to a handler, then handler may be a promise or a function.
-	chainHandler = (self, offset) ->
+	chainHandler = (self, offset) -> nextTick ->
 		# Trick: Reuse the value of state as the handler selector.
 		# The "i + state" shows the math nature of promise.
 		handler = self._handlers[offset + self._state]
