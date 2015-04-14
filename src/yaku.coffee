@@ -52,11 +52,7 @@ do -> class Promise
 	###
 	@resolve: (value) ->
 		new Promise (resolve, reject) ->
-			if isThenable value
-				value.then resolve, reject
-			else
-				resolve value
-
+			tryThenable value, resolve, reject
 			return
 
 	###*
@@ -81,13 +77,7 @@ do -> class Promise
 	@race: (iterable) ->
 		new Promise (resolve, reject) ->
 			for x in iterable
-				if not isThenable x
-					x = Promise.resolve x
-
-				# TODO: We don't have to return promise here,
-				# performance can be optimizated.
-				x.then resolve, reject
-
+				tryThenable x, resolve, reject
 			return
 
 	###*
@@ -108,9 +98,7 @@ do -> class Promise
 			countDown = iterable.length
 
 			iter = (i) ->
-				# TODO: We don't have to return promise here,
-				# performance can be optimizated.
-				x.then (v) ->
+				tryThenable x, (v) ->
 					res[i] = v
 					if --countDown == 0
 						resolve res
@@ -119,8 +107,6 @@ do -> class Promise
 				return
 
 			for x, i in iterable
-				if not isThenable x
-					x = Promise.resolve x
 				iter i
 
 			return
@@ -169,8 +155,26 @@ do -> class Promise
 		else
 			setTimeout
 
-	isThenable = (x) ->
-		x and typeof x.then == 'function'
+	tryThenable = (x, resolve, reject) ->
+		if not x
+			resolve x if resolve
+			return
+
+		try
+			xthen = x.then
+		catch e
+			reject e
+			return
+
+		if typeof xthen == 'function'
+			# TODO: If the promise is a Yaku instance,
+			# not some thing like the Bluebird or jQuery Defer,
+			# we can do some performance optimization.
+			xthen.call x, resolve, reject
+		else
+			resolve x
+
+		return
 
 	# Push new handler to current promise.
 	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
@@ -203,15 +207,8 @@ do -> class Promise
 			if x == self._handlers[offset + 4]
 				return x._handlers[offset + 1]? new TypeError $resolveSelf
 
-			if isThenable x
-				# TODO: If the promise is a Yaku instance,
-				# not some thing like the Bluebird or jQuery Defer,
-				# we can do some performance optimization.
-				x.then self._handlers[offset + 2],
+			tryThenable x, self._handlers[offset + 2],
 					self._handlers[offset + 3]
-			else
-				resolve = self._handlers[offset + 2]
-				resolve x if resolve
 		else
 			self._handlers[offset + 2 + self._state] self._value
 
