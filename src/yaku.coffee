@@ -204,20 +204,11 @@ do -> class Promise
 				return x._handlers[offset + 1]? new TypeError $resolveSelf
 
 			if isThenable x
-				# If the promise is a Yaku instance
-				# (not some thing like the Bluebird or jQuery Defer),
+				# TODO: If the promise is a Yaku instance,
+				# not some thing like the Bluebird or jQuery Defer,
 				# we can do some performance optimization.
-				if x instanceof Promise
-					# If the promise is pending, we don't have to create
-					# new promise instance to chain the process.
-					if x._state == $pending
-						addHandler x, self._handlers[offset + 2],
-							self._handlers[offset + 3]
-					else
-						self._handlers[offset + 2 + self._state] x._value
-				else
-					x.then self._handlers[offset + 2],
-						self._handlers[offset + 3]
+				x.then self._handlers[offset + 2],
+					self._handlers[offset + 3]
 			else
 				resolve = self._handlers[offset + 2]
 				resolve x if resolve
