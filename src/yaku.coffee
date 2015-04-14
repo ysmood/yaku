@@ -182,12 +182,12 @@ do -> class Promise
 		self._thenOffset += $groupNum
 
 		if self._state != $pending
-			chainHandler self, offset
+			doResolve self, offset
 
 		return
 
 	# Chain value to a handler, then handler may be a promise or a function.
-	chainHandler = (self, offset) -> nextTick ->
+	doResolve = (self, offset) -> nextTick ->
 		# Trick: Reuse the value of state as the handler selector.
 		# The "i + state" shows the math nature of promise.
 		handler = self._handlers[offset + self._state]
@@ -237,7 +237,7 @@ do -> class Promise
 		offset = 0
 
 		while offset < self._thenOffset
-			chainHandler self, offset
+			doResolve self, offset
 
 			offset += $groupNum
 
