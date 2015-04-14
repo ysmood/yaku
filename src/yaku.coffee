@@ -190,7 +190,7 @@ do -> class Promise
 		# The "i + state" shows the math nature of promise.
 		handler = self._handlers[offset + self._state]
 
-		if handler
+		if typeof handler == 'function'
 			try
 				x = handler self._value
 			catch e
