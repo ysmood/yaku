@@ -156,21 +156,21 @@ do -> class Promise
 			setTimeout
 
 	tryThenable = (x, resolve, reject) ->
-		if not x
-			resolve x if resolve
-			return
+		type = typeof x
+		if type == 'function' or type == 'object'
+			try
+				xthen = x.then
+			catch e
+				reject e
+				return
 
-		try
-			xthen = x.then
-		catch e
-			reject e
-			return
-
-		if typeof xthen == 'function'
-			# TODO: If the promise is a Yaku instance,
-			# not some thing like the Bluebird or jQuery Defer,
-			# we can do some performance optimization.
-			xthen.call x, resolve, reject
+			if typeof xthen == 'function'
+				# TODO: If the promise is a Yaku instance,
+				# not some thing like the Bluebird or jQuery Defer,
+				# we can do some performance optimization.
+				xthen.call x, resolve, reject
+			else
+				resolve x
 		else
 			resolve x
 
