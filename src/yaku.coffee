@@ -27,7 +27,9 @@ do -> class Promise
 	then: (onFulfilled, onRejected) ->
 		self = @
 
-		new Promise (resolve, reject) ->
+		newPromise = @_thenOffset + 4
+
+		@_handlers[newPromise] = new Promise (resolve, reject) ->
 			addHandler self, onFulfilled, onRejected, resolve, reject
 
 	###*
@@ -144,19 +146,20 @@ do -> class Promise
 	# This is one of the most tricky part.
 	#
 	# For better performance, both memory and speed, the array is like below,
-	# every 4 entities are paired together as a group:
+	# every 5 entities are paired together as a group:
 	# ```
-	#   0            1           2        3       ...
-	# [ onFulfilled, onRejected, resolve, reject, ... ]
+	#   0            1           2        3       4       ...
+	# [ onFulfilled, onRejected, resolve, reject, promise ... ]
 	# ```
 	# To save memory the position of 0 and 1 may be replaced with their returned values,
 	# then these values will be passed to 2 and 3.
 	_handlers: []
+	$groupNum = 5
 
 	# It only counts when the current promise is on pending state.
-	_thenCount: 0
+	_thenOffset: 0
 
-	$resolveSelf = 'Promise cannot resolve itself.'
+	$resolveSelf = 'circular promise resolution chain'
 
 	nextTick = do ->
 		if process? and process.nextTick
@@ -171,13 +174,12 @@ do -> class Promise
 
 	# Push new handler to current promise.
 	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
-		offset = self._thenCount * 4
-
+		offset = self._thenOffset
 		self._handlers[offset] = onFulfilled
 		self._handlers[offset + 1] = onRejected
 		self._handlers[offset + 2] = resolve
 		self._handlers[offset + 3] = reject
-		self._thenCount++
+		self._thenOffset += $groupNum
 
 		if self._state != $pending
 			chainHandler self, offset
@@ -197,8 +199,9 @@ do -> class Promise
 				self._handlers[offset + 3] e
 				return
 
-			if x == self
-				return self._handlers[offset + 3] new TypeError $resolveSelf
+			# Prevent circular chain.
+			if x == self._handlers[offset + 4]
+				return x._handlers[offset + 1]? new TypeError $resolveSelf
 
 			if isThenable x
 				# If the promise is a Yaku instance
@@ -232,12 +235,11 @@ do -> class Promise
 		self._value = value
 
 		offset = 0
-		len = self._thenCount * 4
 
-		while offset < len
+		while offset < self._thenOffset
 			chainHandler self, offset
 
-			offset += 4
+			offset += $groupNum
 
 		return
 
