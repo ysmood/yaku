@@ -168,11 +168,13 @@ do -> class Promise
 				# TODO: If the promise is a Yaku instance,
 				# not some thing like the Bluebird or jQuery Defer,
 				# we can do some performance optimization.
-				xthen.call x, resolve, reject
+				xthen.call x, (y) ->
+					tryThenable y, resolve, reject
+				, reject
 			else
 				resolve x
 		else
-			resolve x
+			resolve x if resolve
 
 		return
 
