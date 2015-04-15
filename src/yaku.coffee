@@ -52,7 +52,7 @@ do -> class Promise
 	###
 	@resolve: (value) ->
 		new Promise (resolve, reject) ->
-			tryThenable value, resolve, reject
+			resolveValue value, resolve, reject
 			return
 
 	###*
@@ -77,7 +77,7 @@ do -> class Promise
 	@race: (iterable) ->
 		new Promise (resolve, reject) ->
 			for x in iterable
-				tryThenable x, resolve, reject
+				resolveValue x, resolve, reject
 			return
 
 	###*
@@ -98,7 +98,7 @@ do -> class Promise
 			countDown = iterable.length
 
 			iter = (i) ->
-				tryThenable x, (v) ->
+				resolveValue x, (v) ->
 					res[i] = v
 					if --countDown == 0
 						resolve res
@@ -155,7 +155,7 @@ do -> class Promise
 		else
 			setTimeout
 
-	tryThenable = (x, resolve, reject) ->
+	resolveValue = (x, resolve, reject) ->
 		type = typeof x
 		if x != null and (type == 'function' or type == 'object')
 			try
@@ -169,7 +169,7 @@ do -> class Promise
 				# not some thing like the Bluebird or jQuery Defer,
 				# we can do some performance optimization.
 				xthen.call x, (y) ->
-					tryThenable y, resolve, reject
+					resolveValue y, resolve, reject
 				, reject
 			else
 				resolve x
@@ -188,12 +188,12 @@ do -> class Promise
 		self._thenOffset += $groupNum
 
 		if self._state != $pending
-			doResolve self, offset
+			resolveHanlers self, offset
 
 		return
 
 	# Chain value to a handler, then handler may be a promise or a function.
-	doResolve = (self, offset) -> nextTick ->
+	resolveHanlers = (self, offset) -> nextTick ->
 		# Trick: Reuse the value of state as the handler selector.
 		# The "i + state" shows the math nature of promise.
 		handler = self._handlers[offset + self._state]
@@ -209,7 +209,7 @@ do -> class Promise
 			if x == self._handlers[offset + 4]
 				return x._handlers[offset + 1]? new TypeError $resolveSelf
 
-			tryThenable x, self._handlers[offset + 2],
+			resolveValue x, self._handlers[offset + 2],
 					self._handlers[offset + 3]
 		else
 			self._handlers[offset + 2 + self._state] self._value
@@ -227,7 +227,7 @@ do -> class Promise
 		offset = 0
 
 		while offset < self._thenOffset
-			doResolve self, offset
+			resolveHanlers self, offset
 
 			offset += $groupNum
 
