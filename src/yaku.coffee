@@ -157,7 +157,7 @@ do -> class Promise
 
 	tryThenable = (x, resolve, reject) ->
 		type = typeof x
-		if type == 'function' or type == 'object'
+		if x != null and (type == 'function' or type == 'object')
 			try
 				xthen = x.then
 			catch e
