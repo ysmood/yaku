@@ -30,6 +30,7 @@
     "coffee-script": "1.9.1",
     "coffeelint": "1.9.3",
     "commander": "2.7.1",
+    "es6-promise": "^2.1.0",
     "nokit": "0.5.9",
     "promises-aplus-tests": "*",
     "uglify-js": "2.4.19"

@@ -53,3 +53,6 @@ module.exports = (task, option) ->
 				'--nodejs', '--harmony'
 				path
 			]
+
+	task 'clean', 'Clean temp files', ->
+		kit.remove '{.nokit,dist}'
