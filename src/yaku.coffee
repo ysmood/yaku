@@ -253,7 +253,7 @@ do -> class Yaku
 				return
 
 			# Prevent circular chain.
-			if x == self[offset + 4]
+			if x == self[offset + 4] and x
 				return x[offset + 1]? new TypeError $circularErrorInfo
 
 			resolveValue x, self[offset + 2],
