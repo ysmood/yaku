@@ -12,7 +12,6 @@ do -> class Yaku
 	###
 	constructor: (executor) ->
 		@_value = null
-		@_handlers = []
 
 		executor genTrigger(@, $resolved), genTrigger(@, $rejected)
 
@@ -27,9 +26,9 @@ do -> class Yaku
 	then: (onFulfilled, onRejected) ->
 		self = @
 
-		newYaku = @_thenOffset + 4
+		newYaku = @_hCount + 4
 
-		@_handlers[newYaku] = new Yaku (resolve, reject) ->
+		@[newYaku] = new Yaku (resolve, reject) ->
 			addHandler self, onFulfilled, onRejected, resolve, reject
 
 	###*
@@ -120,6 +119,8 @@ do -> class Yaku
 	 * @private
 	###
 
+	# ************************ Private Constant Start *************************
+
 	###*
 	 * These are some static symbolys.
 	 * The state value is designed to be 0, 1, 2. Not by chance.
@@ -129,9 +130,6 @@ do -> class Yaku
 	$resolved = 0
 	$rejected = 1
 	$pending = 2
-
-	_state: $pending
-	_value: null
 
 	###*
 	 * This is one of the most tricky part.
@@ -146,13 +144,20 @@ do -> class Yaku
 	 * then these values will be passed to 2 and 3.
 	 * @private
 	###
-	_handlers: []
 	$groupNum = 5
 
-	# It only counts when the current promise is on pending state.
-	_thenOffset: 0
+	$circularErrorInfo = 'circular promise resolution chain'
 
-	$resolveSelf = 'circular promise resolution chain'
+	# ************************* Private Constant End **************************
+
+	_state: $pending
+	_value: null
+
+	###*
+	 * The number of current handlers that attach to this Yaku instance.
+	 * @private
+	###
+	_hCount: 0
 
 	###*
 	 * Create cross platform nextTick helper.
@@ -178,12 +183,12 @@ do -> class Yaku
 	 * @param {Function} reject Call it to make a promise reject.
 	###
 	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
-		offset = self._thenOffset
-		self._handlers[offset] = onFulfilled
-		self._handlers[offset + 1] = onRejected
-		self._handlers[offset + 2] = resolve
-		self._handlers[offset + 3] = reject
-		self._thenOffset += $groupNum
+		offset = self._hCount
+		self[offset] = onFulfilled
+		self[offset + 1] = onRejected
+		self[offset + 2] = resolve
+		self[offset + 3] = reject
+		self._hCount += $groupNum
 
 		if self._state != $pending
 			resolveHanlers self, offset
@@ -238,23 +243,23 @@ do -> class Yaku
 	resolveHanlers = (self, offset) -> nextTick ->
 		# Trick: Reuse the value of state as the handler selector.
 		# The "i + state" shows the math nature of promise.
-		handler = self._handlers[offset + self._state]
+		handler = self[offset + self._state]
 
 		if typeof handler == 'function'
 			try
 				x = handler self._value
 			catch e
-				self._handlers[offset + 3] e
+				self[offset + 3] e
 				return
 
 			# Prevent circular chain.
-			if x == self._handlers[offset + 4]
-				return x._handlers[offset + 1]? new TypeError $resolveSelf
+			if x == self[offset + 4]
+				return x[offset + 1]? new TypeError $circularErrorInfo
 
-			resolveValue x, self._handlers[offset + 2],
-					self._handlers[offset + 3]
+			resolveValue x, self[offset + 2],
+					self[offset + 3]
 		else
-			self._handlers[offset + 2 + self._state] self._value
+			self[offset + 2 + self._state] self._value
 
 		return
 
@@ -274,7 +279,7 @@ do -> class Yaku
 
 		offset = 0
 
-		while offset < self._thenOffset
+		while offset < self._hCount
 			resolveHanlers self, offset
 
 			offset += $groupNum
