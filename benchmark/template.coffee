@@ -13,8 +13,8 @@ module.exports = (name, Promise) ->
 			resolveCount++
 
 	process.on 'exit', ->
-		console.log 'Resolve Count:', resolveCount
 		console.timeEnd name
+		console.log 'Resolve Count:', resolveCount
 		console.log '***********'
 
 	console.time name

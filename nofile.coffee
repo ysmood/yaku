@@ -49,4 +49,7 @@ module.exports = (task, option) ->
 	task 'benchmark', 'compare performance between different libraries', ->
 		kit.globSync 'benchmark/*.coffee'
 		.map (path) ->
-			kit.spawn 'coffee', [path]
+			kit.spawn 'coffee', [
+				'--nodejs', '--harmony'
+				path
+			]
