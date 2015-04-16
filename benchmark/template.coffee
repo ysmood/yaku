@@ -32,5 +32,5 @@ module.exports = (name, Promise) ->
 
 			checkEnd()
 
-	kit._.times 10, ->
+	kit._.times 100, ->
 		asyncTask()

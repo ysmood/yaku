@@ -47,6 +47,8 @@ module.exports = (task, option) ->
 		}
 
 	task 'benchmark', 'compare performance between different libraries', ->
+		process.env.NODE_ENV = 'production'
+
 		kit.globSync 'benchmark/*.coffee'
 		.map (path) ->
 			kit.spawn 'coffee', [
