@@ -1,5 +1,6 @@
 yaku = require '../src/yaku'
 bluebird = require 'bluebird'
+kit = require 'nokit'
 
 create = (lib) ->
 	new lib (r, rr) ->
@@ -11,14 +12,15 @@ create = (lib) ->
 		, t
 
 test = (lib, p) ->
-	defer = {}
+	p = lib.resolve({num: 10}).then ->
+		{
+			then: (fulfil) ->
+				fulfil null
+				throw {err: 'xxx'}
+		}
 
-	defer.promise = new lib (resolve, reject) ->
-		defer.resolve = resolve
-		defer.reject = reject
-
-	console.log defer
-	defer
+	p.then (v) ->
+		console.log v
 
 test yaku
 
