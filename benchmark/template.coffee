@@ -1,3 +1,12 @@
+kit = require 'nokit'
+cs = kit.require 'colors/safe'
+
+###*
+ * The test will last for 5 seconds.
+ * Each promise only do 1ms async task.
+ * When each task ends, a new task will run.
+ * There are 10 init tasks.
+###
 
 module.exports = (name, Promise) ->
 
@@ -5,9 +14,6 @@ module.exports = (name, Promise) ->
 	start = Date.now()
 
 	checkEnd = ->
-		kit = require 'nokit'
-		cs = kit.require 'colors/safe'
-
 		if Date.now() - start >= 1000 * 5
 			console.log """
 			#{cs.cyan kit._.padRight(name, 15)} Resolve Count: #{cs.green resolveCount}
@@ -26,4 +32,5 @@ module.exports = (name, Promise) ->
 
 			checkEnd()
 
-	asyncTask()
+	kit._.times 10, ->
+		asyncTask()
