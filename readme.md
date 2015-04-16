@@ -43,9 +43,10 @@ Use `npm run no -- benchmark` to run the benchmark.
 ### Sample Result
 
 ```
-yaku            Resolve Count: 39252
-es6-promise     Resolve Count: 39045
-bluebird        Resolve Count: 6204
+es6-promise     Resolve Count: 342856
+yaku            Resolve Count: 342332
+bluebird        Resolve Count: 339745
+Native          Resolve Count: 291268
 ```
 
 # Misc.

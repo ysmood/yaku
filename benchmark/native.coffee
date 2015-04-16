@@ -1,3 +1,3 @@
 
 if Promise?
-	require('./template') 'Native', Promise
+	require('./template') 'native', Promise

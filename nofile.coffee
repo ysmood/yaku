@@ -51,10 +51,7 @@ module.exports = (task, option) ->
 
 		kit.globSync 'benchmark/*.coffee'
 		.map (path) ->
-			kit.spawn 'coffee', [
-				'--nodejs', '--harmony'
-				path
-			]
+			kit.spawn 'coffee', [path]
 
 	task 'clean', 'Clean temp files', ->
 		kit.remove '{.nokit,dist}'
