@@ -1,9 +1,12 @@
-# Under Development
+# Overview
 
-Why another Promise lib?
+Compare Yaku to other implementations:
 
-- Bluebird is too big with a lot of non-standard helper functions.
-- I need better performance (maybe I'll use asm.js).
+| Name         | Minified Size  | Performance |
+|--------------|----------------|-------------|
+| yaku         | 2KB            | 342332      |
+| es6-promise  | 18KB           | 342856      |
+| bluebird     | 73KB           | 339745      |
 
 # Road Map
 
@@ -25,9 +28,9 @@ I will only implement these basic functions.
 
 - [x] Cross platform
 
-- [ ] Long stack trace
-
 - [ ] Possibly unhandled error
+
+- [ ] Long stack trace
 
 
 # Unit Test
