@@ -1,8 +1,19 @@
 
 module.exports = (name, Promise) ->
 
-	count = 10 ** 5
 	resolveCount = 0
+	start = Date.now()
+
+	checkEnd = ->
+		kit = require 'nokit'
+		cs = kit.require 'colors/safe'
+
+		if Date.now() - start >= 1000 * 5
+			console.log """
+			#{cs.cyan kit._.padRight(name, 15)} Resolve Count: #{cs.green resolveCount}
+			"""
+
+			process.exit()
 
 	asyncTask = ->
 		new Promise (resolve) ->
@@ -11,12 +22,8 @@ module.exports = (name, Promise) ->
 			, 1
 		.then ->
 			resolveCount++
+			asyncTask()
 
-	process.on 'exit', ->
-		console.timeEnd name
-		console.log 'Resolve Count:', resolveCount
-		console.log '***********'
+			checkEnd()
 
-	console.time name
-	while count--
-		asyncTask()
+	asyncTask()
