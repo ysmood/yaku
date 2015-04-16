@@ -17,6 +17,16 @@ module.exports = (task, option) ->
 		.load kit.drives.auto 'lint'
 		.load kit.drives.auto 'compile'
 		.load kit.drives.auto 'compress'
+		.load (f) ->
+			# Add license.
+			{ version } = require './package'
+			f.set """
+			/*
+			 Yaku v#{version}
+			 (c) 2015 Yad Smood. http://ysmood.org
+			 License MIT
+			*/\n
+			""" + f.contents
 		.run 'dist'
 
 	option '--debug', 'run with remote debug server'
