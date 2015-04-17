@@ -5,6 +5,14 @@ getYaku = ->
 	else
 		window.Yaku
 
+log = do -> (val) ->
+	if window?
+		xhr = new XMLHttpRequest()
+		xhr.open 'POST', '/log'
+		xhr.send JSON.stringify val
+	else
+		console.log.call console, val
+
 main = ->
 	Yaku = getYaku()
 
@@ -12,6 +20,6 @@ main = ->
 
 	Yaku.resolve val
 	.then (val) ->
-		console.log val
+		log val
 
 main()

@@ -61,15 +61,27 @@ module.exports = (task, option) ->
 		port = 8219
 
 		server = http.createServer (req, res) ->
-			kit.readFile 'test/browser.html', (html) ->
-				all = ''
-				kit.warp ['src/yaku.coffee', 'test/basic.coffee']
-				.load kit.drives.auto 'compile'
-				.load (f) ->
-					all += f.contents + '\n\n'
-					f.contents = null
-				.run().then ->
-					res.end """<script>#{all}</script>"""
+			kit.log req.url
+			switch req.url
+				when '/'
+					kit.readFile 'test/browser.html', (html) ->
+						all = ''
+						kit.warp ['src/yaku.coffee', 'test/basic.coffee']
+						.load kit.drives.auto 'compile'
+						.load (f) ->
+							all += f.contents + '\n\n'
+							f.contents = null
+						.run().then ->
+							res.end """<script>#{all}</script>"""
+				when '/log'
+					req.on 'data', (c) ->
+						kit.log JSON.parse c.toString()
+					req.on 'end', ->
+						res.end()
+				else
+					res.statusCode = 404
+					res.end()
 
 		server.listen port, ->
 			kit.log 'Listen ' + port
+			kit.xopen 'http://127.0.0.1:' + port
