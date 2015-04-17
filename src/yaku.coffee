@@ -287,11 +287,11 @@ do -> class Yaku
 		return
 
 	# AMD Support
-	if typeof module == "object" and typeof module.exports == "object"
+	if typeof module == 'object' and typeof module.exports == 'object'
 		module.exports = Yaku
 	else
 		# CMD
-		if typeof define == "function" and define.amd
+		if typeof define == 'function' and define.amd
 			define -> Yaku
 		else
 			window?.Yaku = Yaku
