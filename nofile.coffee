@@ -48,7 +48,7 @@ module.exports = (task, option) ->
 			grep: opts.grep
 		}
 
-	task 'benchmark', 'compare performance between different libraries', ->
+	task 'benchmark', ['build'], 'compare performance between different libraries', ->
 		process.env.NODE_ENV = 'production'
 
 		kit.globSync 'benchmark/*.coffee'
