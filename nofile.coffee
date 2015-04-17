@@ -42,8 +42,6 @@ module.exports = (task, option) ->
 
 	option '--grep <pattern>', 'run test that match the pattern', '.'
 	task 'test', 'run promise/A+ tests', (opts) ->
-		require './test/basic'
-
 		require('./test/compliance.coffee') {
 			grep: opts.grep
 		}

@@ -4,10 +4,6 @@ Promise = require '../src/yaku'
 module.exports = (opts) ->
 
 	adapter = {
-		resolved: Promise.resolve
-
-		rejected: Promise.reject
-
 		deferred: ->
 			defer = {}
 
