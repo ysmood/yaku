@@ -5,14 +5,14 @@ module.exports = (task, option) ->
 
 	task 'default build', ['doc', 'code']
 
-	task 'doc', ->
+	task 'doc', 'build doc', ->
 		kit.warp ''
 		.load kit.drives.comment2md {
 			tpl: 'docs/readme.jst.md'
 		}
 		.run()
 
-	task 'code', ->
+	task 'code', 'build source code', ->
 		kit.warp 'src/**/*.coffee'
 		.load kit.drives.auto 'lint'
 		.load kit.drives.auto 'compile'

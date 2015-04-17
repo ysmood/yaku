@@ -1,12 +1,12 @@
 # Overview
 
-Compare Yaku to other implementations:
+If you want to learn how Promise works, read the minimum implementation file `docs/minPromiseA+.coffee`.
 
-| Name         | Minified Size  | Performance |
-|--------------|----------------|-------------|
-| yaku         | 2KB            | 342332      |
-| es6-promise  | 18KB           | 342856      |
-| bluebird     | 73KB           | 339745      |
+## Features
+
+- The minified file is only 2KB, `bluebird` is 73KB, `es6-promise` is 18KB
+- Full compliant with Promise/A+
+- Better performance than the native Promise.
 
 # Road Map
 

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Yaku</title>
+</head>
+<body>
+
+<script type="text/javascript" src='../../dist/yaku.js'></script>
+
+<script>
+
+var test = function (name, lib) {
+	var count = 0
+	var start = Date.now()
+
+	var asyncTask = function () {
+		new lib(function (resolve) {
+			setTimeout(function () {
+				resolve()
+			}, 0)
+		})
+		.then(function () {
+			if (Date.now() - start < 1000 * 3) {
+				count++
+				asyncTask()
+			} else {
+				console.log(name, count)
+			}
+		})
+	}
+
+	asyncTask()
+
+}
+
+test('yaku', Yaku)
+// test('native', Promise)
+
+</script>
+
+</body>
+</html>
