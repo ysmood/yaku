@@ -55,3 +55,21 @@ module.exports = (task, option) ->
 
 	task 'clean', 'Clean temp files', ->
 		kit.remove '{.nokit,dist}'
+
+	task 'browser', 'Unit test on browser', ->
+		http = require 'http'
+		port = 8219
+
+		server = http.createServer (req, res) ->
+			kit.readFile 'test/browser.html', (html) ->
+				all = ''
+				kit.warp ['src/yaku.coffee', 'test/basic.coffee']
+				.load kit.drives.auto 'compile'
+				.load (f) ->
+					all += f.contents + '\n\n'
+					f.contents = null
+				.run().then ->
+					res.end """<script>#{all}</script>"""
+
+		server.listen port, ->
+			kit.log 'Listen ' + port
