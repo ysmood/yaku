@@ -1,9 +1,9 @@
 
-getYaku = ->
-	if module? and module.exports?
-		require '../src/yaku'
-	else
-		window.Yaku
+
+Yaku = if module? and module.exports?
+	require '../src/yaku'
+else
+	window.Yaku
 
 log = do -> (val) ->
 	if window?
@@ -13,13 +13,82 @@ log = do -> (val) ->
 	else
 		console.log.call console, val
 
-main = ->
-	Yaku = getYaku()
+# Only one level equality.
+assert = (a, b) ->
+	if typeof a != 'object'
+		if a == b
+			return false
+		else
+			{ a, b }
 
-	val = { v: 'ok' }
+	for k, v of a
+		if b[k] != v
+			return { a, b }
 
-	Yaku.resolve val
-	.then (val) ->
-		log val
+	return false
 
-main()
+test = (name, output, fn) ->
+	report = (res) ->
+		if not res
+			log "v [test] #{name}"
+		else
+			log """
+			x [test] #{name}
+				>>>>>>>> Should Equal
+				#{JSON.stringify res.a}
+				<<<<<<<< Should Equal
+				#{JSON.stringify res.b}
+			"""
+
+	out = fn()
+	if out and out.then
+		out.then (v) ->
+			report assert v, output
+	else
+		report assert fn(), output
+
+
+$val = { val: 'ok' }
+
+test 'resolve', $val, ->
+	new Yaku (resolve) ->
+		resolve $val
+
+test 'resolve static', $val, ->
+	Yaku.resolve $val
+
+test 'reject', $val, ->
+	Yaku.reject $val
+	.catch (val) -> val
+
+test 'catch', $val, ->
+	new Yaku (nil, reject) ->
+		reject $val
+	.catch (val) -> val
+
+test 'chain', 'ok', ->
+	Yaku.resolve().then ->
+		new Yaku (r) ->
+			setTimeout ->
+				r 'ok'
+			, 10
+
+test 'all', [1, 'test', 'x', 0], ->
+	Yaku.all [
+		1
+		'test'
+		Yaku.resolve 'x'
+		new Yaku (r) -> r 0
+	]
+
+test 'race', 20, ->
+	Yaku.race [
+		new Yaku (r) ->
+			setTimeout ->
+				r 0
+			, 20
+		new Yaku (r) ->
+			setTimeout ->
+				r 1
+			, 30
+	]

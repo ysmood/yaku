@@ -61,7 +61,6 @@ module.exports = (task, option) ->
 		port = 8219
 
 		server = http.createServer (req, res) ->
-			kit.log req.url
 			switch req.url
 				when '/'
 					kit.readFile 'test/browser.html', (html) ->
@@ -75,7 +74,7 @@ module.exports = (task, option) ->
 							res.end """<script>#{all}</script>"""
 				when '/log'
 					req.on 'data', (c) ->
-						kit.log JSON.parse c.toString()
+						console.log JSON.parse c.toString()
 					req.on 'end', ->
 						res.end()
 				else
