@@ -16,13 +16,15 @@ log = do -> (val) ->
 # Only one level equality.
 assert = (a, b) ->
 	if typeof a != 'object'
-		if a == b
-			return false
+		return if a == b
+			false
 		else
+			process?.exit(1)
 			{ a, b }
 
 	for k, v of a
 		if b[k] != v
+			process?.exit(1)
 			return { a, b }
 
 	return false
@@ -81,7 +83,7 @@ test 'all', [1, 'test', 'x', 0], ->
 		new Yaku (r) -> r 0
 	]
 
-test 'race', 20, ->
+test 'race', 0, ->
 	Yaku.race [
 		new Yaku (r) ->
 			setTimeout ->

@@ -42,6 +42,8 @@ module.exports = (task, option) ->
 
 	option '--grep <pattern>', 'run test that match the pattern', '.'
 	task 'test', 'run promise/A+ tests', (opts) ->
+		require './test/basic'
+
 		require('./test/compliance.coffee') {
 			grep: opts.grep
 		}
@@ -56,9 +58,9 @@ module.exports = (task, option) ->
 	task 'clean', 'Clean temp files', ->
 		kit.remove '{.nokit,dist}'
 
-	task 'browser', 'Unit test on browser', ->
+	option '--browserPort <8227>', 'browser test port', 8227
+	task 'browser', 'Unit test on browser', (opts) ->
 		http = require 'http'
-		port = 8219
 
 		server = http.createServer (req, res) ->
 			switch req.url
@@ -81,6 +83,6 @@ module.exports = (task, option) ->
 					res.statusCode = 404
 					res.end()
 
-		server.listen port, ->
-			kit.log 'Listen ' + port
-			kit.xopen 'http://127.0.0.1:' + port
+		server.listen opts.browserPort, ->
+			kit.log 'Listen ' + opts.browserPort
+			kit.xopen 'http://127.0.0.1:' + opts.browserPort
