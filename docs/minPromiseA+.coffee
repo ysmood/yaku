@@ -11,8 +11,6 @@ do -> class Yaku
 	 * We can call these functions, once our operation is completed.
 	###
 	constructor: (executor) ->
-		@_value = null
-
 		executor genTrigger(@, $resolved), genTrigger(@, $rejected)
 
 	###*
@@ -73,7 +71,6 @@ do -> class Yaku
 	# ************************* Private Constant End **************************
 
 	_state: $pending
-	_value: null
 
 	###*
 	 * The number of current handlers that attach to this Yaku instance.
@@ -132,9 +129,6 @@ do -> class Yaku
 				return
 
 			if typeof xthen == 'function'
-				# TODO: If the promise is a Yaku instance,
-				# not some thing like the Bluebird or jQuery Defer,
-				# we can do some performance optimization.
 				try
 					isResolved = false
 					xthen.call x, (y) ->
