@@ -24,9 +24,9 @@ do -> class Yaku
 	then: (onFulfilled, onRejected) ->
 		self = @
 
-		newYaku = @_hCount + 4
+		newYaku = self._hCount + 4
 
-		@[newYaku] = new Yaku (resolve, reject) ->
+		self[newYaku] = new Yaku (resolve, reject) ->
 			addHandler self, onFulfilled, onRejected, resolve, reject
 
 	###*
@@ -151,7 +151,6 @@ do -> class Yaku
 	# ************************* Private Constant End **************************
 
 	_state: $pending
-	_value: null
 
 	###*
 	 * The number of current handlers that attach to this Yaku instance.
