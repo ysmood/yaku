@@ -11,8 +11,6 @@ do -> class Yaku
 	 * We can call these functions, once our operation is completed.
 	###
 	constructor: (executor) ->
-		@_value = null
-
 		executor genTrigger(@, $resolved), genTrigger(@, $rejected)
 
 	###*

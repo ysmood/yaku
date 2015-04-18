@@ -1,18 +1,22 @@
 utils = require './utils'
 
-bar1 = (self) ->
-	self.count1++
-
 class A
 	constructor: ->
 		@count1 = 0
 		@count2 = 0
 
+	bar1 = (self) ->
+		self.count1++
+
 	foo1: ->
-		bar1 @
+		self = @
+		do -> do ->
+			bar1 self
 
 	foo2: ->
-		@bar2()
+		self = @
+		do -> do ->
+			self.bar2()
 
 	bar2: ->
 		@count2++
