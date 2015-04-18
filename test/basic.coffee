@@ -6,6 +6,9 @@ else
 	window.Yaku
 
 log = do -> (val) ->
+	if not JSON?
+		JSON = stringify: (obj) -> "\"#{obj}\""
+
 	if window?
 		data = JSON.stringify val
 		xhr = new XMLHttpRequest()

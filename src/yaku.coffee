@@ -170,10 +170,21 @@ do -> class Yaku
 			process.nextTick
 		else if setImmediate?
 			setImmediate
-		else if CustomEvent?
-			addEventListener '__yakuNextTick', (e) -> e.detail()
-			(fn) ->
-				dispatchEvent new CustomEvent '__yakuNextTick', detail: fn
+		else if CustomEvent? or (document? and document.createEvent?)
+			eventName = '__yakuNextTick'
+			newEvent = try
+				new CustomEvent ''
+				(fn) ->
+					new CustomEvent eventName,
+						detail: fn, bubbles: false, cancelable: false
+			catch
+				(fn) ->
+					evt = document.createEvent 'CustomEvent'
+					evt.initCustomEvent eventName, false, false, fn
+					evt
+
+			addEventListener eventName, (e) -> e.detail()
+			(fn) -> dispatchEvent newEvent fn
 		else
 			setTimeout
 
