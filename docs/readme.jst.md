@@ -5,7 +5,7 @@ It only implements the `constructor` and `then`. It passed all the tests of [pro
 
 ## Features
 
-- The minified file is only 2KB (`bluebird` / 73KB, `es6-promise` / 18KB)
+- The minified file is only 3KB (`bluebird` / 73KB, `es6-promise` / 18KB)
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
 - Works on IE5+ and other major browsers
