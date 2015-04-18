@@ -45,15 +45,6 @@ Use `npm run no -- test` to run the unit test.
 
 Use `npm run no -- benchmark` to run the benchmark.
 
-### Sample Result
-
-```
-es6-promise     Resolve Count: 342856
-yaku            Resolve Count: 342332
-bluebird        Resolve Count: 339745
-Native          Resolve Count: 291268
-```
-
 # Misc.
 
 The name `yaku` comes from the word `約束` which means promise.
