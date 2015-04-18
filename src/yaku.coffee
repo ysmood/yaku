@@ -148,6 +148,8 @@ do -> class Yaku
 
 	$circularErrorInfo = 'circular promise resolution chain'
 
+	$tryErr = {}
+
 	# ************************* Private Constant End **************************
 
 	_state: $pending
@@ -220,34 +222,48 @@ do -> class Yaku
 	resolveValue = (x, resolve, reject) ->
 		type = typeof x
 		if x != null and (type == 'function' or type == 'object')
-			try
-				xthen = x.then
-			catch e
-				reject e
-				return
+			xthen = getXthen x, reject
+			return if xthen == $tryErr
 
 			if typeof xthen == 'function'
-				# TODO: If the promise is a Yaku instance,
-				# not some thing like the Bluebird or jQuery Defer,
-				# we can do some performance optimization.
-				try
-					isResolved = false
-					xthen.call x, (y) ->
-						return if isResolved
-						isResolved = true
-						resolveValue y, resolve, reject
-					, (r) ->
-						return if isResolved
-						isResolved = true
-						reject r
-				catch e
-					reject e if not isResolved
+				resolveXthen x, xthen, resolve, reject
 			else
 				resolve x
 		else
 			resolve x if resolve
 
 		return
+
+	resolveXthen = (x, xthen, resolve, reject) ->
+		# TODO: If the promise is a Yaku instance,
+		# not some thing like the Bluebird or jQuery Defer,
+		# we can do some performance optimization.
+		try
+			isResolved = false
+			xthen.call x, (y) ->
+				return if isResolved
+				isResolved = true
+				resolveValue y, resolve, reject
+			, (r) ->
+				return if isResolved
+				isResolved = true
+				reject r
+		catch e
+			reject e if not isResolved
+
+	getXthen = (x, reject) ->
+		try
+			x.then
+		catch e
+			reject e
+			return $tryErr
+
+	getX = (self, offset, handler) ->
+		try
+			handler self._value
+		catch e
+			self[offset + 3] e
+			return $tryErr
 
 	###*
 	 * Decide how handlers works.
@@ -261,11 +277,8 @@ do -> class Yaku
 		handler = self[offset + self._state]
 
 		if typeof handler == 'function'
-			try
-				x = handler self._value
-			catch e
-				self[offset + 3] e
-				return
+			x = getX self, offset, handler
+			return if x == $tryErr
 
 			# Prevent circular chain.
 			if x == self[offset + 4] and x
