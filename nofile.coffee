@@ -73,7 +73,11 @@ module.exports = (task, option) ->
 							all += f.contents + '\n\n'
 							f.contents = null
 						.run().then ->
-							res.end """<script>#{all}</script>"""
+							res.end """
+								<html>
+									<body></body>
+									<script>#{all}</script>
+								</html>"""
 				when '/log'
 					req.on 'data', (c) ->
 						console.log JSON.parse c.toString()

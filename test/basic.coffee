@@ -7,9 +7,14 @@ else
 
 log = do -> (val) ->
 	if window?
+		data = JSON.stringify val
 		xhr = new XMLHttpRequest()
 		xhr.open 'POST', '/log'
-		xhr.send JSON.stringify val
+		xhr.send data
+
+		elem = document.createElement 'div'
+		elem.innerText = data
+		document.body.appendChild elem
 	else
 		console.log.call console, val
 
