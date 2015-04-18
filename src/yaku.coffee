@@ -11,7 +11,12 @@ do -> class Yaku
 	 * We can call these functions, once our operation is completed.
 	###
 	constructor: (executor) ->
-		executor genTrigger(@, $resolved), genTrigger(@, $rejected)
+		self = @
+
+		executor (val) ->
+			self._trigger $resolved, val
+		, (val) ->
+			self._trigger $rejected, val
 
 	###*
 	 * Appends fulfillment and rejection handlers to the promise,
@@ -24,10 +29,18 @@ do -> class Yaku
 	then: (onFulfilled, onRejected) ->
 		self = @
 
-		newYaku = self._hCount + 4
+		hGroup = [onFulfilled, onRejected]
 
-		self[newYaku] = new Yaku (resolve, reject) ->
-			addHandler self, onFulfilled, onRejected, resolve, reject
+		@[@_hCount++] = hGroup
+
+		hGroup[4] = new Yaku (resolve, reject) ->
+			hGroup[2] = resolve
+			hGroup[3] = reject
+
+			if self._state != $pending
+				self._resolveHanlers hGroup
+
+			return
 
 	###*
 	 * The catch() method returns a Promise and deals with rejected cases only.
@@ -142,7 +155,6 @@ do -> class Yaku
 	 * then these values will be passed to 2 and 3.
 	 * @private
 	###
-	$groupNum = 5
 
 	$circularErrorInfo = 'circular promise resolution chain'
 
@@ -186,28 +198,6 @@ do -> class Yaku
 			(fn) -> dispatchEvent newEvent fn
 		else
 			setTimeout
-
-	###*
-	 * Push new handler to current promise.
-	 * @private
-	 * @param {Yaku} self
-	 * @param {Function} onFulfilled It will be called when self is resolved.
-	 * @param {Function} onRejected It will be called when self is rejected.
-	 * @param {Function} resolve Call it to make a promise resolve.
-	 * @param {Function} reject Call it to make a promise reject.
-	###
-	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
-		offset = self._hCount
-		self[offset] = onFulfilled
-		self[offset + 1] = onRejected
-		self[offset + 2] = resolve
-		self[offset + 3] = reject
-		self._hCount += $groupNum
-
-		if self._state != $pending
-			resolveHanlers self, offset
-
-		return
 
 	###*
 	 * Resolve or reject primise with value x. The x can also be a thenable.
@@ -258,59 +248,50 @@ do -> class Yaku
 			reject e
 			return $tryErr
 
-	getX = (self, offset, handler) ->
+	_getX: (hGroup, handler) ->
 		try
-			handler self._value
+			handler @_value
 		catch e
-			self[offset + 3] e
+			hGroup[3] e
 			return $tryErr
 
 	###*
 	 * Decide how handlers works.
 	 * @private
 	 * @param  {Yaku} self
-	 * @param  {Integer} offset The offset of the handler group.
 	###
-	resolveHanlers = (self, offset) ->
+	_resolveHanlers: (hGroup) ->
 		# Trick: Reuse the value of state as the handler selector.
 		# The "i + state" shows the math nature of promise.
-		handler = self[offset + self._state]
+		handler = hGroup[@_state]
 
 		if typeof handler == 'function'
+			self = @
 			nextTick ->
-				x = getX self, offset, handler
+				x = self._getX hGroup, handler
 				return if x == $tryErr
 
 				# Prevent circular chain.
-				if x == self[offset + 4] and x
-					return x[offset + 1]? new TypeError $circularErrorInfo
+				if x == hGroup[4] and x
+					return x._trigger $rejected,
+						new TypeError $circularErrorInfo
 
-				resolveValue x, self[offset + 2], self[offset + 3]
+				resolveValue x, hGroup[2], hGroup[3]
 		else
-			self[offset + 2 + self._state] self._value
+			hGroup[2 + @_state] @_value
 
 		return
 
-	###*
-	 * It will produce a trigger function to user.
-	 * Such as the resolve and reject in this `new Yaku (resolve, reject) ->`.
-	 * @private
-	 * @param  {Yaku} self
-	 * @param  {Integer} state The value is one of `$pending`, `$resolved` or `$rejected`.
-	 * @return {Function} `(value) -> undefined` A resolve or reject function.
-	###
-	genTrigger = (self, state) -> (value) ->
-		return if self._state != $pending
+	_trigger: (state, value) ->
+		return if @_state != $pending
 
-		self._state = state
-		self._value = value
+		@_state = state
+		@_value = value
 
-		offset = 0
+		i = 0
 
-		while offset < self._hCount
-			resolveHanlers self, offset
-
-			offset += $groupNum
+		while i < @_hCount
+			@_resolveHanlers @[i++]
 
 		return
 
