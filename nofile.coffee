@@ -50,8 +50,17 @@ module.exports = (task, option) ->
 
 	task 'benchmark', ['build'], 'compare performance between different libraries', ->
 		process.env.NODE_ENV = 'production'
+		os = require 'os'
 
-		kit.globSync 'benchmark/*.coffee'
+		console.log """
+			Node #{process.version}
+			OS   #{os.platform()}
+			Arch #{os.arch()}
+			CPU  #{os.cpus()[0].model}
+			#{kit._.repeat('-', 80)}
+		"""
+
+		kit.Promise.all kit.globSync 'benchmark/*.coffee'
 		.map (path) ->
 			kit.spawn 'coffee', [path]
 

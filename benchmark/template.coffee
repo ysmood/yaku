@@ -4,8 +4,7 @@ cs = kit.require 'colors/safe'
 ###*
  * The test will last for 5 seconds.
  * Each promise only do 1ms async task.
- * When each task ends, a new task will run.
- * There are 100 init tasks.
+ * When each task ends, two new tasks will run.
 ###
 
 module.exports = (name, Promise) ->
@@ -13,12 +12,13 @@ module.exports = (name, Promise) ->
 	resolveCount = 0
 	start = Date.now()
 	taskSpan = 1
-	initTasks = 100
 
 	checkEnd = ->
-		if Date.now() - start >= 1000 * 5
+		if Date.now() - start >= 1000 * 1
 			console.log """
-			#{cs.cyan kit._.padRight(name, 15)} Resolve Count: #{cs.green resolveCount}
+			#{cs.cyan kit._.padRight(name, 15)}
+			    resolve count: #{cs.green resolveCount}
+			     memory usage: #{JSON.stringify process.memoryUsage()}
 			"""
 
 			process.exit()
@@ -31,8 +31,8 @@ module.exports = (name, Promise) ->
 		.then ->
 			resolveCount++
 			asyncTask()
+			asyncTask()
 
 			checkEnd()
 
-	kit._.times initTasks, ->
-		asyncTask()
+	asyncTask()

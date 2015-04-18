@@ -8,7 +8,7 @@ It only implements the `constructor` and `then`. It passed all the tests of [pro
 - The minified file is only 2KB (`bluebird` / 73KB, `es6-promise` / 18KB)
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
-- Works on IE6+ and other major browsers
+- Works on IE5+ and other major browsers
 
 # Road Map
 
@@ -28,7 +28,7 @@ I will only implement these basic functions.
 
 - [x] `@resolve: (value) ->`
 
-- [ ] Cross platform
+- [x] Cross platform
 
 - [ ] Possibly unhandled error
 
