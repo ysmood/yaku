@@ -14,11 +14,15 @@ module.exports = (name, Promise) ->
 	taskSpan = 1
 
 	checkEnd = ->
-		if Date.now() - start >= 1000 * 1
+		if Date.now() - start >= 1000 * 5
+			mem = process.memoryUsage()
+			for k of mem
+				mem[k] = Math.floor(mem[k] / 1024 / 1024) + 'mb'
+
 			console.log """
 			#{cs.cyan kit._.padRight(name, 15)}
 			    resolve count: #{cs.green resolveCount}
-			     memory usage: #{JSON.stringify process.memoryUsage()}
+			     memory usage: #{JSON.stringify mem}
 			"""
 
 			process.exit()
@@ -30,9 +34,11 @@ module.exports = (name, Promise) ->
 			, taskSpan
 		.then ->
 			resolveCount++
+
 			asyncTask()
 			asyncTask()
 
 			checkEnd()
+			return
 
 	asyncTask()
