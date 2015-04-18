@@ -235,11 +235,12 @@ do -> class Yaku
 		return
 
 	resolveXthen = (x, xthen, resolve, reject) ->
+		isResolved = false
+
 		# TODO: If the promise is a Yaku instance,
 		# not some thing like the Bluebird or jQuery Defer,
 		# we can do some performance optimization.
 		try
-			isResolved = false
 			xthen.call x, (y) ->
 				return if isResolved
 				isResolved = true

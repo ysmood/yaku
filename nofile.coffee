@@ -60,8 +60,9 @@ module.exports = (task, option) ->
 			#{kit._.repeat('-', 80)}
 		"""
 
-		kit.Promise.all kit.globSync 'benchmark/*.coffee'
-		.map (path) ->
+		paths = kit.globSync 'benchmark/*.coffee'
+
+		kit.async paths.map (path) -> ->
 			kit.spawn 'coffee', [path]
 
 	task 'clean', 'Clean temp files', ->

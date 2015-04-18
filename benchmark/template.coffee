@@ -14,7 +14,7 @@ module.exports = (name, Promise) ->
 	taskSpan = 1
 
 	checkEnd = ->
-		if Date.now() - start >= 1000 * 5
+		if Date.now() - start >= 1000 * 3
 			mem = process.memoryUsage()
 			for k of mem
 				mem[k] = Math.floor(mem[k] / 1024 / 1024) + 'mb'
