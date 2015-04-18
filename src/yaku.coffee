@@ -249,6 +249,8 @@ do -> class Yaku
 		catch e
 			reject e if not isResolved
 
+		return
+
 	getXthen = (x, reject) ->
 		try
 			x.then
@@ -269,21 +271,21 @@ do -> class Yaku
 	 * @param  {Yaku} self
 	 * @param  {Integer} offset The offset of the handler group.
 	###
-	resolveHanlers = (self, offset) -> nextTick ->
+	resolveHanlers = (self, offset) ->
 		# Trick: Reuse the value of state as the handler selector.
 		# The "i + state" shows the math nature of promise.
 		handler = self[offset + self._state]
 
 		if typeof handler == 'function'
-			x = getX self, offset, handler
-			return if x == $tryErr
+			nextTick ->
+				x = getX self, offset, handler
+				return if x == $tryErr
 
-			# Prevent circular chain.
-			if x == self[offset + 4] and x
-				return x[offset + 1]? new TypeError $circularErrorInfo
+				# Prevent circular chain.
+				if x == self[offset + 4] and x
+					return x[offset + 1]? new TypeError $circularErrorInfo
 
-			resolveValue x, self[offset + 2],
-					self[offset + 3]
+				resolveValue x, self[offset + 2], self[offset + 3]
 		else
 			self[offset + 2 + self._state] self._value
 
