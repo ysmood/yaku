@@ -11,7 +11,8 @@ do -> class Yaku
 	 * We can call these functions, once our operation is completed.
 	###
 	constructor: (executor) ->
-		executor genTrigger(@, $resolved), genTrigger(@, $rejected)
+		return if executor == $noop
+		executor genResolver(@, $resolved), genResolver(@, $rejected)
 
 	###*
 	 * Appends fulfillment and rejection handlers to the promise,
@@ -22,12 +23,18 @@ do -> class Yaku
 	 * the current Promise.
 	###
 	then: (onFulfilled, onRejected) ->
-		self = @
+		p = new Yaku $noop
 
-		newYaku = self._hCount + 4
+		offset = @_hCount
+		@[offset] = onFulfilled
+		@[offset + 1] = onRejected
+		@[offset + 2] = p
+		@_hCount += $groupNum
 
-		self[newYaku] = new Yaku (resolve, reject) ->
-			addHandler self, onFulfilled, onRejected, resolve, reject
+		if @_state != $pending
+			resolveHanlers @, offset
+
+		p
 
 	###*
 	 * The catch() method returns a Promise and deals with rejected cases only.
@@ -48,9 +55,7 @@ do -> class Yaku
 	 * @return {Yaku}
 	###
 	@resolve: (value) ->
-		new Yaku (resolve, reject) ->
-			resolveValue value, resolve, reject
-			return
+		resolvePromise new Yaku($noop), $resolved, value
 
 	###*
 	 * The Promise.reject(reason) method returns a Promise object that is rejected with the given reason.
@@ -58,9 +63,7 @@ do -> class Yaku
 	 * @return {Yaku}
 	###
 	@reject: (reason) ->
-		new Yaku (nil, reject) ->
-			reject reason
-			return
+		resolvePromise new Yaku($noop), $rejected, reason
 
 	###*
 	 * The Promise.race(iterable) method returns a promise that resolves or rejects
@@ -122,7 +125,7 @@ do -> class Yaku
 	###*
 	 * These are some static symbolys.
 	 * The state value is designed to be 0, 1, 2. Not by chance.
-	 * See the genTrigger part's selector.
+	 * See the genResolver part's selector.
 	 * @private
 	###
 	$resolved = 0
@@ -135,18 +138,20 @@ do -> class Yaku
 	 * For better performance, both memory and speed, the array is like below,
 	 * every 5 entities are paired together as a group:
 	 * ```
-	 *   0            1           2        3       4       ...
-	 * [ onFulfilled, onRejected, resolve, reject, promise ... ]
+	 *   0            1           2       ...
+	 * [ onFulfilled, onRejected, promise ... ]
 	 * ```
 	 * To save memory the position of 0 and 1 may be replaced with their returned values,
 	 * then these values will be passed to 2 and 3.
 	 * @private
 	###
-	$groupNum = 5
+	$groupNum = 3
 
 	$circularErrorInfo = 'circular promise resolution chain'
 
 	$tryErr = {}
+
+	$noop = {}
 
 	# ************************* Private Constant End **************************
 
@@ -190,81 +195,55 @@ do -> class Yaku
 		nextTick fn
 
 	###*
-	 * Push new handler to current promise.
-	 * @private
-	 * @param {Yaku} self
-	 * @param {Function} onFulfilled It will be called when self is resolved.
-	 * @param {Function} onRejected It will be called when self is rejected.
-	 * @param {Function} resolve Call it to make a promise resolve.
-	 * @param {Function} reject Call it to make a promise reject.
-	###
-	addHandler = (self, onFulfilled, onRejected, resolve, reject) ->
-		offset = self._hCount
-		self[offset] = onFulfilled
-		self[offset + 1] = onRejected
-		self[offset + 2] = resolve
-		self[offset + 3] = reject
-		self._hCount += $groupNum
-
-		if self._state != $pending
-			resolveHanlers self, offset
-
-		return
-
-	###*
 	 * Resolve or reject primise with value x. The x can also be a thenable.
 	 * @private
-	 * @param  {Any | Thenable} x A normal value or a thenable.
-	 * @param  {Function} resolve If it is called, a promise resolves.
-	 * @param  {Function} reject If it is called, a promise rejects.
+	 * @param {Yaku} [p]
+	 * @param {Any | Thenable} x A normal value or a thenable.
 	###
-	resolveValue = (x, resolve, reject) ->
+	resolveValue = (p, x) ->
 		type = typeof x
 		if x != null and (type == 'function' or type == 'object')
-			xthen = getXthen x, reject
+			xthen = getXthen p, x
 			return if xthen == $tryErr
 
 			if typeof xthen == 'function'
-				resolveXthen x, xthen, resolve, reject
+				resolveXthen p, x, xthen
 			else
-				resolve x
+				resolvePromise p, $resolved, x
 		else
-			resolve x if resolve
+			resolvePromise p, $resolved, x
 
 		return
 
-	resolveXthen = (x, xthen, resolve, reject) ->
+	resolveXthen = (p, x, xthen) ->
 		isResolved = false
 
-		# TODO: If the promise is a Yaku instance,
-		# not some thing like the Bluebird or jQuery Defer,
-		# we can do some performance optimization.
 		try
 			xthen.call x, (y) ->
 				return if isResolved
 				isResolved = true
-				resolveValue y, resolve, reject
+				resolveValue p, y
 			, (r) ->
 				return if isResolved
 				isResolved = true
-				reject r
+				resolvePromise p, $rejected, r
 		catch e
-			reject e if not isResolved
+			resolvePromise p, $rejected, e if not isResolved
 
 		return
 
-	getXthen = (x, reject) ->
+	getXthen = (p, x) ->
 		try
 			x.then
 		catch e
-			reject e
+			resolvePromise p, $rejected, e
 			return $tryErr
 
-	getX = (self, offset, handler) ->
+	getX = (self, p, handler) ->
 		try
 			handler self._value
 		catch e
-			self[offset + 3] e
+			resolvePromise p, $rejected, e
 			return $tryErr
 
 	###*
@@ -277,31 +256,24 @@ do -> class Yaku
 		# Trick: Reuse the value of state as the handler selector.
 		# The "i + state" shows the math nature of promise.
 		handler = self[offset + self._state]
+		p = self[offset + 2]
 
 		if typeof handler == 'function'
 			schedule ->
-				x = getX self, offset, handler
+				x = getX self, p, handler
 				return if x == $tryErr
 
 				# Prevent circular chain.
-				if x == self[offset + 4] and x
+				if x == p and x
 					return x[offset + 1]? new TypeError $circularErrorInfo
 
-				resolveValue x, self[offset + 2], self[offset + 3]
+				resolveValue p, x
 		else
-			self[offset + 2 + self._state] self._value
+			resolvePromise p, self._state, self._value
 
 		return
 
-	###*
-	 * It will produce a trigger function to user.
-	 * Such as the resolve and reject in this `new Yaku (resolve, reject) ->`.
-	 * @private
-	 * @param  {Yaku} self
-	 * @param  {Integer} state The value is one of `$pending`, `$resolved` or `$rejected`.
-	 * @return {Function} `(value) -> undefined` A resolve or reject function.
-	###
-	genTrigger = (self, state) -> (value) ->
+	resolvePromise = (self, state, value) ->
 		return if self._state != $pending
 
 		self._state = state
@@ -314,7 +286,18 @@ do -> class Yaku
 
 			offset += $groupNum
 
-		return
+		self
+
+	###*
+	 * It will produce a resolvePromise function to user.
+	 * Such as the resolve and reject in this `new Yaku (resolve, reject) ->`.
+	 * @private
+	 * @param  {Yaku} self
+	 * @param  {Integer} state The value is one of `$pending`, `$resolved` or `$rejected`.
+	 * @return {Function} `(value) -> undefined` A resolve or reject function.
+	###
+	genResolver = (self, state) -> (value) ->
+		resolvePromise self, state, value
 
 	# AMD Support
 	if typeof module == 'object' and typeof module.exports == 'object'
