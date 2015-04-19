@@ -33,6 +33,7 @@
     "es6-promise": "*",
     "nokit": "0.5.9",
     "promises-aplus-tests": "*",
+    "q": "*",
     "uglify-js": "2.4.19"
   }
 }
