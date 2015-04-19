@@ -163,36 +163,55 @@ do -> class Yaku
 	###
 	_hCount: 0
 
+	fnQueue = Array 1000
+	fnQueueLen = 0
+
+	flush = ->
+		i = 0
+		while i < fnQueueLen
+			fnQueue[i]()
+			fnQueue[i++] = undefined
+
+		fnQueueLen = 0
+
+		return
+
+	schedule = (fn) ->
+		fnQueue[fnQueueLen++] = fn
+
+		scheduleFlush() if fnQueueLen == 1
+
+		return
+
 	###*
 	 * Create cross platform nextTick helper.
 	 * @private
 	 * @return {Function} `(fn) -> undefined` The fn will be called until
 	 * the execution context stack contains only platform code.
 	###
-	nextTick =
+	scheduleFlush =
 		if process? and process.nextTick
-			process.nextTick
-		else if setImmediate?
-			setImmediate
-		else if MutationObserver?
-			(fn) ->
-				div = document.createElement 'div'
-				observer = new MutationObserver fn
-				observer.observe div, attributes: true
-				div.classList.toggle 'x'
-		else if document? and document.createEvent?
-			addEventListener '__yakuNextTick', (e) -> e.detail()
-			(fn) ->
-				evt = document.createEvent 'CustomEvent'
-				evt.initCustomEvent '__yakuNextTick', false, false, fn
-				dispatchEvent evt
-		else
-			setTimeout
+			-> process.nextTick flush
 
-	# TODO: this is the bottle neck.
-	# We need a schedule to handle it.
-	schedule = (fn) ->
-		nextTick fn
+		else if setImmediate?
+			-> setImmediate flush
+
+		else if MutationObserver?
+			i = 1
+			n = document.createTextNode ''
+			observer = new MutationObserver flush
+			observer.observe n, characterData: true
+			-> n.data = (i = -i)
+
+		else if document? and document.createEvent?
+			addEventListener '__yakuNextTick', flush
+			->
+				evt = document.createEvent 'CustomEvent'
+				evt.initCustomEvent '__yakuNextTick', false, false
+				dispatchEvent evt
+
+		else
+			-> setTimeout flush
 
 	###*
 	 * Resolve or reject primise with value x. The x can also be a thenable.
