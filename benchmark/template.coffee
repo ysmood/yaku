@@ -11,30 +11,36 @@ module.exports = (name, Promise) ->
 
 	countDown = 10 ** 5
 
-	isEnd = ->
+	checkEnd = ->
 		return if --countDown
 		logResult()
 
 	logResult = ->
-		time = Date.now() - startTime
+		resolutionTime = Date.now() - startResolution
 
 		mem = process.memoryUsage()
-		for k of mem
-			mem[k] = Math.floor(mem[k] / 1024 / 1024) + 'mb'
+		memFormat = []
+		for k, v of mem
+			memFormat.push "#{k} - #{Math.floor(v / 1024 / 1024)}mb"
 
 		console.log """
 		#{cs.cyan kit._.padRight(name, 15)}
-		    	     time: #{cs.green time}ms
-		     memory usage: #{JSON.stringify mem}
+		       total: #{cs.green initTime + resolutionTime}ms
+		        init: #{initTime}ms
+		  resolution: #{resolutionTime}ms
+		      memory: #{memFormat.join(' | ')}
 		"""
 
 	asyncTask = ->
-		new Promise((resolve) -> resolve())
+		new Promise((resolve) -> resolve()).then checkEnd
 
 	i = countDown
-	console.time name
+
+	initStart = Date.now()
+
 	while i--
 		asyncTask()
-	console.timeEnd name
 
-	startTime = Date.now()
+	initTime = Date.now() - initStart
+
+	startResolution = Date.now()
