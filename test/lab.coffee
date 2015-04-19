@@ -5,8 +5,7 @@ kit = require 'nokit'
 test = (lib, p) ->
 	p = lib.reject 'err'
 	.then -> null
-	.catch -> null
 
-test yaku
+# test yaku
 
-# test bluebird
+test bluebird

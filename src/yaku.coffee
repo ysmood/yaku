@@ -169,21 +169,18 @@ do -> class Yaku
 			process.nextTick
 		else if setImmediate?
 			setImmediate
-		else if CustomEvent? or (document? and document.createEvent?)
-			eventName = '__yakuNextTick'
-			newEvent = try
-				new CustomEvent ''
-				(fn) ->
-					new CustomEvent eventName,
-						detail: fn, bubbles: false, cancelable: false
-			catch
-				(fn) ->
-					evt = document.createEvent 'CustomEvent'
-					evt.initCustomEvent eventName, false, false, fn
-					evt
-
-			addEventListener eventName, (e) -> e.detail()
-			(fn) -> dispatchEvent newEvent fn
+		else if MutationObserver?
+			(fn) ->
+				div = document.createElement 'div'
+				observer = new MutationObserver fn
+				observer.observe div, attributes: true
+				div.classList.toggle 'x'
+		else if document? and document.createEvent?
+			addEventListener '__yakuNextTick', (e) -> e.detail()
+			(fn) ->
+				evt = document.createEvent 'CustomEvent'
+				evt.initCustomEvent '__yakuNextTick', false, false, fn
+				dispatchEvent evt
 		else
 			setTimeout
 
