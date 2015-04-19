@@ -184,6 +184,11 @@ do -> class Yaku
 		else
 			setTimeout
 
+	# TODO: this is the bottle neck.
+	# We need a schedule to handle it.
+	schedule = (fn) ->
+		nextTick fn
+
 	###*
 	 * Push new handler to current promise.
 	 * @private
@@ -274,7 +279,7 @@ do -> class Yaku
 		handler = self[offset + self._state]
 
 		if typeof handler == 'function'
-			nextTick ->
+			schedule ->
 				x = getX self, offset, handler
 				return if x == $tryErr
 
