@@ -1,5 +1,7 @@
 promisesAplusTests = require 'promises-aplus-tests'
-Promise = require '../src/yaku'
+Promise = require('../src/yaku')
+# Promise = require('es6-promise').Promise
+# Promise = require('bluebird')
 
 module.exports = (opts) ->
 
