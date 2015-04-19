@@ -2,20 +2,21 @@ kit = require 'nokit'
 cs = kit.require 'colors/safe'
 
 ###*
- * The test will last for 5 seconds.
- * Each promise only do 1ms async task.
- * When each task ends, two new tasks will run.
+ * The test will run 10 ^ 5 promise.
+ * Each promise will resolve immediately.
+ * When all tasks are done, print out how much time it takes.
 ###
 
 module.exports = (name, Promise) ->
 
 	countDown = 10 ** 5
-	start = Date.now()
 
-	checkEnd = ->
+	isEnd = ->
 		return if --countDown
+		logResult()
 
-		time = Date.now() - start
+	logResult = ->
+		time = Date.now() - startTime
 
 		mem = process.memoryUsage()
 		for k of mem
@@ -23,16 +24,17 @@ module.exports = (name, Promise) ->
 
 		console.log """
 		#{cs.cyan kit._.padRight(name, 15)}
-		    	     time: #{cs.green time}
+		    	     time: #{cs.green time}ms
 		     memory usage: #{JSON.stringify mem}
 		"""
 
 	asyncTask = ->
-		new Promise (resolve) ->
-			resolve()
-		.then ->
-			checkEnd()
+		new Promise((resolve) -> resolve())
 
 	i = countDown
+	console.time name
 	while i--
 		asyncTask()
+	console.timeEnd name
+
+	startTime = Date.now()
