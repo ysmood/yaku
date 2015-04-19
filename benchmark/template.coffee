@@ -31,8 +31,13 @@ module.exports = (name, Promise) ->
 		      memory: #{memFormat.join(' | ')}
 		"""
 
+	resolver = (resolve) ->
+		setTimeout ->
+			resolve()
+		, 1
+
 	asyncTask = ->
-		new Promise((resolve) -> resolve()).then checkEnd
+		new Promise(resolver).then checkEnd
 
 	i = countDown
 
@@ -41,6 +46,6 @@ module.exports = (name, Promise) ->
 	while i--
 		asyncTask()
 
-	initTime = Date.now() - initStart
-
 	startResolution = Date.now()
+	initTime = startResolution - initStart
+
