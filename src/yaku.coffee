@@ -189,7 +189,7 @@ do -> class Yaku
 	 * @return {Function} `(fn) -> undefined` The fn will be called until
 	 * the execution context stack contains only platform code.
 	###
-	scheduleFlush =
+	scheduleFlush = do ->
 		if process? and process.nextTick
 			->
 				process.nextTick flush
@@ -201,12 +201,12 @@ do -> class Yaku
 				return
 
 		else if MutationObserver?
-			i = 1
-			n = document.createTextNode ''
+			content = 1
+			node = document.createTextNode ''
 			observer = new MutationObserver flush
-			observer.observe n, characterData: true
+			observer.observe node, characterData: true
 			->
-				n.data = (i = -i)
+				node.data = (content = -content)
 				return
 
 		else if document? and document.createEvent?
