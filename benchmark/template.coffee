@@ -9,36 +9,30 @@ cs = kit.require 'colors/safe'
 
 module.exports = (name, Promise) ->
 
-	resolveCount = 0
+	countDown = 10 ** 5
 	start = Date.now()
-	taskSpan = 1
 
 	checkEnd = ->
-		if Date.now() - start >= 1000 * 3
-			mem = process.memoryUsage()
-			for k of mem
-				mem[k] = Math.floor(mem[k] / 1024 / 1024) + 'mb'
+		return if --countDown
 
-			console.log """
-			#{cs.cyan kit._.padRight(name, 15)}
-			    resolve count: #{cs.green resolveCount}
-			     memory usage: #{JSON.stringify mem}
-			"""
+		time = Date.now() - start
 
-			process.exit()
+		mem = process.memoryUsage()
+		for k of mem
+			mem[k] = Math.floor(mem[k] / 1024 / 1024) + 'mb'
+
+		console.log """
+		#{cs.cyan kit._.padRight(name, 15)}
+		    	     time: #{cs.green time}
+		     memory usage: #{JSON.stringify mem}
+		"""
 
 	asyncTask = ->
 		new Promise (resolve) ->
-			setTimeout ->
-				resolve()
-			, taskSpan
+			resolve()
 		.then ->
-			resolveCount++
-
-			asyncTask()
-			asyncTask()
-
 			checkEnd()
-			return
 
-	asyncTask()
+	i = countDown
+	while i--
+		asyncTask()
