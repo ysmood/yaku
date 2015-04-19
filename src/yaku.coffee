@@ -156,6 +156,7 @@ do -> class Yaku
 
 	# ************************* Private Constant End **************************
 
+	# Default state
 	_state: $pending
 
 	###*
@@ -164,6 +165,11 @@ do -> class Yaku
 	###
 	_hCount: 0
 
+	###*
+	 * All onFulfilled and onRejected functions will be scheduled in
+	 * here, so that they can be execute on the next tick.
+	 * @private
+	###
 	fnQueue = Array 1000
 	fnQueueLen = 0
 
@@ -182,7 +188,7 @@ do -> class Yaku
 		return
 
 	###*
-	 * Schedule a function. The function will run on the next context.
+	 * Schedule a function. The function will run on the next tick.
 	 * @private
 	 * @param  {Function} fn
 	###
@@ -193,6 +199,7 @@ do -> class Yaku
 
 		return
 
+	# Schedule a flush task on the next tick.
 	scheduleFlush = do ->
 		if process? and process.nextTick
 			->
