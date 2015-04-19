@@ -31,10 +31,13 @@ module.exports = (name, Promise) ->
 		      memory: #{memFormat.join(' | ')}
 		"""
 
+
 	resolver = (resolve) ->
 		setTimeout ->
 			resolve()
 		, 1
+
+	resolver = (resolve) -> resolve()
 
 	asyncTask = ->
 		new Promise(resolver).then checkEnd
