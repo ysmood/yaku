@@ -147,10 +147,9 @@ do -> class Yaku
 	###
 	$groupNum = 3
 
-	$circularErrorInfo = 'circular promise resolution chain'
-
+	# These are some symbols. They won't be used to store data.
+	$circularError = 'circular promise resolution chain'
 	$tryErr = {}
-
 	$noop = {}
 
 	# ************************* Private Constant End **************************
@@ -293,7 +292,7 @@ do -> class Yaku
 
 				# Prevent circular chain.
 				if x == p and x
-					x[offset + 1]? new TypeError $circularErrorInfo
+					x[offset + 1]? new TypeError $circularError
 					return
 
 				resolveValue p, x
