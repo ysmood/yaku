@@ -153,6 +153,8 @@ do -> class Yaku
 	$circularError = 'circular promise resolution chain'
 	$tryErr = {}
 	$noop = {}
+	$function = 'function'
+	$object = 'object'
 
 	# ************************* Private Constant End **************************
 
@@ -201,17 +203,17 @@ do -> class Yaku
 
 	# Schedule a flush task on the next tick.
 	scheduleFlush = do ->
-		if process? and process.nextTick
+		if typeof process == $object and process.nextTick
 			->
 				process.nextTick flush
 				return
 
-		else if setImmediate?
+		else if typeof setImmediate == $function
 			->
 				setImmediate flush
 				return
 
-		else if MutationObserver?
+		else if typeof MutationObserver == $function
 			content = 1
 			node = document.createTextNode ''
 			observer = new MutationObserver flush
@@ -220,11 +222,11 @@ do -> class Yaku
 				node.data = (content = -content)
 				return
 
-		else if document? and document.createEvent?
-			addEventListener '__yakuNextTick', flush
+		else if typeof document == $object and document.createEvent
+			addEventListener '_yakuTick', flush
 			->
 				evt = document.createEvent 'CustomEvent'
-				evt.initCustomEvent '__yakuNextTick', false, false
+				evt.initCustomEvent '_yakuTick', false, false
 				dispatchEvent evt
 				return
 
@@ -241,11 +243,11 @@ do -> class Yaku
 	###
 	resolveValue = (p, x) ->
 		type = typeof x
-		if x != null and (type == 'function' or type == 'object')
+		if x != null and (type == $function or type == $object)
 			xthen = getXthen p, x
 			return if xthen == $tryErr
 
-			if typeof xthen == 'function'
+			if typeof xthen == $function
 				resolveXthen p, x, xthen
 			else
 				resolvePromise p, $resolved, x
@@ -319,14 +321,15 @@ do -> class Yaku
 		handler = self[offset + self._state]
 		p = self[offset + 2]
 
-		if typeof handler == 'function'
+		if typeof handler == $function
 			scheduleFn ->
 				x = getX self, p, handler
 				return if x == $tryErr
 
 				# Prevent circular chain.
 				if x == p and x
-					x[offset + 1]? new TypeError $circularError
+					if x[offset + 1]
+						x[offset + 1] new TypeError $circularError
 					return
 
 				resolveValue p, x
@@ -369,11 +372,11 @@ do -> class Yaku
 		resolvePromise self, state, value
 
 	# AMD Support
-	if typeof module == 'object' and typeof module.exports == 'object'
+	if typeof module == $object and typeof module.exports == $object
 		module.exports = Yaku
 	else
 		# CMD
-		if typeof define == 'function' and define.amd
+		if typeof define == $function and define.amd
 			define -> Yaku
 		else
-			window?.Yaku = Yaku
+			window.Yaku = Yaku if typeof window == $object
