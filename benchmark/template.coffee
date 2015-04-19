@@ -2,7 +2,7 @@ kit = require 'nokit'
 cs = kit.require 'colors/safe'
 
 ###*
- * The test will run 10 ^ 5 promise.
+ * The test will run 10 ^ 5 promises.
  * Each promise will resolve immediately.
  * When all tasks are done, print out how much time it takes.
 ###
@@ -31,16 +31,15 @@ module.exports = (name, Promise) ->
 		      memory: #{memFormat.join(' | ')}
 		"""
 
+	resolver0 = (resolve) -> resolve()
 
-	resolver = (resolve) ->
+	resolver1 = (resolve) ->
 		setTimeout ->
 			resolve()
 		, 1
 
-	resolver = (resolve) -> resolve()
-
 	asyncTask = ->
-		new Promise(resolver).then checkEnd
+		new Promise(resolver0).then checkEnd
 
 	i = countDown
 

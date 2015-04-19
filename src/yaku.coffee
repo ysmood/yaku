@@ -176,7 +176,7 @@ do -> class Yaku
 
 		return
 
-	schedule = (fn) ->
+	scheduleFn = (fn) ->
 		fnQueue[fnQueueLen++] = fn
 
 		scheduleFlush() if fnQueueLen == 1
@@ -191,17 +191,23 @@ do -> class Yaku
 	###
 	scheduleFlush =
 		if process? and process.nextTick
-			-> process.nextTick flush
+			->
+				process.nextTick flush
+				return
 
 		else if setImmediate?
-			-> setImmediate flush
+			->
+				setImmediate flush
+				return
 
 		else if MutationObserver?
 			i = 1
 			n = document.createTextNode ''
 			observer = new MutationObserver flush
 			observer.observe n, characterData: true
-			-> n.data = (i = -i)
+			->
+				n.data = (i = -i)
+				return
 
 		else if document? and document.createEvent?
 			addEventListener '__yakuNextTick', flush
@@ -209,9 +215,12 @@ do -> class Yaku
 				evt = document.createEvent 'CustomEvent'
 				evt.initCustomEvent '__yakuNextTick', false, false
 				dispatchEvent evt
+				return
 
 		else
-			-> setTimeout flush
+			->
+				setTimeout flush
+				return
 
 	###*
 	 * Resolve or reject primise with value x. The x can also be a thenable.
@@ -278,13 +287,14 @@ do -> class Yaku
 		p = self[offset + 2]
 
 		if typeof handler == 'function'
-			schedule ->
+			scheduleFn ->
 				x = getX self, p, handler
 				return if x == $tryErr
 
 				# Prevent circular chain.
 				if x == p and x
-					return x[offset + 1]? new TypeError $circularErrorInfo
+					x[offset + 1]? new TypeError $circularErrorInfo
+					return
 
 				resolveValue p, x
 		else

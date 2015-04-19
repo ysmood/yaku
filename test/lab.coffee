@@ -4,10 +4,10 @@ es6 = require('es6-promise').Promise
 kit = require 'nokit'
 
 test = (lib, p) ->
-	p = lib.resolve 'err'
+	p = lib.resolve 'info'
 	.then (v) ->
 		console.log v
 
 test yaku
-test bluebird
-test es6
+# test bluebird
+# test es6
