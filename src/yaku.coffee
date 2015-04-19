@@ -117,6 +117,8 @@ do -> class Yaku
 	 * 'bind' and 'call' is slow, so we use Python
 	 * style "self" with curry and closure.
 	 * See: http://jsperf.com/call-vs-arguments
+	 *
+	 * All static variable name will begin with `$`. Such as `$rejected`.
 	 * @private
 	###
 
@@ -165,6 +167,10 @@ do -> class Yaku
 	fnQueue = Array 1000
 	fnQueueLen = 0
 
+	###*
+	 * Run all queued functions.
+	 * @private
+	###
 	flush = ->
 		i = 0
 		while i < fnQueueLen
@@ -175,6 +181,11 @@ do -> class Yaku
 
 		return
 
+	###*
+	 * Schedule a function. The function will run on the next context.
+	 * @private
+	 * @param  {Function} fn
+	###
 	scheduleFn = (fn) ->
 		fnQueue[fnQueueLen++] = fn
 
@@ -182,12 +193,6 @@ do -> class Yaku
 
 		return
 
-	###*
-	 * Create cross platform nextTick helper.
-	 * @private
-	 * @return {Function} `(fn) -> undefined` The fn will be called until
-	 * the execution context stack contains only platform code.
-	###
 	scheduleFlush = do ->
 		if process? and process.nextTick
 			->
@@ -224,7 +229,7 @@ do -> class Yaku
 	###*
 	 * Resolve or reject primise with value x. The x can also be a thenable.
 	 * @private
-	 * @param {Yaku} [p]
+	 * @param {Yaku} p
 	 * @param {Any | Thenable} x A normal value or a thenable.
 	###
 	resolveValue = (p, x) ->
@@ -242,6 +247,13 @@ do -> class Yaku
 
 		return
 
+	###*
+	 * Resolve then with its promise.
+	 * @private
+	 * @param  {Yaku} p
+	 * @param  {Thenable} x
+	 * @param  {Function} xthen
+	###
 	resolveXthen = (p, x, xthen) ->
 		isResolved = false
 
@@ -259,6 +271,13 @@ do -> class Yaku
 
 		return
 
+	###*
+	 * Try to get a promise's then method.
+	 * @private
+	 * @param  {Yaku} p
+	 * @param  {Thenable} x
+	 * @return {Function | $tryErr}
+	###
 	getXthen = (p, x) ->
 		try
 			x.then
@@ -266,6 +285,14 @@ do -> class Yaku
 			resolvePromise p, $rejected, e
 			return $tryErr
 
+	###*
+	 * Try to get return value of `onFulfilled` or `onRejected`.
+	 * @private
+	 * @param  {Yaku} self
+	 * @param  {Yaku} p
+	 * @param  {Function} handler
+	 * @return {Any | $tryErr}
+	###
 	getX = (self, p, handler) ->
 		try
 			handler self._value
@@ -301,6 +328,13 @@ do -> class Yaku
 
 		return
 
+	###*
+	 * Resolve or reject a promise.
+	 * @param  {Yaku} self
+	 * @param  {Integer} state
+	 * @param  {Any} value
+	 * @return {Yaku} It will simply return the `self`.
+	###
 	resolvePromise = (self, state, value) ->
 		return if self._state != $pending
 
