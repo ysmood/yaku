@@ -274,7 +274,10 @@ do -> class Yaku
 			, (r) ->
 				return if isResolved
 				isResolved = true
-				resolvePromise p, $rejected, r
+
+				# To prevent the resolving circular we have to
+				# make this action on the next tick.
+				scheduleFn -> resolvePromise p, $rejected, r
 		catch e
 			resolvePromise p, $rejected, e if not isResolved
 
