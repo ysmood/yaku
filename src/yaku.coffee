@@ -26,8 +26,8 @@ do -> class Yaku
 		p = new Yaku $noop
 
 		offset = @_hCount
-		@[offset] = onFulfilled
-		@[offset + 1] = onRejected
+		@[offset] = onFulfilled if typeof onFulfilled == $function
+		@[offset + 1] = onRejected if typeof onRejected == $function
 		@[offset + 2] = p
 		@_hCount += $groupNum
 
@@ -321,7 +321,7 @@ do -> class Yaku
 		handler = self[offset + self._state]
 		p = self[offset + 2]
 
-		if typeof handler == $function
+		if handler
 			scheduleFn ->
 				x = getX self, p, handler
 				return if x == $tryErr
