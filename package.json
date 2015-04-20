@@ -1,11 +1,12 @@
 {
   "name": "yaku",
-  "version": "0.0.1",
-  "description": "A pure ES6 Promise/A+ that doesn't hurts.",
-  "main": "dist/main.js",
+  "version": "0.1.2",
+  "description": "A ES6 Promise/A+ implementation that doesn't hurts.",
+  "main": "dist/yaku.js",
   "scripts": {
     "no": "no",
-    "test": "no test"
+    "test": "no test",
+    "prepublish": "no clean build"
   },
   "repository": {
     "type": "git",
@@ -26,14 +27,13 @@
     "dist"
   ],
   "devDependencies": {
-    "bluebird": "*",
-    "coffee-script": "1.9.1",
-    "coffeelint": "1.9.3",
-    "commander": "2.7.1",
-    "es6-promise": "*",
-    "nokit": "0.5.9",
+    "bluebird": "2.9.25",
+    "coffee-script": "1.9.2",
+    "coffeelint": "1.9.4",
+    "es6-promise": "2.1.1",
+    "nokit": "0.6.2",
     "promises-aplus-tests": "*",
-    "q": "*",
-    "uglify-js": "2.4.19"
+    "q": "1.3.0",
+    "uglify-js": "2.4.20"
   }
 }

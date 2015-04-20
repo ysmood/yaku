@@ -3,7 +3,7 @@ cs = kit.require 'colors/safe'
 
 ###*
  * The test will run 10 ^ 5 promises.
- * Each promise will resolve immediately.
+ * Each promise will resolve after 1ms.
  * When all tasks are done, print out how much time it takes.
 ###
 
@@ -31,15 +31,16 @@ module.exports = (name, Promise) ->
 		      memory: #{memFormat.join(' | ')}
 		"""
 
-	resolver0 = (resolve) -> resolve()
-
-	resolver1 = (resolve) ->
-		setTimeout ->
-			resolve()
-		, 1
+	resolver = if process.argv[2] == 'sync'
+		(resolve) -> resolve()
+	else
+		(resolve) ->
+			setTimeout ->
+				resolve()
+			, 1
 
 	asyncTask = ->
-		new Promise(resolver0).then checkEnd
+		new Promise(resolver).then checkEnd
 
 	i = countDown
 

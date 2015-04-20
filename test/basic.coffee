@@ -10,16 +10,15 @@ log = do -> (val) ->
 		JSON = stringify: (obj) -> "\"#{obj}\""
 
 	if window?
-		data = JSON.stringify val
 		xhr = new XMLHttpRequest()
 		xhr.open 'POST', '/log'
-		xhr.send data
+		xhr.send val
 
-		elem = document.createElement 'div'
-		elem.innerText = data
+		elem = document.createElement 'pre'
+		elem.innerText = val
 		document.body.appendChild elem
 	else
-		console.log.call console, val
+		console.log val
 
 # Only one level equality.
 assert = (a, b) ->
@@ -37,7 +36,7 @@ assert = (a, b) ->
 
 	return false
 
-test = (name, output, fn) ->
+test = (name, shouldBe, fn) ->
 	report = (res) ->
 		if not res
 			log "v [test] #{name}"
@@ -45,17 +44,18 @@ test = (name, output, fn) ->
 			log """
 			x [test] #{name}
 				>>>>>>>> Should Equal
-				#{JSON.stringify res.a}
-				<<<<<<<< Should Equal
 				#{JSON.stringify res.b}
+				<<<<<<<< But Equal
+				#{JSON.stringify res.a}
+				>>>>>>>>
 			"""
 
 	out = fn()
 	if out and out.then
 		out.then (v) ->
-			report assert v, output
+			report assert v, shouldBe
 	else
-		report assert fn(), output
+		report assert fn(), shouldBe
 
 
 $val = { val: 'ok' }
@@ -66,6 +66,9 @@ test 'resolve', $val, ->
 
 test 'resolve static', $val, ->
 	Yaku.resolve $val
+
+test 'resolve promise', $val, ->
+	Yaku.resolve Yaku.resolve $val
 
 test 'reject', $val, ->
 	Yaku.reject $val
@@ -83,11 +86,21 @@ test 'chain', 'ok', ->
 				r 'ok'
 			, 10
 
-test 'all', [1, 'test', 'x', 0], ->
+randomPromise = (i) ->
+	new Promise (r) ->
+		setTimeout ->
+			r(i)
+		, Math.random() * 100
+
+test 'all', [1, 'test', 'x', 10, 0], ->
 	Yaku.all [
-		1
-		'test'
+		randomPromise 1
+		randomPromise 'test'
 		Yaku.resolve 'x'
+		new Yaku (r) ->
+			setTimeout ->
+				r 10
+			, 10
 		new Yaku (r) -> r 0
 	]
 

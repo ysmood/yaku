@@ -5,10 +5,14 @@ module.exports = (task, option) ->
 
 	task 'default build', ['doc', 'code']
 
-	task 'doc', 'build doc', ->
-		kit.warp ''
+	task 'doc', ['code'], 'build doc', ->
+		size = kit.statSync('dist/yaku.js').size / 1024
+		kit.warp 'src/yaku.coffee'
 		.load kit.drives.comment2md {
 			tpl: 'docs/readme.jst.md'
+			doc: {
+				size: size.toFixed 1
+			}
 		}
 		.run()
 
@@ -48,7 +52,10 @@ module.exports = (task, option) ->
 			grep: opts.grep
 		}
 
-	task 'benchmark', ['build'], 'compare performance between different libraries', ->
+	option '--sync', 'sync benchmark'
+	task 'benchmark', ['build']
+	, 'compare performance between different libraries'
+	, (opts) ->
 		process.env.NODE_ENV = 'production'
 		os = require 'os'
 
@@ -62,8 +69,9 @@ module.exports = (task, option) ->
 
 		paths = kit.globSync 'benchmark/*.coffee'
 
+		sync = if opts.sync then 'sync' else ''
 		kit.async paths.map (path) -> ->
-			kit.spawn 'coffee', [path]
+			kit.spawn 'coffee', [path, sync]
 
 	task 'clean', 'Clean temp files', ->
 		kit.remove '{.nokit,dist}'
@@ -90,7 +98,8 @@ module.exports = (task, option) ->
 								</html>"""
 				when '/log'
 					req.on 'data', (c) ->
-						console.log JSON.parse c.toString()
+						info = c.toString()
+						console.log info
 					req.on 'end', ->
 						res.end()
 				else

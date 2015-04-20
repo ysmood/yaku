@@ -1,6 +1,6 @@
 
 
-do -> class Yaku
+do (root = this) -> class Yaku
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
@@ -9,10 +9,20 @@ do -> class Yaku
 	 * @param  {Function} executor Function object with two arguments resolve and reject.
 	 * The first argument fulfills the promise, the second argument rejects it.
 	 * We can call these functions, once our operation is completed.
+	 * @example
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * p = new Promise (resolve, reject) ->
+	 * 	setTimeout ->
+	 * 		if Math.random() > 0.5
+	 * 			resolve 'ok'
+	 * 		else
+	 * 			reject 'no'
+	 * ```
 	###
 	constructor: (executor) ->
 		return if executor == $noop
-		executor genResolver(@, $resolved), genResolver(@, $rejected)
+		executor genSettler(@, $resolved), genSettler(@, $rejected)
 
 	###*
 	 * Appends fulfillment and rejection handlers to the promise,
@@ -21,64 +31,86 @@ do -> class Yaku
 	 * @param  {Function} onRejected  Optional. Called when the Promise is rejected.
 	 * @return {Yaku} It will return a new Yaku which will resolve or reject after
 	 * the current Promise.
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * p = Promise.resolve 10
+	 *
+	 * p.then (v) ->
+	 * 	console.log v
+	 * ```
 	###
 	then: (onFulfilled, onRejected) ->
-		p = new Yaku $noop
-
-		offset = @_hCount
-		@[offset] = onFulfilled if typeof onFulfilled == $function
-		@[offset + 1] = onRejected if typeof onRejected == $function
-		@[offset + 2] = p
-		@_hCount += $groupNum
-
-		if @_state != $pending
-			resolveHanlers @, offset
-
-		p
+		addHandler @, newEmptyYaku(), onFulfilled, onRejected
 
 	###*
-	 * The catch() method returns a Promise and deals with rejected cases only.
+	 * The `catch()` method returns a Promise and deals with rejected cases only.
 	 * It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
 	 * @param  {Function} onRejected A Function called when the Promise is rejected.
 	 * This function has one argument, the rejection reason.
 	 * @return {Yaku} A Promise that deals with rejected cases only.
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * p = Promise.reject 10
+	 *
+	 * p.catch (v) ->
+	 * 	console.log v
+	 * ```
 	###
 	catch: (onRejected) ->
 		@then undefined, onRejected
 
 	###*
-	 * The Promise. resolve(value) method returns a Promise object that is resolved with the given value.
+	 * The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
 	 * If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
 	 * adopting its eventual state; otherwise the returned promise will be fulfilled with the value.
 	 * @param  {Any} value Argument to be resolved by this Promise.
 	 * Can also be a Promise or a thenable to resolve.
 	 * @return {Yaku}
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * p = Promise.resolve 10
+	 * ```
 	###
 	@resolve: (value) ->
-		resolvePromise new Yaku($noop), $resolved, value
+		return value if value instanceof Yaku
+		settleWithX newEmptyYaku(), value
 
 	###*
-	 * The Promise.reject(reason) method returns a Promise object that is rejected with the given reason.
+	 * The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 	 * @param  {Any} reason Reason why this Promise rejected.
 	 * @return {Yaku}
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * p = Promise.reject 10
+	 * ```
 	###
 	@reject: (reason) ->
-		resolvePromise new Yaku($noop), $rejected, reason
+		settlePromise newEmptyYaku(), $rejected, reason
 
 	###*
-	 * The Promise.race(iterable) method returns a promise that resolves or rejects
+	 * The `Promise.race(iterable)` method returns a promise that resolves or rejects
 	 * as soon as one of the promises in the iterable resolves or rejects,
 	 * with the value or reason from that promise.
 	 * @param  {iterable} iterable An iterable object, such as an Array.
 	 * @return {Yaku} The race function returns a Promise that is settled
 	 * the same way as the first passed promise to settle.
 	 * It resolves or rejects, whichever happens first.
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * Promise.race [
+	 * 	123
+	 * 	Promise.resolve 0
+	 * ]
+	 * .then (value) ->
+	 * 	console.log value # => 123
+	 * ```
 	###
 	@race: (iterable) ->
-		new Yaku (resolve, reject) ->
-			for x in iterable
-				resolveValue x, resolve, reject
-			return
+		p = newEmptyYaku()
+		for x in iterable
+			settleWithX p, x
+			break if p._state != $pending
+		p
 
 	###*
 	 * The `Promise.all(iterable)` method returns a promise that resolves when
@@ -91,149 +123,326 @@ do -> class Yaku
 	 * discarding all the other promises whether or not they have resolved.
 	 * @param  {iterable} iterable An iterable object, such as an Array.
 	 * @return {Yaku}
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * Promise.all [
+	 * 	123
+	 * 	Promise.resolve 0
+	 * ]
+	 * .then (values) ->
+	 * 	console.log values # => [123, 0]
+	 * ```
 	###
 	@all: (iterable) ->
-		new Yaku (resolve, reject) ->
-			res = []
-			countDown = iterable.length
+		p1 = newEmptyYaku()
+		convertor = Yaku.resolve
 
-			iter = (i) ->
-				resolveValue x, (v) ->
-					res[i] = v
-					if --countDown == 0
-						resolve res
-				, reject
+		res = []
+		len = countDown = iterable.length
+		i = 0
 
+		onRejected = (reason) ->
+			settlePromise p1, $rejected, reason
+			return
+
+		iter = (i) ->
+			convertor(iterable[i]).then (value) ->
+				res[i] = value
+				if not --countDown
+					settlePromise p1, $resolved, res
 				return
-
-			for x, i in iterable
-				iter i
+			, onRejected
 
 			return
+
+		while i < len
+			iter i++
+
+		p1
+
+	###*
+	 * Catch all possibly unhandled rejections.
+	 * If it is set, auto `console.error` unhandled rejection will be disabed.
+	 * @param {Any} reason The rejection reason.
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * Promise.onUnhandledRejection = (reason) ->
+	 * 	console.error reason
+	 * ```
+	###
+	@onUnhandledRejection: (reason) ->
+		if typeof console == $object
+			console.error 'Unhandled rejection Error:', reason
+			console.trace() if $isNode
+		return
+
 
 # ********************** Private **********************
 
 	###
-	 * 'bind' and 'call' is slow, so we use Python
-	 * style "self" with curry and closure.
-	 * See: http://jsperf.com/call-vs-arguments
-	 *
 	 * All static variable name will begin with `$`. Such as `$rejected`.
 	 * @private
 	###
 
-	# ************************ Private Constant Start *************************
+	# ******************************* Utils ********************************
 
-	###*
-	 * These are some static symbolys.
-	 * The state value is designed to be 0, 1, 2. Not by chance.
-	 * See the genResolver part's selector.
-	 * @private
-	###
-	$resolved = 0
-	$rejected = 1
-	$pending = 2
-
-	###*
-	 * This is one of the most tricky part.
-	 *
-	 * For better performance, both memory and speed, the array is like below,
-	 * every 5 entities are paired together as a group:
-	 * ```
-	 *   0            1           2       ...
-	 * [ onFulfilled, onRejected, promise ... ]
-	 * ```
-	 * To save memory the position of 0 and 1 may be replaced with their returned values,
-	 * then these values will be passed to 2 and 3.
-	 * @private
-	###
-	$groupNum = 3
-
-	# These are some symbols. They won't be used to store data.
-	$circularError = 'circular promise resolution chain'
-	$tryErr = {}
+	$tryCatchFn = null
+	$tryErr = { e: null }
 	$noop = {}
 	$function = 'function'
 	$object = 'object'
+	$isNode = typeof process == $object
 
-	# ************************* Private Constant End **************************
+	###*
+	 * Release the specified key of an object.
+	 * @private
+	 * @param  {Object} obj
+	 * @param  {String | Number} key
+	###
+	release = (obj, key) ->
+		obj[key] = undefined
+		return
+
+	###*
+	 * Wrap a function into a try-catch.
+	 * @private
+	 * @return {Any | $tryErr}
+	###
+	tryCatcher = ->
+		try
+			$tryCatchFn.apply @, arguments
+		catch e
+			$tryErr.e = e
+			$tryErr
+
+	###*
+	 * Generate a try-catch wrapped function.
+	 * @private
+	 * @param  {Function} fn
+	 * @return {Function}
+	###
+	genTryCatcher = (fn) ->
+		$tryCatchFn = fn
+		tryCatcher
+
+	###*
+	 * Generate a scheduler.
+	 * @private
+	 * @param  {Integer}  initQueueSize
+	 * @param  {Function} fn `(Yaku, Value) ->` The schedule handler.
+	 * @return {Function} `(Yaku, Value) ->` The scheduler.
+	###
+	genScheduler = (initQueueSize, fn) ->
+		###*
+		 * All async promise will be scheduled in
+		 * here, so that they can be execute on the next tick.
+		 * @private
+		###
+		fnQueue = Array initQueueSize
+		fnQueueLen = 0
+
+		###*
+		 * Run all queued functions.
+		 * @private
+		###
+		flush = ->
+			i = 0
+			while i < fnQueueLen
+				pIndex = i++
+				vIndex = i++
+
+				p = fnQueue[pIndex]
+				v = fnQueue[vIndex]
+
+				release fnQueue, pIndex
+				release fnQueue, vIndex
+
+				fn p, v
+
+			fnQueueLen = 0
+			fnQueue.length = initQueueSize
+
+			return
+
+		###*
+		 * Schedule a flush task on the next tick.
+		 * @private
+		 * @param {Function} fn The flush task.
+		###
+		scheduleFlush = do ->
+			doc = root.document
+
+			try
+				nextTick = process.nextTick
+				return ->
+					nextTick flush
+					return
+
+			if nextTick = root.setImmediate
+				->
+					nextTick flush
+					return
+
+			else if mutationObserver = root.MutationObserver
+				content = 1
+				node = doc.createTextNode ''
+				observer = new mutationObserver flush
+				observer.observe node, characterData: true
+				->
+					node.data = (content = -content)
+					return
+
+			else
+				->
+					setTimeout flush
+					return
+
+		(p, v) ->
+			fnQueue[fnQueueLen++] = p
+			fnQueue[fnQueueLen++] = v
+
+			scheduleFlush() if fnQueueLen == 2
+
+			return
+
+
+	# ************************** Promise Constant **************************
+
+	###*
+	 * These are some static symbolys.
+	 * @private
+	###
+	$rejected = 0
+	$resolved = 1
+	$pending = 2
+
+	$unhandledRejection = -1
+
+	# These are some symbols. They won't be used to store data.
+	$circularError = 'circular promise chain'
 
 	# Default state
 	_state: $pending
 
 	###*
-	 * The number of current handlers that attach to this Yaku instance.
+	 * The number of current promises that attach to this Yaku instance.
 	 * @private
 	###
-	_hCount: 0
+	_pCount: 0
+
+	Yaku::[$unhandledRejection] = true
+
+
+	# *************************** Promise Hepers ****************************
 
 	###*
-	 * All onFulfilled and onRejected functions will be scheduled in
-	 * here, so that they can be execute on the next tick.
+	 * Create an empty promise.
 	 * @private
+	 * @return {Yaku}
 	###
-	fnQueue = Array 1000
-	fnQueueLen = 0
+	newEmptyYaku = -> new Yaku $noop
 
 	###*
-	 * Run all queued functions.
+	 * It will produce a settlePromise function to user.
+	 * Such as the resolve and reject in this `new Yaku (resolve, reject) ->`.
 	 * @private
+	 * @param  {Yaku} self
+	 * @param  {Integer} state The value is one of `$pending`, `$resolved` or `$rejected`.
+	 * @return {Function} `(value) -> undefined` A resolve or reject function.
 	###
-	flush = ->
-		i = 0
-		while i < fnQueueLen
-			fnQueue[i]()
-			fnQueue[i++] = undefined
-
-		fnQueueLen = 0
-
-		return
+	genSettler = (self, state) -> (value) ->
+		settlePromise self, state, value
 
 	###*
-	 * Schedule a function. The function will run on the next tick.
+	 * Link the promise1 to the promise2.
 	 * @private
-	 * @param  {Function} fn
+	 * @param {Yaku} p1
+	 * @param {Yaku} p2
+	 * @param {Function} onFulfilled
+	 * @param {Function} onRejected
 	###
-	scheduleFn = (fn) ->
-		fnQueue[fnQueueLen++] = fn
+	addHandler = (p1, p2, onFulfilled, onRejected) ->
+		# 2.2.1
+		if typeof onFulfilled == $function
+			p2._onFulfilled = onFulfilled
+		if typeof onRejected == $function
+			p1[$unhandledRejection] = false
+			p2._onRejected = onRejected
 
-		scheduleFlush() if fnQueueLen == 1
-
-		return
-
-	# Schedule a flush task on the next tick.
-	scheduleFlush = do ->
-		if typeof process == $object and process.nextTick
-			->
-				process.nextTick flush
-				return
-
-		else if typeof setImmediate == $function
-			->
-				setImmediate flush
-				return
-
-		else if typeof MutationObserver == $function
-			content = 1
-			node = document.createTextNode ''
-			observer = new MutationObserver flush
-			observer.observe node, characterData: true
-			->
-				node.data = (content = -content)
-				return
-
-		else if typeof document == $object and document.createEvent
-			addEventListener '_yakuTick', flush
-			->
-				evt = document.createEvent 'CustomEvent'
-				evt.initCustomEvent '_yakuTick', false, false
-				dispatchEvent evt
-				return
-
+		# 2.2.6
+		if p1._state == $pending
+			p1[p1._pCount++] = p2
 		else
-			->
-				setTimeout flush
-				return
+			scheduleHandler p1, p2
+
+		# 2.2.7
+		p2
+
+	###*
+	 * Resolve the value returned by onFulfilled or onRejected.
+	 * @private
+	 * @param {Yaku} p1
+	 * @param {Yaku} p2
+	###
+	scheduleHandler = genScheduler 1000, (p1, p2) ->
+		handler = if p1._state then p2._onFulfilled else p2._onRejected
+
+		# 2.2.7.3
+		# 2.2.7.4
+		if handler == undefined
+			settlePromise p2, p1._state, p1._value
+			return
+
+		# 2.2.7.1
+		x = genTryCatcher(callHanler) handler, p1._value
+		if x == $tryErr
+			# 2.2.7.2
+			settlePromise p2, $rejected, x.e
+			return
+
+		settleWithX p2, x
+
+		return
+
+	scheduleUnhandledRejection = genScheduler 100, (p) ->
+		if p[$unhandledRejection]
+			Yaku.onUnhandledRejection p._value
+		return
+
+	callHanler = (handler, value) ->
+		# 2.2.5
+		handler value
+
+	###*
+	 * Resolve or reject a promise.
+	 * @private
+	 * @param  {Yaku} p
+	 * @param  {Integer} state
+	 * @param  {Any} value
+	###
+	settlePromise = (p, state, value) ->
+		# 2.1.2
+		# 2.1.3
+		return if p._state != $pending
+
+		# 2.1.1.1
+		p._state = state
+		p._value = value
+
+		i = 0
+		len = p._pCount
+
+		if state == $rejected and not len
+			scheduleUnhandledRejection p
+
+		# 2.2.2
+		# 2.2.3
+		while i < len
+			# 2.2.4
+			scheduleHandler p, p[i]
+			release p, i++
+
+		p
 
 	###*
 	 * Resolve or reject primise with value x. The x can also be a thenable.
@@ -241,20 +450,42 @@ do -> class Yaku
 	 * @param {Yaku} p
 	 * @param {Any | Thenable} x A normal value or a thenable.
 	###
-	resolveValue = (p, x) ->
+	settleWithX = (p, x) ->
+		# 2.3.1
+		if x == p and x
+			settlePromise p, $rejected, new TypeError $circularError
+			return
+
+		# 2.3.2
+		# 2.3.3
 		type = typeof x
 		if x != null and (type == $function or type == $object)
-			xthen = getXthen p, x
-			return if xthen == $tryErr
+			# 2.3.2.1
+			xthen = genTryCatcher(getThen) x
+
+			if xthen == $tryErr
+				# 2.3.3.2
+				settlePromise p, $rejected, xthen.e
+				return
 
 			if typeof xthen == $function
-				resolveXthen p, x, xthen
+				settleXthen p, x, xthen
 			else
-				resolvePromise p, $resolved, x
+				# 2.3.3.4
+				settlePromise p, $resolved, x
 		else
-			resolvePromise p, $resolved, x
+			# 2.3.4
+			settlePromise p, $resolved, x
 
-		return
+		p
+
+	###*
+	 * Try to get a promise's then method.
+	 * @private
+	 * @param  {Thenable} x
+	 * @return {Function}
+	###
+	getThen = (x) -> x.then
 
 	###*
 	 * Resolve then with its promise.
@@ -263,123 +494,38 @@ do -> class Yaku
 	 * @param  {Thenable} x
 	 * @param  {Function} xthen
 	###
-	resolveXthen = (p, x, xthen) ->
-		isResolved = false
+	settleXthen = (p, x, xthen) ->
+		# 2.3.3.3
+		err = genTryCatcher(xthen).call x, (y) ->
+			# 2.3.3.3.3
+			return if not x
+			x = null
 
-		try
-			xthen.call x, (y) ->
-				return if isResolved
-				isResolved = true
-				resolveValue p, y
-			, (r) ->
-				return if isResolved
-				isResolved = true
+			# 2.3.3.3.1
+			settleWithX p, y
+			return
+		, (r) ->
+			# 2.3.3.3.3
+			return if not x
+			x = null
 
-				# To prevent the resolving circular we have to
-				# make this action on the next tick.
-				scheduleFn -> resolvePromise p, $rejected, r
-		catch e
-			resolvePromise p, $rejected, e if not isResolved
+			# 2.3.3.3.2
+			settlePromise p, $rejected, r
+			return
 
-		return
-
-	###*
-	 * Try to get a promise's then method.
-	 * @private
-	 * @param  {Yaku} p
-	 * @param  {Thenable} x
-	 * @return {Function | $tryErr}
-	###
-	getXthen = (p, x) ->
-		try
-			x.then
-		catch e
-			resolvePromise p, $rejected, e
-			return $tryErr
-
-	###*
-	 * Try to get return value of `onFulfilled` or `onRejected`.
-	 * @private
-	 * @param  {Yaku} self
-	 * @param  {Yaku} p
-	 * @param  {Function} handler
-	 * @return {Any | $tryErr}
-	###
-	getX = (self, p, handler) ->
-		try
-			handler self._value
-		catch e
-			resolvePromise p, $rejected, e
-			return $tryErr
-
-	###*
-	 * Decide how handlers works.
-	 * @private
-	 * @param  {Yaku} self
-	 * @param  {Integer} offset The offset of the handler group.
-	###
-	resolveHanlers = (self, offset) ->
-		# Trick: Reuse the value of state as the handler selector.
-		# The "i + state" shows the math nature of promise.
-		handler = self[offset + self._state]
-		p = self[offset + 2]
-
-		if handler
-			scheduleFn ->
-				x = getX self, p, handler
-				return if x == $tryErr
-
-				# Prevent circular chain.
-				if x == p and x
-					rejector = x[offset + 1]
-					if rejector
-						rejector new TypeError $circularError
-					return
-
-				resolveValue p, x
-		else
-			resolvePromise p, self._state, self._value
+		# 2.3.3.3.4.1
+		if err == $tryErr and x
+			# 2.3.3.3.4.2
+			settlePromise p, $rejected, err.e
+			x = null
 
 		return
-
-	###*
-	 * Resolve or reject a promise.
-	 * @param  {Yaku} self
-	 * @param  {Integer} state
-	 * @param  {Any} value
-	 * @return {Yaku} It will simply return the `self`.
-	###
-	resolvePromise = (self, state, value) ->
-		return if self._state != $pending
-
-		self._state = state
-		self._value = value
-
-		offset = 0
-
-		while offset < self._hCount
-			resolveHanlers self, offset
-
-			offset += $groupNum
-
-		self
-
-	###*
-	 * It will produce a resolvePromise function to user.
-	 * Such as the resolve and reject in this `new Yaku (resolve, reject) ->`.
-	 * @private
-	 * @param  {Yaku} self
-	 * @param  {Integer} state The value is one of `$pending`, `$resolved` or `$rejected`.
-	 * @return {Function} `(value) -> undefined` A resolve or reject function.
-	###
-	genResolver = (self, state) -> (value) ->
-		resolvePromise self, state, value
 
 	# CMD & AMD Support
-	if typeof module == $object and typeof module.exports == $object
+	try
 		module.exports = Yaku
-	else
-		if typeof define == $function and define.amd
+	catch
+		try
 			define -> Yaku
-		else
-			window.Yaku = Yaku if typeof window == $object
+		catch
+			window.Yaku = Yaku
