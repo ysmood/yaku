@@ -328,8 +328,9 @@ do -> class Yaku
 
 				# Prevent circular chain.
 				if x == p and x
-					if x[offset + 1]
-						x[offset + 1] new TypeError $circularError
+					rejector = x[offset + 1]
+					if rejector
+						rejector new TypeError $circularError
 					return
 
 				resolveValue p, x
