@@ -371,11 +371,10 @@ do -> class Yaku
 	genResolver = (self, state) -> (value) ->
 		resolvePromise self, state, value
 
-	# AMD Support
+	# CMD & AMD Support
 	if typeof module == $object and typeof module.exports == $object
 		module.exports = Yaku
 	else
-		# CMD
 		if typeof define == $function and define.amd
 			define -> Yaku
 		else
