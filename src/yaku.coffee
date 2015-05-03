@@ -30,6 +30,7 @@ do (root = this) -> class Yaku
 	 * @param  {Function} onFulfilled Optional. Called when the Promise is resolved.
 	 * @param  {Function} onRejected  Optional. Called when the Promise is rejected.
 	 * @return {Yaku} It will return a new Yaku which will resolve or reject after
+	 * @example
 	 * the current Promise.
 	 * ```coffee
 	 * Promise = require 'yaku'
@@ -48,6 +49,7 @@ do (root = this) -> class Yaku
 	 * @param  {Function} onRejected A Function called when the Promise is rejected.
 	 * This function has one argument, the rejection reason.
 	 * @return {Yaku} A Promise that deals with rejected cases only.
+	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
 	 * p = Promise.reject 10
@@ -66,6 +68,7 @@ do (root = this) -> class Yaku
 	 * @param  {Any} value Argument to be resolved by this Promise.
 	 * Can also be a Promise or a thenable to resolve.
 	 * @return {Yaku}
+	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
 	 * p = Promise.resolve 10
@@ -79,6 +82,7 @@ do (root = this) -> class Yaku
 	 * The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 	 * @param  {Any} reason Reason why this Promise rejected.
 	 * @return {Yaku}
+	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
 	 * p = Promise.reject 10
@@ -95,6 +99,7 @@ do (root = this) -> class Yaku
 	 * @return {Yaku} The race function returns a Promise that is settled
 	 * the same way as the first passed promise to settle.
 	 * It resolves or rejects, whichever happens first.
+	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
 	 * Promise.race [
@@ -123,6 +128,7 @@ do (root = this) -> class Yaku
 	 * discarding all the other promises whether or not they have resolved.
 	 * @param  {iterable} iterable An iterable object, such as an Array.
 	 * @return {Yaku}
+	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
 	 * Promise.all [
@@ -164,6 +170,7 @@ do (root = this) -> class Yaku
 	 * Catch all possibly unhandled rejections.
 	 * If it is set, auto `console.error` unhandled rejection will be disabed.
 	 * @param {Any} reason The rejection reason.
+	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
 	 * Promise.onUnhandledRejection = (reason) ->

@@ -93,7 +93,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         			reject 'no'
         ```
 
-- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L42)**
+- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L43)**
 
     Appends fulfillment and rejection handlers to the promise,
     and returns a new promise resolving to the return value of the called handler.
@@ -109,6 +109,9 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
     - **<u>return</u>**: { _Yaku_ }
 
         It will return a new Yaku which will resolve or reject after
+
+    - **<u>example</u>**:
+
         the current Promise.
         ```coffee
         Promise = require 'yaku'
@@ -118,7 +121,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log v
         ```
 
-- ### **[catch(onRejected)](src/yaku.coffee?source#L59)**
+- ### **[catch(onRejected)](src/yaku.coffee?source#L61)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -131,6 +134,9 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
     - **<u>return</u>**: { _Yaku_ }
 
         A Promise that deals with rejected cases only.
+
+    - **<u>example</u>**:
+
         ```coffee
         Promise = require 'yaku'
         p = Promise.reject 10
@@ -139,7 +145,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log v
         ```
 
-- ### **[@resolve(value)](src/yaku.coffee?source#L74)**
+- ### **[@resolve(value)](src/yaku.coffee?source#L77)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -152,12 +158,14 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
     - **<u>return</u>**: { _Yaku_ }
 
+    - **<u>example</u>**:
+
         ```coffee
         Promise = require 'yaku'
         p = Promise.resolve 10
         ```
 
-- ### **[@reject(reason)](src/yaku.coffee?source#L87)**
+- ### **[@reject(reason)](src/yaku.coffee?source#L91)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -167,12 +175,14 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
     - **<u>return</u>**: { _Yaku_ }
 
+    - **<u>example</u>**:
+
         ```coffee
         Promise = require 'yaku'
         p = Promise.reject 10
         ```
 
-- ### **[@race(iterable)](src/yaku.coffee?source#L108)**
+- ### **[@race(iterable)](src/yaku.coffee?source#L113)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -187,6 +197,9 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         The race function returns a Promise that is settled
         the same way as the first passed promise to settle.
         It resolves or rejects, whichever happens first.
+
+    - **<u>example</u>**:
+
         ```coffee
         Promise = require 'yaku'
         Promise.race [
@@ -197,7 +210,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log value # => 123
         ```
 
-- ### **[@all(iterable)](src/yaku.coffee?source#L136)**
+- ### **[@all(iterable)](src/yaku.coffee?source#L142)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -214,6 +227,8 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
     - **<u>return</u>**: { _Yaku_ }
 
+    - **<u>example</u>**:
+
         ```coffee
         Promise = require 'yaku'
         Promise.all [
@@ -224,7 +239,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log values # => [123, 0]
         ```
 
-- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L173)**
+- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L180)**
 
     Catch all possibly unhandled rejections.
     If it is set, auto `console.error` unhandled rejection will be disabed.
@@ -232,6 +247,9 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
     - **<u>param</u>**: `reason` { _Any_ }
 
         The rejection reason.
+
+    - **<u>example</u>**:
+
         ```coffee
         Promise = require 'yaku'
         Promise.onUnhandledRejection = (reason) ->
