@@ -5,7 +5,8 @@ The `src/yaku.coffee` of Yaku is full compatible with V8's native [Promise][nati
 If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code.
 It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][].
 
-I am not a optimization freak, I try to keep the source code readable and maintainable.
+I am not an optimization freak, I try to keep the source code readable and maintainable.
+Premature optimization is the root of all evil.
 
 [![NPM version](https://badge.fury.io/js/yaku.svg)](http://badge.fury.io/js/yaku) [![Build Status](https://travis-ci.org/ysmood/yaku.svg)](https://travis-ci.org/ysmood/yaku) [![Deps Up to Date](https://david-dm.org/ysmood/yaku.svg?style=flat)](https://david-dm.org/ysmood/yaku)
 
