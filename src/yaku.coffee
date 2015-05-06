@@ -496,6 +496,9 @@ do (root = this) -> class Yaku
 			settlePromise p, $rejected, genTypeError($circularChain)
 			return
 
+		# TODO: when x instanceof Yaku
+		# Performance can be optimized.
+
 		# 2.3.2
 		# 2.3.3
 		type = typeof x
