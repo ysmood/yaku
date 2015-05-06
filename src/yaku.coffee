@@ -357,7 +357,7 @@ do (root = this) -> class Yaku
 	$unhandledRejection = -1
 
 	# These are some symbols. They won't be used to store data.
-	$circularError = 'circular promise chain'
+	$circularChain = 'promise_circular_chain'
 
 	$invalid_argument = 'invalid_argument'
 
@@ -493,7 +493,7 @@ do (root = this) -> class Yaku
 	settleWithX = (p, x) ->
 		# 2.3.1
 		if x == p and x
-			settlePromise p, $rejected, genTypeError($circularError)
+			settlePromise p, $rejected, genTypeError($circularChain)
 			return
 
 		# 2.3.2
