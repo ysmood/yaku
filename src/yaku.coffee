@@ -188,6 +188,12 @@ do (root = this) -> class Yaku
 	 * Promise = require 'yaku'
 	 * Promise.onUnhandledRejection = (reason) ->
 	 * 	console.error reason
+	 *
+	 * # The console will log an unhandled rejection error message.
+	 * Promise.reject('my reason')
+	 *
+	 * # The below won't log the unhandled rejection error message.
+	 * Promise.reject('v').catch ->
 	 * ```
 	###
 	@onUnhandledRejection: (reason) ->

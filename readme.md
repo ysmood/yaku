@@ -240,7 +240,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log values # => [123, 0]
         ```
 
-- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L193)**
+- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L199)**
 
     Catch all possibly unhandled rejections.
     If it is set, auto `console.error` unhandled rejection will be disabed.
@@ -255,6 +255,12 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise = require 'yaku'
         Promise.onUnhandledRejection = (reason) ->
         	console.error reason
+
+        # The console will log an unhandled rejection error message.
+        Promise.reject('my reason')
+
+        # The below won't log the unhandled rejection error message.
+        Promise.reject('v').catch ->
         ```
 
 
