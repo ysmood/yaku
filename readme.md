@@ -12,7 +12,7 @@ Premature optimization is the root of all evil.
 
 # Features
 
-- The minified file is only 2.7KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 2.8KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
 - Works on IE5+ and other major browsers
@@ -57,7 +57,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 | Name            | Unit Test | 1ms async task | sync task | Helpers | file size |
 | --------------- | --------- | -------------- | --------- | ------- | --------- |
-| Yaku            | 872/872   | 283ms          | 68ms      | ++      | 2.7KB |
+| Yaku            | 872/872   | 283ms          | 68ms      | ++      | 2.8KB |
 | [Bluebird][]    | 872/872   | 244ms          | 164ms     | +++++++ | 73KB      |
 | [ES6-promise][] | 872/872   | 435ms          | 110ms     | +       | 18KB      |
 | [native][]      | 872/872   | 816ms          | 605ms     | +       | 0KB       |
@@ -211,7 +211,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log value # => 123
         ```
 
-- ### **[@all(iterable)](src/yaku.coffee?source#L142)**
+- ### **[@all(iterable)](src/yaku.coffee?source#L150)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -240,7 +240,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log values # => [123, 0]
         ```
 
-- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L180)**
+- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L193)**
 
     Catch all possibly unhandled rejections.
     If it is set, auto `console.error` unhandled rejection will be disabed.

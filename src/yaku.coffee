@@ -111,9 +111,17 @@ do (root = this) -> class Yaku
 	 * ```
 	###
 	@race: (iterable) ->
+		assertIterable iterable
+
+		len = iterable.length
+
+		if len == 0
+			return Yaku.resolve []
+
 		p = newEmptyYaku()
-		for x in iterable
-			settleWithX p, x
+		i = 0
+		while i < len
+			settleWithX p, iterable[i++]
 			break if p._state != $pending
 		p
 
@@ -140,11 +148,16 @@ do (root = this) -> class Yaku
 	 * ```
 	###
 	@all: (iterable) ->
-		p1 = newEmptyYaku()
-		convertor = Yaku.resolve
+		assertIterable iterable
 
-		res = []
+		convertor = Yaku.resolve
 		len = countDown = iterable.length
+
+		if len == 0
+			return convertor []
+
+		p1 = newEmptyYaku()
+		res = []
 		i = 0
 
 		onRejected = (reason) ->
@@ -312,6 +325,24 @@ do (root = this) -> class Yaku
 
 			return
 
+	###*
+	 * Check if a variable is an iterable object.
+	 * @private
+	 * @param  {Any}  obj
+	 * @return {Boolean}
+	###
+	assertIterable = (obj) ->
+		return if obj instanceof Array
+		throw genTypeError $invalid_argument
+
+	###*
+	 * Generate type error object.
+	 * @private
+	 * @param  {String} msg
+	 * @return {TypeError}
+	###
+	genTypeError = (msg) ->
+		new TypeError msg
 
 	# ************************** Promise Constant **************************
 
@@ -327,6 +358,8 @@ do (root = this) -> class Yaku
 
 	# These are some symbols. They won't be used to store data.
 	$circularError = 'circular promise chain'
+
+	$invalid_argument = 'invalid_argument'
 
 	# Default state
 	_state: $pending
@@ -460,7 +493,7 @@ do (root = this) -> class Yaku
 	settleWithX = (p, x) ->
 		# 2.3.1
 		if x == p and x
-			settlePromise p, $rejected, new TypeError $circularError
+			settlePromise p, $rejected, genTypeError($circularError)
 			return
 
 		# 2.3.2

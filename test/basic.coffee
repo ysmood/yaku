@@ -92,6 +92,9 @@ randomPromise = (i) ->
 			r(i)
 		, Math.random() * 100
 
+test 'empty all', [], ->
+	Yaku.all []
+
 test 'all', [1, 'test', 'x', 10, 0], ->
 	Yaku.all [
 		randomPromise 1
@@ -103,6 +106,9 @@ test 'all', [1, 'test', 'x', 10, 0], ->
 			, 10
 		new Yaku (r) -> r 0
 	]
+
+test 'empty race', [], ->
+	Yaku.race []
 
 test 'race', 0, ->
 	Yaku.race [
