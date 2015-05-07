@@ -6,7 +6,7 @@ module.exports = (task, option) ->
 	task 'default build', ['doc', 'code']
 
 	task 'doc', ['code'], 'build doc', ->
-		size = kit.statSync('dist/yaku.js').size / 1024
+		size = kit.statSync('dist/yaku.min.js').size / 1024
 		kit.warp 'src/yaku.coffee'
 		.load kit.drives.comment2md {
 			tpl: 'docs/readme.jst.md'
@@ -20,6 +20,9 @@ module.exports = (task, option) ->
 		kit.warp 'src/**/*.coffee'
 		.load kit.drives.auto 'lint'
 		.load kit.drives.auto 'compile'
+		.load (f) ->
+			f.dest.name = 'yaku.min'
+			kit.outputFile 'dist/yaku.js', f.contents
 		.load kit.drives.auto 'compress'
 		.load (f) ->
 			# Add license.
