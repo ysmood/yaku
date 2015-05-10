@@ -412,8 +412,9 @@ do (root = this) -> class Yaku
 		if typeof onFulfilled == $function
 			p2._onFulfilled = onFulfilled
 		if typeof onRejected == $function
-			p1[$hasUnhandledRejection] = false
 			p2._onRejected = onRejected
+
+		p1[$hasUnhandledRejection] = false
 
 		# 2.2.6
 		if p1._state == $pending
