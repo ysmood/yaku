@@ -360,7 +360,7 @@ do (root = this) -> class Yaku
 	$resolved = 1
 	$pending = 2
 
-	$hasUnhandledRejection = -1
+	$hasUnhandledRejection = '_isUnhandled'
 
 	# These are some symbols. They won't be used to store data.
 	$circularChain = 'promise_circular_chain'
@@ -376,7 +376,7 @@ do (root = this) -> class Yaku
 	###
 	_pCount: 0
 
-	Yaku::[$hasUnhandledRejection] = true
+	"#{$hasUnhandledRejection}": true
 
 
 	# *************************** Promise Hepers ****************************
