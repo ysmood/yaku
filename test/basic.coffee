@@ -87,7 +87,7 @@ test 'chain', 'ok', ->
 			, 10
 
 randomPromise = (i) ->
-	new Promise (r) ->
+	new Yaku (r) ->
 		setTimeout ->
 			r(i)
 		, Math.random() * 100
