@@ -360,7 +360,7 @@ do (root = this) -> class Yaku
 	$resolved = 1
 	$pending = 2
 
-	$unhandledRejection = -1
+	$hasUnhandledRejection = -1
 
 	# These are some symbols. They won't be used to store data.
 	$circularChain = 'promise_circular_chain'
@@ -376,7 +376,7 @@ do (root = this) -> class Yaku
 	###
 	_pCount: 0
 
-	Yaku::[$unhandledRejection] = true
+	Yaku::[$hasUnhandledRejection] = true
 
 
 	# *************************** Promise Hepers ****************************
@@ -412,7 +412,7 @@ do (root = this) -> class Yaku
 		if typeof onFulfilled == $function
 			p2._onFulfilled = onFulfilled
 		if typeof onRejected == $function
-			p1[$unhandledRejection] = false
+			p1[$hasUnhandledRejection] = false
 			p2._onRejected = onRejected
 
 		# 2.2.6
@@ -451,7 +451,7 @@ do (root = this) -> class Yaku
 		return
 
 	scheduleUnhandledRejection = genScheduler 100, (p) ->
-		if p[$unhandledRejection]
+		if p[$hasUnhandledRejection]
 			Yaku.onUnhandledRejection p._value
 		return
 
