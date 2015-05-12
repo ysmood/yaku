@@ -22,7 +22,14 @@ do (root = this) -> class Yaku
 	###
 	constructor: (executor) ->
 		return if executor == $noop
-		executor genSettler(@, $resolved), genSettler(@, $rejected)
+
+		err = genTryCatcher(executor)(
+			genSettler(@, $resolved),
+			genSettler(@, $rejected)
+		)
+
+		if err == $tryErr
+			settlePromise @, $rejected, err.e
 
 	###*
 	 * Appends fulfillment and rejection handlers to the promise,
