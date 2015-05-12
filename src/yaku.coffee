@@ -21,6 +21,9 @@ do (root = this) -> class Yaku
 	 * ```
 	###
 	constructor: (executor) ->
+		if isLongStackTrace
+			@[$handlerStack] = genTraceInfo()
+
 		return if executor == $noop
 
 		err = genTryCatcher(executor)(
@@ -203,11 +206,31 @@ do (root = this) -> class Yaku
 	 * Promise.reject('v').catch ->
 	 * ```
 	###
-	@onUnhandledRejection: (reason) ->
+	@onUnhandledRejection: (reason, p) ->
 		if typeof console == $object
 			console.error 'Unhandled rejection Error:', reason
+
+			if isLongStackTrace and p[$handlerStack]
+				stack = ''
+				while p
+					stack = p[$handlerStack] + stack
+					p = p[$prePromise]
+				console.error stack
 		return
 
+	isLongStackTrace = false
+
+	###*
+	 * It is used to enable the long stack trace.
+	 * @example
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * Promise.enableLongStackTrace()
+	 * ```
+	###
+	@enableLongStackTrace: ->
+		isLongStackTrace = true
+		return
 
 # ********************** Private **********************
 
@@ -356,6 +379,11 @@ do (root = this) -> class Yaku
 	genTypeError = (msg) ->
 		new TypeError msg
 
+	genTraceInfo = ->
+		(new Error).stack
+			.replace 'Error', 'From previous event:'
+			.replace ///.+#{__filename}.+\n///g, ''
+
 	# ************************** Promise Constant **************************
 
 	###*
@@ -367,6 +395,9 @@ do (root = this) -> class Yaku
 	$pending = 2
 
 	$hasUnhandledRejection = '_isUnhandled'
+
+	$prePromise = '_pre'
+	$handlerStack = '_stack'
 
 	# These are some symbols. They won't be used to store data.
 	$circularChain = 'promise_circular_chain'
@@ -459,7 +490,7 @@ do (root = this) -> class Yaku
 
 	scheduleUnhandledRejection = genScheduler 100, (p) ->
 		if p[$hasUnhandledRejection]
-			Yaku.onUnhandledRejection p._value
+			Yaku.onUnhandledRejection p._value, p
 		return
 
 	callHanler = (handler, value) ->
@@ -525,6 +556,9 @@ do (root = this) -> class Yaku
 				return
 
 			if typeof xthen == $function
+				if isLongStackTrace
+					p[$prePromise] = x
+
 				settleXthen p, x, xthen
 			else
 				# 2.3.3.4
