@@ -211,11 +211,14 @@ do (root = this) -> class Yaku
 			console.error 'Unhandled rejection Error:', reason
 
 			if isLongStackTrace and p[$handlerStack]
-				stack = ''
+				hStack = ''
+				sStack = ''
 				while p
-					stack = p[$handlerStack] + stack
+					hStack = p[$handlerStack] + hStack
+					sStack = p[$settlerStack]
 					p = p[$prePromise]
-				console.error stack
+
+				console.error sStack + hStack
 		return
 
 	isLongStackTrace = false
@@ -397,7 +400,8 @@ do (root = this) -> class Yaku
 	$hasUnhandledRejection = '_isUnhandled'
 
 	$prePromise = '_pre'
-	$handlerStack = '_stack'
+	$handlerStack = '_hStack'
+	$settlerStack = '_sStack'
 
 	# These are some symbols. They won't be used to store data.
 	$circularChain = 'promise_circular_chain'
@@ -517,6 +521,9 @@ do (root = this) -> class Yaku
 		len = p._pCount
 
 		if state == $rejected and not len
+			if isLongStackTrace
+				p[$settlerStack] = genTraceInfo()
+
 			scheduleUnhandledRejection p
 
 		# 2.2.2
