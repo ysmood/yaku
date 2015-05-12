@@ -16,7 +16,7 @@ Premature optimization is the root of all evil.
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
 - Works on IE5+ and other major browsers
-- Possibly unhandled rejection support
+- Possibly unhandled rejection and long stack trace support
 
 # Quick Start
 
@@ -74,7 +74,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 # FAQ
 
-- Long stack trace support?
+- Better long stack trace support?
 
   > Latest Node.js and browsers are already support it. If you enabled it, Yaku will take advantage of it
   > without much overhead. Such as this library [longjohn][] for Node.js, or this article for [Chrome][crhome-lst].

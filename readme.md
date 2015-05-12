@@ -16,7 +16,7 @@ Premature optimization is the root of all evil.
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
 - Works on IE5+ and other major browsers
-- Possibly unhandled rejection support
+- Possibly unhandled rejection and long stack trace support
 
 # Quick Start
 
@@ -70,11 +70,215 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 # API
 
+- ### **[constructor(executor)](src/yaku.coffee?source#L23)**
+
+    This class follows the [Promises/A+](https://promisesaplus.com) and
+    [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
+    with some extra helpers.
+
+    - **<u>param</u>**: `executor` { _Function_ }
+
+        Function object with two arguments resolve and reject.
+        The first argument fulfills the promise, the second argument rejects it.
+        We can call these functions, once our operation is completed.
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise = require 'yaku'
+        p = new Promise (resolve, reject) ->
+        	setTimeout ->
+        		if Math.random() > 0.5
+        			resolve 'ok'
+        		else
+        			reject 'no'
+        ```
+
+- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L53)**
+
+    Appends fulfillment and rejection handlers to the promise,
+    and returns a new promise resolving to the return value of the called handler.
+
+    - **<u>param</u>**: `onFulfilled` { _Function_ }
+
+        Optional. Called when the Promise is resolved.
+
+    - **<u>param</u>**: `onRejected` { _Function_ }
+
+        Optional. Called when the Promise is rejected.
+
+    - **<u>return</u>**: { _Yaku_ }
+
+        It will return a new Yaku which will resolve or reject after
+
+    - **<u>example</u>**:
+
+        the current Promise.
+        ```coffee
+        Promise = require 'yaku'
+        p = Promise.resolve 10
+
+        p.then (v) ->
+        	console.log v
+        ```
+
+- ### **[catch(onRejected)](src/yaku.coffee?source#L71)**
+
+    The `catch()` method returns a Promise and deals with rejected cases only.
+    It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
+
+    - **<u>param</u>**: `onRejected` { _Function_ }
+
+        A Function called when the Promise is rejected.
+        This function has one argument, the rejection reason.
+
+    - **<u>return</u>**: { _Yaku_ }
+
+        A Promise that deals with rejected cases only.
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise = require 'yaku'
+        p = Promise.reject 10
+
+        p.catch (v) ->
+        	console.log v
+        ```
+
+- ### **[@resolve(value)](src/yaku.coffee?source#L87)**
+
+    The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
+    If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
+    adopting its eventual state; otherwise the returned promise will be fulfilled with the value.
+
+    - **<u>param</u>**: `value` { _Any_ }
+
+        Argument to be resolved by this Promise.
+        Can also be a Promise or a thenable to resolve.
+
+    - **<u>return</u>**: { _Yaku_ }
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise = require 'yaku'
+        p = Promise.resolve 10
+        ```
+
+- ### **[@reject(reason)](src/yaku.coffee?source#L101)**
+
+    The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
+
+    - **<u>param</u>**: `reason` { _Any_ }
+
+        Reason why this Promise rejected.
+
+    - **<u>return</u>**: { _Yaku_ }
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise = require 'yaku'
+        p = Promise.reject 10
+        ```
+
+- ### **[@race(iterable)](src/yaku.coffee?source#L123)**
+
+    The `Promise.race(iterable)` method returns a promise that resolves or rejects
+    as soon as one of the promises in the iterable resolves or rejects,
+    with the value or reason from that promise.
+
+    - **<u>param</u>**: `iterable` { _iterable_ }
+
+        An iterable object, such as an Array.
+
+    - **<u>return</u>**: { _Yaku_ }
+
+        The race function returns a Promise that is settled
+        the same way as the first passed promise to settle.
+        It resolves or rejects, whichever happens first.
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise = require 'yaku'
+        Promise.race [
+        	123
+        	Promise.resolve 0
+        ]
+        .then (value) ->
+        	console.log value # => 123
+        ```
+
+- ### **[@all(iterable)](src/yaku.coffee?source#L160)**
+
+    The `Promise.all(iterable)` method returns a promise that resolves when
+    all of the promises in the iterable argument have resolved.
+
+    The result is passed as an array of values from all the promises.
+    If something passed in the iterable array is not a promise,
+    it's converted to one by Promise.resolve. If any of the passed in promises rejects,
+    the all Promise immediately rejects with the value of the promise that rejected,
+    discarding all the other promises whether or not they have resolved.
+
+    - **<u>param</u>**: `iterable` { _iterable_ }
+
+        An iterable object, such as an Array.
+
+    - **<u>return</u>**: { _Yaku_ }
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise = require 'yaku'
+        Promise.all [
+        	123
+        	Promise.resolve 0
+        ]
+        .then (values) ->
+        	console.log values # => [123, 0]
+        ```
+
+- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L209)**
+
+    Catch all possibly unhandled rejections.
+    If it is set, auto `console.error` unhandled rejection will be disabed.
+
+    - **<u>param</u>**: `reason` { _Any_ }
+
+        The rejection reason.
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise = require 'yaku'
+        Promise.onUnhandledRejection = (reason) ->
+        	console.error reason
+
+        # The console will log an unhandled rejection error message.
+        Promise.reject('my reason')
+
+        # The below won't log the unhandled rejection error message.
+        Promise.reject('v').catch ->
+        ```
+
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L231)**
+
+    It is used to enable the long stack trace.
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise = require 'yaku'
+        Promise.enableLongStackTrace()
+        ```
+
 
 
 # FAQ
 
-- Long stack trace support?
+- Better long stack trace support?
 
   > Latest Node.js and browsers are already support it. If you enabled it, Yaku will take advantage of it
   > without much overhead. Such as this library [longjohn][] for Node.js, or this article for [Chrome][crhome-lst].
