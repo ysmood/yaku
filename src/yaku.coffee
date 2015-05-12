@@ -206,7 +206,6 @@ do (root = this) -> class Yaku
 	@onUnhandledRejection: (reason) ->
 		if typeof console == $object
 			console.error 'Unhandled rejection Error:', reason
-			console.trace() if $isNode
 		return
 
 
