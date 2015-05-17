@@ -290,10 +290,10 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 - Will Yaku implement `done`, `finally`, `promisify`, etc?
 
-  > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you delete Yaku, everything
+  > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
   > should works well with ES6 native promise. If you need fancy and magic, go for [Bluebird][].
 
-- Why use [CoffeeScript][], or Javascript?
+- Why use [CoffeeScript][], not Javascript?
 
   > If it is really a problemn for people to use it, I will take time to translate it to JS.
   > Else, I'd like to keep the code as simple as CoffeeScript.
