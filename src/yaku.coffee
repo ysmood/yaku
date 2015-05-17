@@ -549,6 +549,7 @@ do (root = this) -> class Yaku
 
 		# TODO: when x instanceof Yaku
 		# Performance can be optimized.
+		# See [Lazy Tree][docs/lazyTree.md].
 
 		# 2.3.2
 		# 2.3.3

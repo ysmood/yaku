@@ -31,4 +31,6 @@ If promise p1 resolves another promise p5, the tree structure will change to:
 
 The tree is dynamically modified on runtime. As the dynamic process goes on,
 the tree's any node can be extended to any shape, of course it's append only,
-you can delete node of this tree.
+you cannot delete node of this tree.
+
+To be continued...

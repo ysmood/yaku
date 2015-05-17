@@ -1,12 +1,13 @@
 # Overview
 
-The `src/yaku.coffee` of Yaku is full compatible with V8's native [Promise][native], but much faster.
+Yaku is full compatible with ES6's native [Promise][native], but much faster.
 
 If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code.
 It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
-Premature optimization is the root of all evil.
+Premature optimization is the root of all evil. I write this lib to research one of my data structure
+ideas: [docs/lazyTree.md][].
 
 [![NPM version](https://badge.fury.io/js/yaku.svg)](http://badge.fury.io/js/yaku) [![Build Status](https://travis-ci.org/ysmood/yaku.svg)](https://travis-ci.org/ysmood/yaku) [![Deps Up to Date](https://david-dm.org/ysmood/yaku.svg?style=flat)](https://david-dm.org/ysmood/yaku)
 
@@ -15,7 +16,7 @@ Premature optimization is the root of all evil.
 - The minified file is only 3.2KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
-- Works on IE5+ and other major browsers
+- Designed to work on IE5+ and other major browsers
 - Possibly unhandled rejection and long stack trace support
 
 # Quick Start
@@ -33,20 +34,20 @@ Promise = require 'yaku'
 
 ## Browser
 
-Download the `yaku.js` file from [release page][]. It supports both `AMD` and `CMD`.
-Raw usage without `AMD` or `CMD`:
+Use something like [Browserify][] or [Webpack][], or download the `yaku.js` file from [release page][].
+It supports both `AMD` and `CMD`. Raw usage without `AMD` or `CMD`:
 
 ```html
 <script type="text/javascript" src ="yaku.js"></script>
 <script>
     // Yaku will be assigned to `window.Yaku`.
-    Promise = Yaku
+    var Promise = Yaku;
 </script>
 ```
 
 # Compare
 
-These comparisons only reflect some limited truth, no one is better than than others on all aspects.
+These comparisons only reflect some limited truth, no one is better than all others on all aspects.
 
 ```
 iojs v1.8.1
@@ -292,6 +293,11 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
   > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you delete Yaku, everything
   > should works well with ES6 native promise. If you need fancy and magic, go for [Bluebird][].
 
+- Why use [CoffeeScript][], or Javascript?
+
+  > If it is really a problemn for people to use it, I will take time to translate it to JS.
+  > Else, I'd like to keep the code as simple as CoffeeScript.
+
 - The name Yaku is weird?
 
   > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
@@ -307,6 +313,7 @@ Use `npm run no -- test` to run the unit test.
 Use `npm run no -- benchmark` to run the benchmark.
 
 
+[docs/lazyTree.md]: docs/lazyTree.md
 [Bluebird]: https://github.com/petkaantonov/bluebird
 [ES6-promise]: https://github.com/jakearchibald/es6-promise
 [native]: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects
@@ -316,3 +323,6 @@ Use `npm run no -- benchmark` to run the benchmark.
 [promises-aplus-tests]: https://github.com/promises-aplus/promises-tests
 [longjohn]: https://github.com/mattinsler/longjohn
 [crhome-lst]: http://www.html5rocks.com/en/tutorials/developertools/async-call-stack
+[Browserify]: http://browserify.org
+[Webpack]: http://webpack.github.io/
+[CoffeeScript]: http://coffeescript.org/
