@@ -18,6 +18,7 @@ ideas: [docs/lazyTree.md][].
 - Better performance than the native Promise
 - Designed to work on IE5+ and other major browsers
 - Possibly unhandled rejection and long stack trace support
+- Well commented source code with every Promise/A+ spec
 
 # Quick Start
 
@@ -312,6 +313,12 @@ Use `npm run no -- test` to run the unit test.
 
 Use `npm run no -- benchmark` to run the benchmark.
 
+# Contribute
+
+Other than use `gulp`, all my projects use [nokit][] to deal with automation.
+Run `npm run no -- -h` to print all the tasks that defined in the [nofile.coffee][].
+If you installed `nokit` globally, you can just run `no -h` without `npm run` and `--`.
+
 
 [docs/lazyTree.md]: docs/lazyTree.md
 [Bluebird]: https://github.com/petkaantonov/bluebird
@@ -326,3 +333,5 @@ Use `npm run no -- benchmark` to run the benchmark.
 [Browserify]: http://browserify.org
 [Webpack]: http://webpack.github.io/
 [CoffeeScript]: http://coffeescript.org/
+[nokit]: https://github.com/ysmood/nokit
+[nofile.coffee]: nofile.coffee
