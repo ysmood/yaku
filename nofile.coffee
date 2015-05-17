@@ -17,23 +17,25 @@ module.exports = (task, option) ->
 		.run()
 
 	task 'code', 'build source code', ->
-		kit.warp 'src/**/*.coffee'
-		.load kit.drives.auto 'lint'
-		.load kit.drives.auto 'compile'
-		.load (f) ->
-			f.dest.name = 'yaku.min'
-			kit.outputFile 'dist/yaku.js', f.contents
-		.load kit.drives.auto 'compress'
-		.load (f) ->
-			# Add license.
-			{ version } = require './package'
-			f.set """
+		addLicense = (str) ->
+			{ version } = kit.require './package', __dirname
+			return """
 			/*
 			 Yaku v#{version}
 			 (c) 2015 Yad Smood. http://ysmood.org
 			 License MIT
 			*/\n
-			""" + f.contents
+			""" + str
+
+		kit.warp 'src/**/*.coffee'
+		.load kit.drives.auto 'lint'
+		.load kit.drives.auto 'compile'
+		.load (f) ->
+			f.dest.name = 'yaku.min'
+			kit.outputFile 'dist/yaku.js', addLicense(f.contents)
+		.load kit.drives.auto 'compress'
+		.load (f) ->
+			f.set addLicense f.contents
 		.run 'dist'
 
 	option '--debug', 'run with remote debug server'
