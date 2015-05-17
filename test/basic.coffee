@@ -64,6 +64,12 @@ test 'resolve', $val, ->
 	new Yaku (resolve) ->
 		resolve $val
 
+test 'constructor throw', $val, ->
+	new Yaku (resolve) ->
+		throw $val
+	.catch (e) ->
+		e
+
 test 'resolve static', $val, ->
 	Yaku.resolve $val
 
