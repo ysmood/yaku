@@ -70,10 +70,6 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 - **1ms async task**: `npm run no -- benchmark`, the smaller the better.
 - **sync task**: `npm run no -- benchmark --sync`, the smaller the better.
 
-# API
-
-<%= doc['src/yaku.coffee'] %>
-
 # FAQ
 
 - Better long stack trace support?
@@ -98,6 +94,10 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 - The name Yaku is weird?
 
   > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
+
+# API
+
+<%= doc['src/yaku.coffee'] %>
 
 # Unit Test
 

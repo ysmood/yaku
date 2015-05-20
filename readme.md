@@ -70,6 +70,31 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 - **1ms async task**: `npm run no -- benchmark`, the smaller the better.
 - **sync task**: `npm run no -- benchmark --sync`, the smaller the better.
 
+# FAQ
+
+- Better long stack trace support?
+
+  > Latest Node.js and browsers are already support it. If you enabled it, Yaku will take advantage of it
+  > without much overhead. Such as this library [longjohn][] for Node.js, or this article for [Chrome][crhome-lst].
+
+- `catch` on old brwoser (IE7, IE8 etc)?
+
+  > In ECMA-262 spec, `catch` cannot be used as method name. If you use `coffee-script`, it will handle the `catch` automatically, else you have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
+
+- Will Yaku implement `done`, `finally`, `promisify`, etc?
+
+  > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
+  > should works well with ES6 native promise. If you need fancy and magic, go for [Bluebird][].
+
+- Why use [CoffeeScript][], not Javascript?
+
+  > If it is really a problemn for people to use it, I will take time to translate it to JS.
+  > Else, I'd like to keep the code as simple as CoffeeScript.
+
+- The name Yaku is weird?
+
+  > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
+
 # API
 
 - ### **[constructor(executor)](src/yaku.coffee?source#L23)**
@@ -279,31 +304,6 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         ```
 
 
-
-# FAQ
-
-- Better long stack trace support?
-
-  > Latest Node.js and browsers are already support it. If you enabled it, Yaku will take advantage of it
-  > without much overhead. Such as this library [longjohn][] for Node.js, or this article for [Chrome][crhome-lst].
-
-- `catch` on old brwoser (IE7, IE8 etc)?
-
-  > In ECMA-262 spec, `catch` cannot be used as method name. If you use `coffee-script`, it will handle the `catch` automatically, else you have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
-
-- Will Yaku implement `done`, `finally`, `promisify`, etc?
-
-  > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
-  > should works well with ES6 native promise. If you need fancy and magic, go for [Bluebird][].
-
-- Why use [CoffeeScript][], not Javascript?
-
-  > If it is really a problemn for people to use it, I will take time to translate it to JS.
-  > Else, I'd like to keep the code as simple as CoffeeScript.
-
-- The name Yaku is weird?
-
-  > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
 
 # Unit Test
 
