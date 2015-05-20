@@ -190,7 +190,8 @@ do (root = this) -> class Yaku
 		p1
 
 	###*
-	 * Catch all possibly unhandled rejections.
+	 * Catch all possibly unhandled rejections. If you want to use specific
+	 * format to display the error stack, overwrite it.
 	 * If it is set, auto `console.error` unhandled rejection will be disabed.
 	 * @param {Any} reason The rejection reason.
 	 * @example
@@ -232,6 +233,7 @@ do (root = this) -> class Yaku
 
 	###*
 	 * It is used to enable the long stack trace.
+	 * Once it is enabled, it can't be reverted.
 	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'

@@ -242,9 +242,10 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log values # => [123, 0]
         ```
 
-- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L209)**
+- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L210)**
 
-    Catch all possibly unhandled rejections.
+    Catch all possibly unhandled rejections. If you want to use specific
+    format to display the error stack, overwrite it.
     If it is set, auto `console.error` unhandled rejection will be disabed.
 
     - **<u>param</u>**: `reason` { _Any_ }
@@ -265,9 +266,10 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L234)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L243)**
 
     It is used to enable the long stack trace.
+    Once it is enabled, it can't be reverted.
 
     - **<u>example</u>**:
 

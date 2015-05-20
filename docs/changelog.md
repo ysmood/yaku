@@ -1,3 +1,7 @@
+- v0.1.7
+
+  - better error log
+
 - v0.1.6
 
   - add: #3 support long stack trace
