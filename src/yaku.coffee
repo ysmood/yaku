@@ -216,9 +216,14 @@ do (root = this) -> class Yaku
 					sStack = p[$settlerStack]
 					p = p[$prePromise]
 
+			stack = if reason
+				reason.stack or reason
+			else
+				reason
+
 			console.error (
 				'Unhandled rejection Error:' +
-				reason + sStack + hStack
+				stack + sStack + hStack
 			).replace ///.+#{__filename}.+\n///g, ''
 
 		return
@@ -495,8 +500,7 @@ do (root = this) -> class Yaku
 
 	scheduleUnhandledRejection = genScheduler 100, (p) ->
 		if p[$hasUnhandledRejection]
-			val = p._value.stack or p._value
-			Yaku.onUnhandledRejection val, p
+			Yaku.onUnhandledRejection p._value, p
 		return
 
 	callHanler = (handler, value) ->
