@@ -208,17 +208,19 @@ do (root = this) -> class Yaku
 	###
 	@onUnhandledRejection: (reason, p) ->
 		if typeof console == $object
-			console.error 'Unhandled rejection Error:', reason
-
+			hStack = ''
+			sStack = ''
 			if isLongStackTrace and p[$handlerStack]
-				hStack = ''
-				sStack = ''
 				while p
 					hStack = p[$handlerStack] + hStack
 					sStack = p[$settlerStack]
 					p = p[$prePromise]
 
-				console.error sStack + hStack
+			console.error (
+				'Unhandled rejection Error:' +
+				reason + sStack + hStack
+			).replace ///.+#{__filename}.+\n///g, ''
+
 		return
 
 	isLongStackTrace = false
@@ -385,7 +387,6 @@ do (root = this) -> class Yaku
 	genTraceInfo = ->
 		(new Error).stack
 			.replace 'Error', 'From previous event:'
-			.replace ///.+#{__filename}.+\n///g, ''
 
 	# ************************** Promise Constant **************************
 
@@ -494,7 +495,8 @@ do (root = this) -> class Yaku
 
 	scheduleUnhandledRejection = genScheduler 100, (p) ->
 		if p[$hasUnhandledRejection]
-			Yaku.onUnhandledRejection p._value, p
+			val = p._value.stack or p._value
+			Yaku.onUnhandledRejection val, p
 		return
 
 	callHanler = (handler, value) ->

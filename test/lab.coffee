@@ -4,14 +4,15 @@ es6 = require('es6-promise').Promise
 kit = require 'nokit'
 
 test = (lib, p) ->
-    # lib.enableLongStackTrace()
+    lib.enableLongStackTrace()
 
-    lib.resolve()
-    .then ->
-        new lib (r, rr) ->
-            rr 1
+    new lib (r, rr) ->
+        a = 10
+
+        a.b.c()
+    # .catch ->
 
 
-# test yaku
-test bluebird
+test yaku
+# test bluebird
 # test es6
