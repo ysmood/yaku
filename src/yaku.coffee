@@ -210,11 +210,9 @@ do (root = this) -> class Yaku
 	@onUnhandledRejection: (reason, p) ->
 		if typeof console == $object
 			hStack = ''
-			sStack = ''
 			if isLongStackTrace and p[$handlerStack]
 				while p
 					hStack = p[$handlerStack] + hStack
-					sStack = p[$settlerStack]
 					p = p[$prePromise]
 
 			stack = if reason
@@ -223,8 +221,8 @@ do (root = this) -> class Yaku
 				reason
 
 			console.error (
-				'Unhandled rejection Error:' +
-				stack + sStack + hStack
+				'Unhandled rejection Error: ' +
+				stack + hStack
 			).replace ///.+#{__filename}.+\n///g, ''
 
 		return
