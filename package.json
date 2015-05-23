@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A ES6 Promise/A+ implementation that doesn't hurt.",
   "main": "dist/yaku.js",
   "scripts": {

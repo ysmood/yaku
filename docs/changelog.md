@@ -1,3 +1,7 @@
+- v0.1.9
+
+  - fix: `__filename` is not defined bug on browser.
+
 - v0.1.8
 
   - better error log
