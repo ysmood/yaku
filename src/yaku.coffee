@@ -208,7 +208,7 @@ do (root = this) -> class Yaku
 	 * ```
 	###
 	@onUnhandledRejection: (reason, p) ->
-		return if typeof console != $object
+		return if not isObject console
 
 		$info = 'Unhandled Rejection:'
 
@@ -255,9 +255,12 @@ do (root = this) -> class Yaku
 	$tryCatchFn = null
 	$tryErr = { e: null }
 	$noop = {}
-	$function = 'function'
-	$object = 'object'
-	$isNode = typeof process == $object
+
+	isObject = (obj) ->
+		typeof obj == 'object'
+
+	isFunction = (obj) ->
+		typeof obj == 'function'
 
 	###*
 	 * Release the specified key of an object.
@@ -457,9 +460,9 @@ do (root = this) -> class Yaku
 	###
 	addHandler = (p1, p2, onFulfilled, onRejected) ->
 		# 2.2.1
-		if typeof onFulfilled == $function
+		if isFunction onFulfilled
 			p2._onFulfilled = onFulfilled
-		if typeof onRejected == $function
+		if isFunction onRejected
 			p2._onRejected = onRejected
 
 		p1[$hasUnhandledRejection] = false
@@ -560,8 +563,7 @@ do (root = this) -> class Yaku
 
 		# 2.3.2
 		# 2.3.3
-		type = typeof x
-		if x != null and (type == $function or type == $object)
+		if x != null and (isFunction(x) or isObject(x))
 			# 2.3.2.1
 			xthen = genTryCatcher(getThen) x
 
@@ -570,7 +572,7 @@ do (root = this) -> class Yaku
 				settlePromise p, $rejected, xthen.e
 				return
 
-			if typeof xthen == $function
+			if isFunction xthen
 				if isLongStackTrace
 					p[$prePromise] = x
 
