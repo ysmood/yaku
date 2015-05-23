@@ -9,6 +9,11 @@ cs = kit.require 'colors/safe'
 
 module.exports = (name, Promise) ->
 
+	ver = try
+		require("../node_modules/#{name}/package.json").version
+	catch
+		require('../package.json').version
+
 	countDown = 10 ** 5
 
 	checkEnd = ->
@@ -24,7 +29,7 @@ module.exports = (name, Promise) ->
 			memFormat.push "#{k} - #{Math.floor(v / 1024 / 1024)}mb"
 
 		console.log """
-		#{cs.cyan kit._.padRight(name, 15)}
+		#{cs.cyan name} v#{ver}
 		       total: #{cs.green initTime + resolutionTime}ms
 		        init: #{initTime}ms
 		  resolution: #{resolutionTime}ms
