@@ -92,6 +92,16 @@ test 'chain', 'ok', ->
 				r 'ok'
 			, 10
 
+test 'unhandled rejection', $val, ->
+	new Yaku (r) ->
+		old = Yaku.onUnhandledRejection
+
+		Yaku.onUnhandledRejection = (reason, p) ->
+			old reason, p
+			r reason
+
+		Yaku.reject $val
+
 randomPromise = (i) ->
 	new Yaku (r) ->
 		setTimeout ->

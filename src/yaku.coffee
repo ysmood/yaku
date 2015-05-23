@@ -208,24 +208,25 @@ do (root = this) -> class Yaku
 	 * ```
 	###
 	@onUnhandledRejection: (reason, p) ->
-		if typeof console == $object
-			hStack = ''
-			if isLongStackTrace and p[$handlerStack]
-				while p
-					hStack = p[$handlerStack] + hStack
-					p = p[$prePromise]
+		return if typeof console != $object
 
-			stack = if reason
-				reason.stack or reason
-			else
-				reason
+		$info = 'Unhandled Rejection:'
 
-			console.error (
-				'Unhandled rejection Error: ' +
-				stack + hStack
-			).replace ///.+#{__filename}.+\n///g, ''
+		hStack = ''
+		if isLongStackTrace and p[$handlerStack]
+			while p
+				hStack = p[$handlerStack] + hStack
+				p = p[$prePromise]
 
-		return
+		if typeof __filename == 'string'
+			hStack = hStack.replace ///.+#{__filename}.+\n///g, ''
+
+		stack = if reason
+			reason.stack or reason
+		else
+			reason
+
+		console.error $info, stack, hStack
 
 	isLongStackTrace = false
 
