@@ -226,7 +226,7 @@ do (root = this) -> class Yaku
 		else
 			reason
 
-		console.error $info, stack, hStack
+		console.error $info, stack, '\n' + hStack
 
 	isLongStackTrace = false
 
