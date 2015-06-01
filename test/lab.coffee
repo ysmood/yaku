@@ -1,20 +1,13 @@
-yaku = require '../src/yaku'
-bluebird = require 'bluebird'
-es6 = require('es6-promise').Promise
-kit = require 'nokit'
+Promise_Yaku = require '../src/yaku'
+Promise_Bird = require 'bluebird'
 
-test = (lib, p) ->
-    # lib.enableLongStackTrace()
+Promise_Yaku.enableLongStackTrace()
+Promise_Bird.longStackTraces()
 
-    p = new lib (r, rr) ->
-        a = 10
+test = (Promise) ->
+    new Promise (r, rr) ->
+        rr(10)
+    .then ->
 
-        a.b.c()
-
-    p.then ->
-
-    p.then ->
-
-test yaku
-# test bluebird
-# test es6
+test Promise_Yaku
+# test Promise_Bird

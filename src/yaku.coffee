@@ -448,6 +448,9 @@ do (root = this) -> class Yaku
 	 * @return {Function} `(value) -> undefined` A resolve or reject function.
 	###
 	genSettler = (self, state) -> (value) ->
+		if isLongStackTrace and state == $rejected
+			self[$settlerStack] = genTraceInfo()
+
 		settlePromise self, state, value
 
 	###*
