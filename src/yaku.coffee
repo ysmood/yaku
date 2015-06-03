@@ -22,7 +22,7 @@ do (root = this or global) -> class Yaku
 	###
 	constructor: (executor) ->
 		if isLongStackTrace
-			@[$handlerStack] = genTraceInfo()
+			@[$promiseStack] = genTraceInfo()
 
 		return if executor == $noop
 
@@ -211,9 +211,9 @@ do (root = this or global) -> class Yaku
 		return if not isObject console
 
 		hStack = '\n'
-		if isLongStackTrace and p[$handlerStack]
+		if isLongStackTrace and p[$promiseStack]
 			while p
-				hStack = p[$handlerStack] + hStack
+				hStack += p[$promiseStack]
 				p = p[$prePromise]
 
 		format = (str) ->
@@ -223,7 +223,10 @@ do (root = this or global) -> class Yaku
 				str
 
 		stack = if reason
-			format(reason.stack) or reason
+			if reason.stack
+				format reason.stack
+			else
+				reason
 		else
 			reason
 
@@ -408,11 +411,8 @@ do (root = this or global) -> class Yaku
 	$resolved = 1
 	$pending = 2
 
-	$hasUnhandledRejection = '_isUnhandled'
-
 	$prePromise = '_pre'
-	$handlerStack = '_hStack'
-	$settlerStack = '_sStack'
+	$promiseStack = '_pStack'
 
 	# These are some symbols. They won't be used to store data.
 	$circularChain = 'promise_circular_chain'
@@ -427,9 +427,6 @@ do (root = this or global) -> class Yaku
 	 * @private
 	###
 	_pCount: 0
-
-	"#{$hasUnhandledRejection}": true
-
 
 	# *************************** Promise Hepers ****************************
 
@@ -449,9 +446,6 @@ do (root = this or global) -> class Yaku
 	 * @return {Function} `(value) -> undefined` A resolve or reject function.
 	###
 	genSettler = (self, state) -> (value) ->
-		if isLongStackTrace and state == $rejected
-			self[$settlerStack] = genTraceInfo()
-
 		settlePromise self, state, value
 
 	###*
@@ -469,7 +463,7 @@ do (root = this or global) -> class Yaku
 		if isFunction onRejected
 			p2._onRejected = onRejected
 
-		p1[$hasUnhandledRejection] = false
+		p2[$prePromise] = p1
 
 		# 2.2.6
 		if p1._state == $pending
@@ -507,8 +501,7 @@ do (root = this or global) -> class Yaku
 		return
 
 	scheduleUnhandledRejection = genScheduler 100, (p) ->
-		if p[$hasUnhandledRejection]
-			Yaku.onUnhandledRejection p._value, p
+		Yaku.onUnhandledRejection p._value, p
 		return
 
 	callHanler = (handler, value) ->
@@ -531,14 +524,12 @@ do (root = this or global) -> class Yaku
 		p._state = state
 		p._value = value
 
+		if state == $rejected and
+		p[$prePromise] and p[$prePromise]._state == $resolved
+			scheduleUnhandledRejection p
+
 		i = 0
 		len = p._pCount
-
-		if state == $rejected and not len
-			if isLongStackTrace
-				p[$settlerStack] = genTraceInfo()
-
-			scheduleUnhandledRejection p
 
 		# 2.2.2
 		# 2.2.3
@@ -577,9 +568,6 @@ do (root = this or global) -> class Yaku
 				return
 
 			if isFunction xthen
-				if isLongStackTrace
-					p[$prePromise] = x
-
 				settleXthen p, x, xthen
 			else
 				# 2.3.3.4
