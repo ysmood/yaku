@@ -1,6 +1,6 @@
 
 
-do (root = this) -> class Yaku
+do (root = this or global) -> class Yaku
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
