@@ -99,7 +99,7 @@ do (root = this or global) -> class Yaku
 	 * ```
 	###
 	@reject: (reason) ->
-		settlePromise newEmptyYaku(), $rejected, reason
+		settlePromise newEmptyYaku(), $rejected, reason, true
 
 	###*
 	 * The `Promise.race(iterable)` method returns a promise that resolves or rejects
@@ -446,7 +446,7 @@ do (root = this or global) -> class Yaku
 	 * @return {Function} `(value) -> undefined` A resolve or reject function.
 	###
 	genSettler = (self, state) -> (value) ->
-		settlePromise self, state, value
+		settlePromise self, state, value, state == $rejected
 
 	###*
 	 * Link the promise1 to the promise2.
@@ -515,7 +515,7 @@ do (root = this or global) -> class Yaku
 	 * @param  {Integer} state
 	 * @param  {Any} value
 	###
-	settlePromise = (p, state, value) ->
+	settlePromise = (p, state, value, isTrace) ->
 		# 2.1.2
 		# 2.1.3
 		return if p._state != $pending
@@ -524,9 +524,12 @@ do (root = this or global) -> class Yaku
 		p._state = state
 		p._value = value
 
-		if state == $rejected and
-		p[$prePromise] and p[$prePromise]._state == $resolved
-			scheduleUnhandledRejection p
+		if state == $rejected
+			if p[$prePromise]
+				if p[$prePromise]._state == $resolved
+					scheduleUnhandledRejection p
+			else
+				scheduleUnhandledRejection p
 
 		i = 0
 		len = p._pCount
