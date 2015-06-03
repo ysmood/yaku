@@ -210,23 +210,24 @@ do (root = this or global) -> class Yaku
 	@onUnhandledRejection: (reason, p) ->
 		return if not isObject console
 
-		$info = 'Unhandled Rejection:'
-
-		hStack = ''
+		hStack = '\n'
 		if isLongStackTrace and p[$handlerStack]
 			while p
 				hStack = p[$handlerStack] + hStack
 				p = p[$prePromise]
 
-		if typeof __filename == 'string'
-			hStack = hStack.replace ///.+#{__filename}.+\n///g, ''
+		format = (str) ->
+			if typeof __filename == 'string'
+				str.replace ///.+#{__filename}.+\n///g, ''
+			else
+				str
 
 		stack = if reason
-			reason.stack or reason
+			format(reason.stack) or reason
 		else
 			reason
 
-		console.error $info, stack, '\n' + hStack
+		console.error 'Unhandled Rejection:', stack, format(hStack)
 
 	isLongStackTrace = false
 
