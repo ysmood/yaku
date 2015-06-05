@@ -504,18 +504,14 @@ do (root = this or window) -> class Yaku
 		return
 
 	scheduleUnhandledRejection = genScheduler 100, (p) ->
-		Yaku.onUnhandledRejection p._value, p
-		return
-
-	checkRejection = (p) ->
-		pre = p._pre
+		pre = p
 		while pre
 			return if pre._hasUnhandled
-
+			pre._hasUnhandled = true
 			pre = pre._pre
 
-		p._hasUnhandled = true
-		scheduleUnhandledRejection p
+		Yaku.onUnhandledRejection p._value, p
+		return
 
 	callHanler = (handler, value) ->
 		# 2.2.5
@@ -538,7 +534,7 @@ do (root = this or window) -> class Yaku
 		p._value = value
 
 		if state == $rejected
-			checkRejection p
+			scheduleUnhandledRejection p
 
 		i = 0
 		len = p._pCount
@@ -580,6 +576,7 @@ do (root = this or window) -> class Yaku
 				return
 
 			if isFunction xthen
+				x._pre = p if x instanceof Yaku
 				settleXthen p, x, xthen
 			else
 				# 2.3.3.4
