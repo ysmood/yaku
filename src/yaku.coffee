@@ -214,7 +214,7 @@ do (root = this or window) -> class Yaku
 		if isLongStackTrace and p[$promiseStack]
 			while p
 				hStack += p[$promiseStack]
-				p = p[$prePromise]
+				p = p._pre
 
 		format = (str) ->
 			if typeof __filename == 'string'
@@ -411,7 +411,6 @@ do (root = this or window) -> class Yaku
 	$resolved = 1
 	$pending = 2
 
-	$prePromise = '_pre'
 	$promiseStack = '_pStack'
 
 	# These are some symbols. They won't be used to store data.
@@ -427,6 +426,10 @@ do (root = this or window) -> class Yaku
 	 * @private
 	###
 	_pCount: 0
+
+	_pre: null
+
+	_hasUnhandled: false
 
 	# *************************** Promise Hepers ****************************
 
@@ -463,7 +466,7 @@ do (root = this or window) -> class Yaku
 		if isFunction onRejected
 			p2._onRejected = onRejected
 
-		p2[$prePromise] = p1
+		p2._pre = p1
 
 		# 2.2.6
 		if p1._state == $pending
@@ -504,6 +507,16 @@ do (root = this or window) -> class Yaku
 		Yaku.onUnhandledRejection p._value, p
 		return
 
+	checkRejection = (p) ->
+		pre = p._pre
+		while pre
+			return if pre._hasUnhandled
+
+			pre = pre._pre
+
+		p._hasUnhandled = true
+		scheduleUnhandledRejection p
+
 	callHanler = (handler, value) ->
 		# 2.2.5
 		handler value
@@ -525,7 +538,7 @@ do (root = this or window) -> class Yaku
 		p._value = value
 
 		if state == $rejected
-			scheduleUnhandledRejection p
+			checkRejection p
 
 		i = 0
 		len = p._pCount
