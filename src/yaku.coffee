@@ -22,7 +22,7 @@ do (root = this or window) -> class Yaku
 	###
 	constructor: (executor) ->
 		if isLongStackTrace
-			@[$promiseStack] = genTraceInfo()
+			@[$promiseTrace] = genTraceInfo()
 
 		return if executor == $noop
 
@@ -211,26 +211,29 @@ do (root = this or window) -> class Yaku
 		return if not isObject console
 
 		hStack = '\n'
-		if isLongStackTrace and p[$promiseStack]
+		if isLongStackTrace and p[$promiseTrace]
+			if p[$settlerTrace]
+				hStack += p[$settlerTrace]
 			while p
-				hStack += p[$promiseStack]
+				hStack += p[$promiseTrace]
 				p = p._pre
 
 		format = (str) ->
-			if typeof __filename == 'string'
-				str.replace ///.+#{__filename}.+\n///g, ''
+			(if typeof __filename == 'string'
+				str.replace ///.+#{__filename}.+\n?///g, ''
 			else
 				str
+			).replace(/\n$/, '')
 
-		stack = if reason
-			if reason.stack
-				format reason.stack
+		console.error 'Unhandled Rejection:', (
+			if reason
+				if reason.stack
+					format reason.stack
+				else
+					reason
 			else
 				reason
-		else
-			reason
-
-		console.error 'Unhandled Rejection:', stack, format(hStack)
+		), format(hStack)
 
 	isLongStackTrace = false
 
@@ -397,9 +400,10 @@ do (root = this or window) -> class Yaku
 	genTypeError = (msg) ->
 		new TypeError msg
 
-	genTraceInfo = ->
+	genTraceInfo = (noTitle) ->
 		(new Error).stack
-			.replace 'Error', 'From previous event:'
+			.replace 'Error\n',
+				(if noTitle then '' else ' From previous event:\n')
 
 	# ************************** Promise Constant **************************
 
@@ -411,7 +415,8 @@ do (root = this or window) -> class Yaku
 	$resolved = 1
 	$pending = 2
 
-	$promiseStack = '_pStack'
+	$promiseTrace = '_pStack'
+	$settlerTrace = '_sStack'
 
 	# These are some symbols. They won't be used to store data.
 	$circularChain = 'promise_circular_chain'
@@ -449,7 +454,10 @@ do (root = this or window) -> class Yaku
 	 * @return {Function} `(value) -> undefined` A resolve or reject function.
 	###
 	genSettler = (self, state) -> (value) ->
-		settlePromise self, state, value, state == $rejected
+		if isLongStackTrace
+			self[$settlerTrace] = genTraceInfo(true)
+
+		settlePromise self, state, value
 
 	###*
 	 * Link the promise1 to the promise2.
