@@ -349,7 +349,7 @@ do (root = this or window) -> class Yaku
 			doc = root.document
 
 			try
-				nextTick = process.nextTick
+				nextTick = root.process.nextTick
 				return ->
 					nextTick flush
 					return
