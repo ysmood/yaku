@@ -1,4 +1,4 @@
-
+# This test should work on both Nodejs and Browser.
 
 Yaku = if module? and module.exports?
 	require '../src/yaku'
