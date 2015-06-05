@@ -1,6 +1,6 @@
 
 
-do (root = this or global) -> class Yaku
+do (root = this or window) -> class Yaku
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
@@ -630,4 +630,4 @@ do (root = this or global) -> class Yaku
 		try
 			define -> Yaku
 		catch
-			window.Yaku = Yaku
+			root.Yaku = Yaku
