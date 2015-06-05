@@ -1,3 +1,7 @@
+- v0.2.0
+
+  - fix: #5 long stack trace bug
+
 - v0.1.9
 
   - fix: `__filename` is not defined bug on browser.
