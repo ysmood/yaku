@@ -9,6 +9,9 @@ test = (Promise) ->
     .then ->
         a()
     .then -> null
+    .catch -> 'ok'
+
+    # Promise.reject(10)
 
 test Promise_Yaku
-test Promise_Bird
+# test Promise_Bird

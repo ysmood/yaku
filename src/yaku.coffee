@@ -434,8 +434,6 @@ do (root = this or window) -> class Yaku
 
 	_pre: null
 
-	_hasUnhandled: false
-
 	# *************************** Promise Hepers ****************************
 
 	###*
@@ -512,11 +510,15 @@ do (root = this or window) -> class Yaku
 		return
 
 	scheduleUnhandledRejection = genScheduler 100, (p) ->
-		pre = p
-		while pre
-			return if pre._hasUnhandled
-			pre._hasUnhandled = true
-			pre = pre._pre
+		# iter tree
+		iter = (node) ->
+			i = 0
+			len = node._pCount
+			console.log node
+			while i < len
+				iter node[i]
+
+		# iter p
 
 		Yaku.onUnhandledRejection p._value, p
 		return
@@ -541,7 +543,8 @@ do (root = this or window) -> class Yaku
 		p._state = state
 		p._value = value
 
-		if state == $rejected
+		if state == $rejected and
+		(not p._pre or p._pre._state == $resolved)
 			scheduleUnhandledRejection p
 
 		i = 0
@@ -552,7 +555,6 @@ do (root = this or window) -> class Yaku
 		while i < len
 			# 2.2.4
 			scheduleHandler p, p[i]
-			release p, i++
 
 		p
 
