@@ -554,7 +554,7 @@ do (root = this or window) -> class Yaku
 		# 2.2.3
 		while i < len
 			# 2.2.4
-			scheduleHandler p, p[i]
+			scheduleHandler p, p[i++]
 
 		p
 
