@@ -5,13 +5,13 @@ Promise_Yaku.enableLongStackTrace()
 Promise_Bird.longStackTraces()
 
 test = (Promise) ->
-    Promise.resolve()
+    p = Promise.resolve()
     .then ->
-        a()
+        Promise.reject(10)
     .then -> null
-    .catch -> 'ok'
 
-    # Promise.reject(10)
+    p1 = p.then -> 'ok'
+    p2 = p.then -> 'test'
 
 test Promise_Yaku
 # test Promise_Bird

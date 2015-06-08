@@ -60,10 +60,10 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 | Name                 | Unit Test | 1ms async task | sync task | Helpers | file size |
 | -------------------- | --------- | -------------- | --------- | ------- | --------- |
 | Yaku                 | 872/872   | 283ms          | 68ms      | ++      | <%= doc.size %>KB |
-| [Bluebird][] v2.9    | 872/872   | 244ms          | 164ms     | +++++++ | 73KB      |
-| [ES6-promise][] v2.1 | 872/872   | 435ms          | 110ms     | +       | 18KB      |
-| [native][] iojs v1.8 | 872/872   | 816ms          | 605ms     | +       | 0KB       |
-| [q][] v1.3           | 208/872   | 2637ms         | 2327ms    | +++     | 24K       |
+| [Bluebird][] v2.9    | 872/872   | 272ms          | 164ms     | +++++++ | 73KB      |
+| [ES6-promise][] v2.1 | 872/872   | 459ms          | 110ms     | +       | 18KB      |
+| [native][] iojs v1.8 | 872/872   | 826ms          | 605ms     | +       | 0KB       |
+| [q][] v1.3           | 208/872   | 2710ms         | 2327ms    | +++     | 24K       |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers.

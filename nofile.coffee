@@ -79,7 +79,7 @@ module.exports = (task, option) ->
 			kit.spawn 'coffee', [path, sync]
 
 	task 'clean', 'Clean temp files', ->
-		kit.remove '{.nokit,dist}'
+		kit.remove '{.nokit,dist,.coffee,.nobone}'
 
 	option '--browserPort <8227>', 'browser test port', 8227
 	task 'browser', 'Unit test on browser', (opts) ->

@@ -402,8 +402,8 @@ do (root = this or window) -> class Yaku
 
 	genTraceInfo = (noTitle) ->
 		(new Error).stack
-			.replace 'Error\n',
-				(if noTitle then '' else ' From previous event:\n')
+			.replace 'Error',
+				(if noTitle then '' else ' From previous event:')
 
 	# ************************** Promise Constant **************************
 
