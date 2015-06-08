@@ -291,7 +291,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L249)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L250)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
