@@ -514,13 +514,16 @@ do (root = this or window) -> class Yaku
 		iter = (node) ->
 			i = 0
 			len = node._pCount
-			console.log node
+			return if node._onRejected
+
 			while i < len
-				iter node[i]
+				return if not iter node[i++]
 
-		# iter p
+			return true
 
-		Yaku.onUnhandledRejection p._value, p
+		if iter p
+			Yaku.onUnhandledRejection p._value, p
+
 		return
 
 	callHanler = (handler, value) ->
