@@ -210,30 +210,31 @@ do (root = this or window) -> class Yaku
 	@onUnhandledRejection: (reason, p) ->
 		return if not isObject console
 
-		hStack = '\n'
-		if isLongStackTrace and p[$promiseTrace]
-			if p[$settlerTrace]
-				hStack += p[$settlerTrace]
-			while p
-				hStack += p[$promiseTrace]
-				p = p._pre
-
-		format = (str) ->
-			(if typeof __filename == 'string'
-				str.replace ///.+#{__filename}.+\n?///g, ''
-			else
-				str
-			).replace(/\n$/, '')
-
-		console.error 'Unhandled Rejection:', (
+		stackInfo = [(
 			if reason
 				if reason.stack
-					format reason.stack
+					reason.stack.trim()
 				else
 					reason
 			else
 				reason
-		), format(hStack)
+		)]
+
+		if isLongStackTrace and p[$promiseTrace]
+			if p[$settlerTrace]
+				stackInfo.push p[$settlerTrace].trim()
+			while p
+				stackInfo.push p[$promiseTrace].trim()
+				p = p._pre
+
+		stackStr = stackInfo.join('\n')
+
+		if typeof __filename == 'string'
+			stackStr = stackStr.replace ///.+#{__filename}.+\n?///g, ''
+
+		console.error 'Unhandled Rejection:', stackStr
+
+		return stackInfo
 
 	isLongStackTrace = false
 
@@ -403,7 +404,7 @@ do (root = this or window) -> class Yaku
 	genTraceInfo = (noTitle) ->
 		(new Error).stack
 			.replace 'Error',
-				(if noTitle then '' else ' From previous event:')
+				(if noTitle then '' else 'From previous event:')
 
 	# ************************** Promise Constant **************************
 
