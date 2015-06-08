@@ -590,7 +590,12 @@ do (root = this or window) -> class Yaku
 				return
 
 			if isFunction xthen
-				x._pre = p if x instanceof Yaku
+				# On this point a new node is inserted in to the tree.
+				# To full understand this, you have to read the `docs/lazyTree.md`.
+				if x instanceof Yaku
+					x._pre = p._pre
+					p._pre = x
+
 				settleXthen p, x, xthen
 			else
 				# 2.3.3.4
