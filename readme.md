@@ -13,7 +13,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.4KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.5KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
 - Designed to work on IE5+ and other major browsers
@@ -59,7 +59,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 | Name                 | Unit Test | 1ms async task | sync task | Helpers | file size |
 | -------------------- | --------- | -------------- | --------- | ------- | --------- |
-| Yaku                 | 872/872   | 283ms          | 68ms      | ++      | 3.4KB |
+| Yaku                 | 872/872   | 283ms          | 68ms      | ++      | 3.5KB |
 | [Bluebird][] v2.9    | 872/872   | 272ms          | 164ms     | +++++++ | 73KB      |
 | [ES6-promise][] v2.1 | 872/872   | 459ms          | 110ms     | +       | 18KB      |
 | [native][] iojs v1.8 | 872/872   | 826ms          | 605ms     | +       | 0KB       |
@@ -291,7 +291,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L250)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L254)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
