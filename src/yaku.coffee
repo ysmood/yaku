@@ -575,7 +575,7 @@ do (root = this or window) -> class Yaku
 			settlePromise p, $rejected, genTypeError($circularChain)
 			return
 
-		# See [Lazy Tree][docs/lazyTree.md].
+		# See [Lazy Tree](docs/lazyTree.md).
 		if x instanceof Yaku
 			insertPromise x, p
 			return
