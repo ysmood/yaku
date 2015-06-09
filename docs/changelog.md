@@ -1,4 +1,4 @@
-- v0.2.1
+- v0.2.2
 
   - fix: #5 long stack trace bug
 
