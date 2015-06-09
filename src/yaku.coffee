@@ -575,9 +575,10 @@ do (root = this or window) -> class Yaku
 			settlePromise p, $rejected, genTypeError($circularChain)
 			return
 
-		# TODO: when x instanceof Yaku
-		# Performance can be optimized.
 		# See [Lazy Tree][docs/lazyTree.md].
+		if x instanceof Yaku
+			insertPromise x, p
+			return
 
 		# 2.3.2
 		# 2.3.3
@@ -591,10 +592,7 @@ do (root = this or window) -> class Yaku
 				return
 
 			if isFunction xthen
-				if x instanceof Yaku
-					insertPromise x, p
-				else
-					settleXthen p, x, xthen
+				settleXthen p, x, xthen
 			else
 				# 2.3.3.4
 				settlePromise p, $resolved, x
@@ -606,7 +604,6 @@ do (root = this or window) -> class Yaku
 
 	# Insert a new promise to reshape the tree.
 	# Insert p1 to p2.
-	# To full understand this, you have to read the `docs/lazyTree.md`.
 	insertPromise = (p1, p2) ->
 		p1._pre = p2
 
