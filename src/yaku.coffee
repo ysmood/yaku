@@ -596,8 +596,10 @@ do (root = this or window) -> class Yaku
 				# On this point a new node is inserted in to the tree.
 				# To full understand this, you have to read the `docs/lazyTree.md`.
 				if x instanceof Yaku
+					x._xpre = p
 					x._pre = p._pre
 					p._pre = x
+					x[x._pCount++] = p
 
 				settleXthen p, x, xthen
 			else
