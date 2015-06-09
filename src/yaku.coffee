@@ -237,6 +237,7 @@ do (root = this or window) -> class Yaku
 				reason
 		), stackStr
 
+       stackInfo.unshift reason
 		return stackInfo
 
 	isLongStackTrace = false
