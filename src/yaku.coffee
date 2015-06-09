@@ -218,8 +218,6 @@ do (root = this or window) -> class Yaku
 				push p[$settlerTrace]
 			while p
 				push p[$promiseTrace]
-				if p._$pre
-					push p._$pre[$promiseTrace]
 				p = p._pre
 
 		stackStr = '\n' + stackInfo.join('\n')
@@ -596,8 +594,8 @@ do (root = this or window) -> class Yaku
 			if isFunction xthen
 				if x instanceof Yaku
 					insertPromise x, p
-
-				settleXthen p, x, xthen
+				else
+					settleXthen p, x, xthen
 			else
 				# 2.3.3.4
 				settlePromise p, $resolved, x
@@ -608,12 +606,17 @@ do (root = this or window) -> class Yaku
 		p
 
 	# Insert a new promise to reshape the tree.
+	# Insert p1 to p2.
 	# To full understand this, you have to read the `docs/lazyTree.md`.
 	insertPromise = (p1, p2) ->
-		p1._$pre = p2
-		p1._pre = p2._pre
-		p2._pre = p1
-		p1[p1._pCount++] = p2
+		p1._pre = p2
+
+		len = p1._pCount = p2._pCount
+		i = p2._pCount = 0
+
+		while i < len
+			p1[i] = p2[i]
+			addHandler p1, p2[i++]
 
 	###*
 	 * Try to get a promise's then method.
