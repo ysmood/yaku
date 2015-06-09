@@ -476,11 +476,10 @@ do (root = this or window) -> class Yaku
 			p2._onRejected = onRejected
 
 		p2._pre = p1
+		p1[p1._pCount++] = p2
 
 		# 2.2.6
-		if p1._state == $pending
-			p1[p1._pCount++] = p2
-		else
+		if p1._state != $pending
 			scheduleHandler p1, p2
 
 		# 2.2.7
