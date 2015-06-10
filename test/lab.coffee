@@ -6,17 +6,13 @@ Promise_Bird.longStackTraces()
 
 test = (Promise) ->
     p = Promise.resolve()
-    .then ->
-        a()
-        Promise.resolve({a: 10})
-    # .catch -> 0
-
-    p.then (v) -> console.log v
-    # .catch -> 0
-    p.then (v) -> console.log v
-
-    # Promise.reject(10)
-    # .catch -> 0
+    p.then ->
+        new Promise (r) ->
+            setTimeout ->
+                r 10
+            , 10
+    .then (v) ->
+        console.log v
 
 test Promise_Yaku
 # test Promise_Bird
