@@ -607,12 +607,16 @@ do (root = this or window) -> class Yaku
 	insertPromise = (p1, p2) ->
 		p1._pre = p2
 
-		len = p1._pCount = p2._pCount
+		len = p2._pCount
 		i = p2._pCount = 0
 
-		while i < len
-			p1[i] = p2[i]
-			addHandler p2[i++], p1
+		if p1._state == $pending
+			p1._pCount = len
+			while i < len
+				p1[i] = p2[i++]
+		else
+			while i < len
+				scheduleHandler p1, p2[i++]
 
 		return
 
