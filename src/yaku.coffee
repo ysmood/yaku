@@ -612,7 +612,9 @@ do (root = this or window) -> class Yaku
 
 		while i < len
 			p1[i] = p2[i]
-			addHandler p1, p2[i++]
+			addHandler p2[i++], p1
+
+		return
 
 	###*
 	 * Try to get a promise's then method.
