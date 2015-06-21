@@ -458,6 +458,10 @@ do (root = this or window) -> class Yaku
 		if isLongStackTrace
 			self[$settlerTrace] = genTraceInfo(true)
 
+		if state == $resolved
+			settleWithX self, value
+			return
+
 		settlePromise self, state, value
 
 	###*
