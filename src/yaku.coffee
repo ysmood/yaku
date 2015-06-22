@@ -231,18 +231,19 @@ do (root = this or window) -> class Yaku
 
 		stackStr = '\n' + stackInfo.join('\n')
 
-		if typeof __filename == 'string'
-			stackStr = stackStr.replace ///.+#{__filename}.+\n?///g, ''
+		clean = (stack) ->
+			if typeof __filename == 'string'
+				stack.replace ///.+#{__filename}.+\n?///g, ''
 
 		console.error 'Unhandled Rejection:', (
 			if reason
 				if reason.stack
-					reason.stack.trim()
+					clean reason.stack.trim()
 				else
 					reason
 			else
 				reason
-		), stackStr
+		), clean(stackStr)
 
 		stackInfo.unshift reason
 		return stackInfo
