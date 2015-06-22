@@ -7,7 +7,7 @@ Promise_Bird.longStackTraces()
 test = (Promise) ->
     p = new Promise (r) ->
         r new Promise (r) ->
-            r 'done'
+            a()
 
     p.then((value) ->
         console.log(value)

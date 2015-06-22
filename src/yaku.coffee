@@ -212,9 +212,11 @@ do (root = this or window) -> class Yaku
 
 		stackInfo = []
 
+		trim = (str) -> str.replace /^\s+|\s+$/g
+
 		if isLongStackTrace and p[$promiseTrace]
 			push = (trace) ->
-				stackInfo.push trace.trim()
+				stackInfo.push trim trace
 
 			if p[$settlerTrace]
 				push p[$settlerTrace]
@@ -238,15 +240,14 @@ do (root = this or window) -> class Yaku
 		console.error 'Unhandled Rejection:', (
 			if reason
 				if reason.stack
-					clean reason.stack.trim()
+					clean trim reason.stack
 				else
 					reason
 			else
 				reason
 		), clean(stackStr)
 
-		stackInfo.unshift reason
-		return stackInfo
+		return
 
 	isLongStackTrace = false
 
