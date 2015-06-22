@@ -10,10 +10,10 @@ The code is complex, to simplify it, let's see some graphics.
 Here we have defined some promises. Like below:
 
 ```
-         p0
-      /      \
-     p1       p4
-   /    \
+          p0
+       /      \
+      p1       p4
+    /    \
   p2     p3
 ```
 
@@ -28,6 +28,13 @@ If promise p1 resolves another promise p5, the tree structure will change to:
     /    \
   p2     p3
 ```
+
+There are some interesting constrains of this data structure:
+
+- Each individual promise can only have one settled value.
+- Each individual promise can only have one callback to pass the settled value.
+- Each individual callback can only produce one promise.
+- The only way to link two promise is through the callback.
 
 The tree is dynamically modified on runtime. As the dynamic process goes on,
 the tree's any node can be extended to any shape, of course it's append only,
