@@ -213,13 +213,21 @@ do (root = this or window) -> class Yaku
 		stackInfo = []
 
 		if isLongStackTrace and p[$promiseTrace]
-			push = (trace) -> stackInfo.push trace.trim()
+			push = (trace) ->
+				stackInfo.push trace.trim()
+
 			if p[$settlerTrace]
 				push p[$settlerTrace]
 
-			while p
-				push p[$promiseTrace]
-				p = p._pre
+			# Hope you guys could understand how the back trace works.
+			# We only have to iter through the tree from the bottom to root.
+			iter = (node) ->
+				return if not node
+				iter node._next
+				push node[$promiseTrace]
+				iter node._pre
+
+			iter p
 
 		stackStr = '\n' + stackInfo.join('\n')
 
@@ -581,8 +589,7 @@ do (root = this or window) -> class Yaku
 			settlePromise p, $rejected, genTypeError($circularChain)
 			return
 
-		# See [Lazy Tree](docs/lazyTree.md).
-		if x instanceof Yaku
+		if isLongStackTrace and x instanceof Yaku
 			p._next = x
 
 		# 2.3.2
