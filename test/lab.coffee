@@ -5,19 +5,11 @@ Promise_Yaku.enableLongStackTrace()
 Promise_Bird.longStackTraces()
 
 test = (Promise) ->
-    resolved = (v) ->
-        new Promise (r) ->
-           r v
-
-    promise = resolved({ dummy: "dummy" }).then(->
-        {
-            then: (resolvePromise) ->
-                resolvePromise resolved({
-                    then: (onFulfilled) ->
-                        onFulfilled({ sentinel: "sentinel" });
-                })
-        };
-    );
+    promise = new Promise (r) ->
+        r {
+            then: (ful) ->
+                ful 'done'
+        }
 
     promise.then((value) ->
         console.log(value)
