@@ -23,7 +23,7 @@ test = function (Promise) {
 
 test(Yaku)
 test(Bluebird)
-test(Promise) // Native
+test(Promise) // Chrome Native
 ```
 
 
@@ -47,7 +47,6 @@ test = function (Promise) {
 
 test(Yaku)
 test(Bluebird)
-test(Promise) // Native
 ```
 
 Trace info of Bluebird:
