@@ -17,7 +17,7 @@ ideas: [docs/lazyTree.md][].
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
 - Designed to work on IE5+ and other major browsers
-- Possibly unhandled rejection and long stack trace support
+- Better `possibly unhandled rejection` and `long stack trace` than [Bluebird][]
 - Well commented source code with every Promise/A+ spec
 
 # Quick Start
@@ -66,7 +66,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 | [q][] v1.3           | 208/872   | 2710ms         | 2327ms    | +++     | 24K       |
 
 - **Helpers**: extra methods that help with your promise programming, such as
-  async flow control helpers, debug helpers.
+  async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
 - **1ms async task**: `npm run no -- benchmark`, the smaller the better.
 - **sync task**: `npm run no -- benchmark --sync`, the smaller the better.
 
@@ -291,7 +291,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L261)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L262)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -323,6 +323,7 @@ If you installed `nokit` globally, you can just run `no -h` without `npm run` an
 
 
 [docs/lazyTree.md]: docs/lazyTree.md
+[docs/debugHelperComparison.md]: docs/debugHelperComparison.md
 [Bluebird]: https://github.com/petkaantonov/bluebird
 [ES6-promise]: https://github.com/jakearchibald/es6-promise
 [native]: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects
