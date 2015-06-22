@@ -26,12 +26,10 @@ assert = (a, b) ->
 		return if a == b
 			false
 		else
-			process?.exit(1)
 			{ a, b }
 
 	for k, v of a
 		if b[k] != v
-			process?.exit(1)
 			return { a, b }
 
 	return false
@@ -49,6 +47,7 @@ test = (name, shouldBe, fn) ->
 				#{JSON.stringify res.a}
 				>>>>>>>>
 			"""
+			process?.exit(1)
 
 	out = fn()
 	if out and out.then
@@ -63,6 +62,13 @@ $val = { val: 'ok' }
 test 'resolve', $val, ->
 	new Yaku (resolve) ->
 		resolve $val
+
+test 'resolve promise like value', $val, ->
+	new Yaku (resolve) ->
+		resolve {
+			then: (fulfil) ->
+				fulfil $val
+		}
 
 test 'constructor throw', $val, ->
 	new Yaku (resolve) ->
