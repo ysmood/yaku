@@ -5,7 +5,7 @@ Only `Yaku` will not report an `unhandled error`. Even the
 native works improperly.
 
 ```javascript
-var Yaku = require('../dist/yaku')
+var Yaku = require('yaku')
 var Bluebird = require('bluebird')
 
 Yaku.enableLongStackTrace()
@@ -32,7 +32,7 @@ test(Promise) // Chrome Native
 Only Yaku will trace back to the root the Promise chain.
 
 ```javascript
-var Yaku = require('../dist/yaku')
+var Yaku = require('yaku')
 var Bluebird = require('bluebird')
 
 Yaku.enableLongStackTrace()
