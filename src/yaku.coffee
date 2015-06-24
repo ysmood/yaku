@@ -591,9 +591,6 @@ do (root = this or window) -> class Yaku
 			settlePromise p, $rejected, genTypeError($circularChain)
 			return
 
-		if isLongStackTrace and x instanceof Yaku
-			p._next = x
-
 		# 2.3.2
 		# 2.3.3
 		if x != null and (isFunction(x) or isObject(x))
@@ -606,6 +603,9 @@ do (root = this or window) -> class Yaku
 				return
 
 			if isFunction xthen
+				if isLongStackTrace and x instanceof Yaku
+					p._next = x
+
 				settleXthen p, x, xthen
 			else
 				# 2.3.3.4
