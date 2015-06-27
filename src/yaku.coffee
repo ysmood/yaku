@@ -1,6 +1,7 @@
 
 
 do (root = this or window) -> class Yaku
+	'use strict'
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and

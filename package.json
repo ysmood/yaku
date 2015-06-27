@@ -31,7 +31,7 @@
     "coffee-script": "1.9.3",
     "coffeelint": "1.10.1",
     "es6-promise": "2.2.0",
-    "nokit": "0.7.7",
+    "nokit": "0.8.0",
     "promises-aplus-tests": "*",
     "q": "1.4.1",
     "uglify-js": "2.4.23"
