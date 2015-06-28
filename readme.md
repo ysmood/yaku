@@ -474,10 +474,10 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L289)**
+- ### **[promisify(fn, self)](src/utils.coffee?source#L304)**
 
     Convert a node callback style function to a function that returns
-    promise.
+    promise when the last callback is not supplied.
 
     - **<u>param</u>**: `fn` { _Function_ }
 
@@ -487,7 +487,24 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L308)**
+    - **<u>example</u>**:
+
+        ```coffee
+        foo = (val, cb) ->
+        	setTimeout ->
+        		cb null, val + 1
+
+        bar = utils.promisify(foo)
+
+        bar(0).then (val) ->
+        	console.log val # output => 1
+
+        # It also supports the callback style.
+        bar 0, (val) ->
+        	console.log val # output => 1
+        ```
+
+- ### **[sleep(time, val)](src/utils.coffee?source#L323)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -501,7 +518,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[throw(err)](src/utils.coffee?source#L322)**
+- ### **[throw(err)](src/utils.coffee?source#L337)**
 
     Throw an error to break the program.
 

@@ -281,10 +281,25 @@ utils = module.exports =
 
 	###*
 	 * Convert a node callback style function to a function that returns
-	 * promise.
+	 * promise when the last callback is not supplied.
 	 * @param  {Function} fn
 	 * @param  {Any} self The `this` to bind to the fn.
 	 * @return {Function}
+	 * @example
+	 * ```coffee
+	 * foo = (val, cb) ->
+	 * 	setTimeout ->
+	 * 		cb null, val + 1
+	 *
+	 * bar = utils.promisify(foo)
+	 *
+	 * bar(0).then (val) ->
+	 * 	console.log val # output => 1
+	 *
+	 * # It also supports the callback style.
+	 * bar 0, (val) ->
+	 * 	console.log val # output => 1
+	 * ```
 	###
 	promisify: (fn, self) ->
 		(args...) ->
