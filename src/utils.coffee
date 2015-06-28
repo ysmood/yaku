@@ -24,7 +24,8 @@ utils = module.exports =
 	 * If the list is an array, it should be a list of functions or promises,
 	 * and each function will return a promise.
 	 * If the list is a function, it should be a iterator that returns
-	 * a promise, when it returns `utils.end`, the iteration ends.
+	 * a promise, when it returns `utils.end`, the iteration ends. Of course
+	 * it can never end.
 	 * @param {Boolean} saveResults Whether to save each promise's result or
 	 * not. Default is true.
 	 * @param {Function} progress If a task ends, the resolve value will be
@@ -90,7 +91,7 @@ utils = module.exports =
 		else if isFunction list
 			iter = list
 		else
-			return Promise.reject new Error 'wrong argument type: ' + list
+			return throw new TypeError 'wrong argument type: ' + list
 
 		utils.end ?= {}
 
@@ -236,7 +237,7 @@ utils = module.exports =
 		else if fns.length > 1
 			iter = genIter fns
 		else
-			return Promise.reject new Error 'wrong argument type: ' + fn
+			return throw new TypeError 'wrong argument type: ' + fn
 
 		utils.end ?= {}
 
@@ -299,6 +300,12 @@ utils = module.exports =
 	###*
 	 * Throw an error to break the program.
 	 * @param  {Any} err
+	 * @example
+	 * ```coffee
+	 * Promise.resolve().then ->
+	 * 	# This error won't be caught by promise.
+	 * 	utils.throw 'break the program!'
+	 * ```
 	###
 	throw: (err) ->
 		setTimeout -> err
