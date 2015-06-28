@@ -162,6 +162,18 @@ utils = module.exports =
 					Promise.reject err
 
 	###*
+	 * Create a `jQuery.Deferred` like object.
+	###
+	Deferred: ->
+		defer = {}
+
+		defer.promise = new Promise (resolve, reject) ->
+			defer.resolve = resolve
+			defer.reject = reject
+
+		defer
+
+	###*
 	 * The end symbol.
 	###
 	end: {}
