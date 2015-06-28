@@ -1,9 +1,10 @@
 # This test should work on both Nodejs and Browser.
 
-Yaku = if module? and module.exports?
-	require '../src/yaku'
+if module? and module.exports?
+	Yaku = require '../src/yaku'
+	utils = require '../src/utils'
 else
-	window.Yaku
+	Yaku = window.Yaku
 
 log = do -> (val) ->
 	if not JSON?
@@ -143,3 +144,47 @@ test 'race', 0, ->
 				r 1
 			, 30
 	]
+
+if utils
+
+	test 'async array', [1, 2, 3], ->
+		list = [
+			-> utils.sleep 10, 1
+			-> utils.sleep 10, 2
+			-> utils.sleep 10, 3
+		]
+
+		utils.async 2, list
+
+	test 'async iter progress', 10, ->
+		iter = ->
+			i = 0
+			->
+				if i++ == 10
+					return utils.end
+				new Yaku (r) ->
+					setTimeout (-> r 1), 10
+
+		count = 0
+		utils.async 3, iter(), false, (ret) ->
+			count += ret
+		.then -> count
+
+	test 'flow array', 'bc', ->
+		(utils.flow [
+			'a'
+			Promise.resolve 'b'
+			(v) -> v + 'c'
+		])(0)
+
+	test 'flow iter', [0, 1, 2, 3], ->
+		list = []
+		(utils.flow (v) ->
+			return utils.end if v == 3
+			Yaku.resolve().then ->
+				list.push v
+				++v
+		)(0)
+		.then (v) ->
+			list.push v
+			list

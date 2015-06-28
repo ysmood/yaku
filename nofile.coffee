@@ -5,9 +5,9 @@ module.exports = (task, option) ->
 
 	task 'default build', ['doc', 'code']
 
-	task 'doc', ['code'], 'build doc', ->
-		size = kit.statSync('dist/yaku.min.js').size / 1024
-		kit.warp 'src/yaku.coffee'
+	task 'doc', ['code', 'utils'], 'build doc', ->
+		size = kit.statSync('lib/yaku.min.js').size / 1024
+		kit.warp 'src/*.coffee'
 		.load kit.drives.comment2md {
 			tpl: 'docs/readme.jst.md'
 			doc: {
@@ -27,16 +27,22 @@ module.exports = (task, option) ->
 			*/\n
 			""" + str
 
-		kit.warp 'src/**/*.coffee'
+		kit.warp 'src/yaku.coffee'
 		.load kit.drives.auto 'lint'
 		.load kit.drives.auto 'compile'
 		.load (f) ->
 			f.dest.name = 'yaku.min'
-			kit.outputFile 'dist/yaku.js', addLicense(f.contents)
+			kit.outputFile 'lib/yaku.js', addLicense(f.contents)
 		.load kit.drives.auto 'compress'
 		.load (f) ->
 			f.set addLicense f.contents
-		.run 'dist'
+		.run 'lib'
+
+	task 'utils', 'build utils', ->
+		kit.warp 'src/utils.coffee'
+		.load kit.drives.auto 'lint'
+		.load kit.drives.auto 'compile'
+		.run 'lib'
 
 	option '--debug', 'run with remote debug server'
 	option '--port <8219>', 'remote debug server port', 8219
@@ -51,7 +57,7 @@ module.exports = (task, option) ->
 
 	option '--grep <pattern>', 'run test that match the pattern', '.'
 	task 'test', 'run promise/A+ tests', (opts) ->
-		if not opts.grep
+		if opts.grep == '.'
 			require './test/basic'
 
 		require('./test/compliance.coffee') {
@@ -80,7 +86,7 @@ module.exports = (task, option) ->
 			kit.spawn 'coffee', [path, sync]
 
 	task 'clean', 'Clean temp files', ->
-		kit.remove '{.nokit,dist,.coffee,.nobone}'
+		kit.remove '{.nokit,lib,.coffee,.nobone}'
 
 	option '--browserPort <8227>', 'browser test port', 8227
 	task 'browser', 'Unit test on browser', (opts) ->
@@ -91,7 +97,11 @@ module.exports = (task, option) ->
 				when '/'
 					kit.readFile 'test/browser.html', (html) ->
 						all = ''
-						kit.warp ['src/yaku.coffee', 'test/basic.coffee']
+						kit.warp([
+							'src/yaku.coffee'
+							'src/utils.coffee'
+							'test/basic.coffee'
+						])
 						.load kit.drives.auto 'compile'
 						.load (f) ->
 							all += f.contents + '\n\n'

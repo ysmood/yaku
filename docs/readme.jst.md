@@ -99,6 +99,12 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 <%= doc['src/yaku.coffee'] %>
 
+# Utils
+
+To use it you have to require it separately: `utils = require 'yaku/lib/utils'`.
+
+<%= doc['src/utils.coffee'] %>
+
 # Unit Test
 
 This project use [promises-aplus-tests][] to test the compliance of Promise/A+ specification. There are about 900 test cases.

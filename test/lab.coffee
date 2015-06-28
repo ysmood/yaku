@@ -1,17 +1,7 @@
-Promise_Yaku = require '../src/yaku'
-Promise_Bird = require 'bluebird'
+Promise = require '../src/yaku'
+utils = require '../src/utils'
 
-Promise_Yaku.enableLongStackTrace()
-Promise_Bird.longStackTraces()
-
-test = (Promise) ->
-    p = new Promise (r) ->
-        r new Promise (r) ->
-            a()
-
-    p.then((value) ->
-        console.log(value)
-    );
-
-test Promise_Yaku
-# test Promise_Bird
+utils.async 2, ->
+	new Promise (r) ->
+		console.log 'tick'
+		setTimeout r, 1000

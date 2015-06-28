@@ -2,7 +2,7 @@
   "name": "yaku",
   "version": "0.2.3",
   "description": "A ES6 Promise/A+ implementation that doesn't hurt.",
-  "main": "dist/yaku.js",
+  "main": "lib/yaku.js",
   "scripts": {
     "no": "no",
     "test": "no test",
@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/ysmood/yaku",
   "files": [
-    "dist/yaku.js"
+    "lib/yaku.js",
+    "lib/utils.js"
   ],
   "devDependencies": {
     "bluebird": "2.9.27",
