@@ -1,3 +1,8 @@
+<a href="http://promisesaplus.com/">
+    <img src="http://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo"
+         title="Promises/A+ 1.1 compliant" align="right" />
+</a>
+
 # Overview
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster.
@@ -301,6 +306,213 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         ```coffee
         Promise = require 'yaku'
         Promise.enableLongStackTrace()
+        ```
+
+
+
+# Utils
+
+To use it you have to require it separately: `utils = require 'yaku/lib/utils'`.
+If you want to use it in the browser, you have to use `browserify` or `webpack`.
+
+- ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L68)**
+
+    An throttled version of `Promise.all`, it runs all the tasks under
+    a concurrent limitation.
+    To run tasks sequentially, use `utils.flow`.
+
+    - **<u>param</u>**: `limit` { _Int_ }
+
+        The max task to run at a time. It's optional.
+        Default is `Infinity`.
+
+    - **<u>param</u>**: `list` { _Array | Function_ }
+
+        If the list is an array, it should be a list of functions or promises,
+        and each function will return a promise.
+        If the list is a function, it should be a iterator that returns
+        a promise, when it returns `utils.end`, the iteration ends. Of course
+        it can never end.
+
+    - **<u>param</u>**: `saveResults` { _Boolean_ }
+
+        Whether to save each promise's result or
+        not. Default is true.
+
+    - **<u>param</u>**: `progress` { _Function_ }
+
+        If a task ends, the resolve value will be
+        passed to this function.
+
+    - **<u>return</u>**: { _Promise_ }
+
+    - **<u>example</u>**:
+
+        ```coffee
+        kit = require 'nokit'
+        utils = require 'yaku/lib/utils'
+
+        urls = [
+         'http://a.com'
+         'http://b.com'
+         'http://c.com'
+         'http://d.com'
+        ]
+        tasks = [
+         -> kit.request url[0]
+         -> kit.request url[1]
+         -> kit.request url[2]
+         -> kit.request url[3]
+        ]
+
+        utils.async(tasks).then ->
+         kit.log 'all done!'
+
+        utils.async(2, tasks).then ->
+         kit.log 'max concurrent limit is 2'
+
+        utils.async 3, ->
+         url = urls.pop()
+         if url
+             kit.request url
+         else
+             utils.end
+        .then ->
+         kit.log 'all done!'
+        ```
+
+- ### **[callbackify(fn, self)](src/utils.coffee?source#L145)**
+
+    If a function returns promise, convert it to
+    node callback style function.
+
+    - **<u>param</u>**: `fn` { _Function_ }
+
+    - **<u>param</u>**: `self` { _Any_ }
+
+        The `this` to bind to the fn.
+
+    - **<u>return</u>**: { _Function_ }
+
+- ### **[Deferred](src/utils.coffee?source#L167)**
+
+    Create a `jQuery.Deferred` like object.
+
+- ### **[end](src/utils.coffee?source#L179)**
+
+    The end symbol.
+
+- ### **[flow(fns)](src/utils.coffee?source#L234)**
+
+    Creates a function that is the composition of the provided functions.
+    Besides, it can also accept async function that returns promise.
+    See `utils.async`, if you need concurrent support.
+
+    - **<u>param</u>**: `fns` { _Function | Array_ }
+
+        Functions that return
+        promise or any value.
+        And the array can also contains promises or values other than function.
+        If there's only one argument and it's a function, it will be treated as an iterator,
+        when it returns `utils.end`, the iteration ends.
+
+    - **<u>return</u>**: { _Function_ }
+
+        `(val) -> Promise` A function that will return a promise.
+
+    - **<u>example</u>**:
+
+        It helps to decouple sequential pipeline code logic.
+        ```coffee
+        kit = require 'nokit'
+        utils = require 'yaku/lib/utils'
+
+        createUrl = (name) ->
+        	return "http://test.com/" + name
+
+        curl = (url) ->
+        	kit.request(url).then (body) ->
+        		kit.log 'get'
+        		body
+
+        save = (str) ->
+        	kit.outputFile('a.txt', str).then ->
+        		kit.log 'saved'
+
+        download = utils.flow createUrl, curl, save
+        # same as "download = utils.flow [createUrl, curl, save]"
+
+        download 'home'
+        ```
+
+    - **<u>example</u>**:
+
+        Walk through first link of each page.
+        ```coffee
+        kit = require 'nokit'
+        utils = require 'yaku/lib/utils'
+
+        list = []
+        iter = (url) ->
+        	return utils.end if not url
+
+        	kit.request url
+        	.then (body) ->
+        		list.push body
+        		m = body.match /href="(.+?)"/
+        		m[0] if m
+
+        walker = utils.flow iter
+        walker 'test.com'
+        ```
+
+- ### **[isPromise(obj)](src/utils.coffee?source#L279)**
+
+    Check if an object is a promise-like object.
+
+    - **<u>param</u>**: `obj` { _Object_ }
+
+    - **<u>return</u>**: { _Boolean_ }
+
+- ### **[promisify(fn, self)](src/utils.coffee?source#L289)**
+
+    Convert a node callback style function to a function that returns
+    promise.
+
+    - **<u>param</u>**: `fn` { _Function_ }
+
+    - **<u>param</u>**: `self` { _Any_ }
+
+        The `this` to bind to the fn.
+
+    - **<u>return</u>**: { _Function_ }
+
+- ### **[sleep(time, val)](src/utils.coffee?source#L308)**
+
+    Create a promise that will wait for a while before resolution.
+
+    - **<u>param</u>**: `time` { _Integer_ }
+
+        The unit is millisecond.
+
+    - **<u>param</u>**: `val` { _Any_ }
+
+        What the value this promise will resolve.
+
+    - **<u>return</u>**: { _Promise_ }
+
+- ### **[throw(err)](src/utils.coffee?source#L322)**
+
+    Throw an error to break the program.
+
+    - **<u>param</u>**: `err` { _Any_ }
+
+    - **<u>example</u>**:
+
+        ```coffee
+        Promise.resolve().then ->
+        	# This error won't be caught by promise.
+        	utils.throw 'break the program!'
         ```
 
 

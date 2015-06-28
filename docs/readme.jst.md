@@ -1,3 +1,8 @@
+<a href="http://promisesaplus.com/">
+    <img src="http://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo"
+         title="Promises/A+ 1.1 compliant" align="right" />
+</a>
+
 # Overview
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster.
@@ -102,6 +107,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 # Utils
 
 To use it you have to require it separately: `utils = require 'yaku/lib/utils'`.
+If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
 <%= doc['src/utils.coffee'] %>
 
