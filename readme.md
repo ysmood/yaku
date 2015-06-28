@@ -22,7 +22,7 @@ ideas: [docs/lazyTree.md][].
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
 - Designed to work on IE5+ and other major browsers
-- Better `possibly unhandled rejection` and `long stack trace` than [Bluebird][]
+- [Better][docs/debugHelperComparison.md] `possibly unhandled rejection` and `long stack trace` than [Bluebird][]
 - Well commented source code with every Promise/A+ spec
 
 # Quick Start
