@@ -188,3 +188,19 @@ if utils
 		.then (v) ->
 			list.push v
 			list
+
+	test 'promisify promise', 1, ->
+		fn = utils.promisify (val, cb) ->
+			setTimeout ->
+				cb null, val + 1
+
+		fn 0
+
+	test 'promisify callback', 1, ->
+		fn = utils.promisify (val, cb) ->
+			setTimeout ->
+				cb null, val + 1
+
+		new Promise (r) ->
+			fn 0, (err, val) ->
+				r val
