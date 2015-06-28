@@ -297,7 +297,7 @@ utils = module.exports =
 	 * 	console.log val # output => 1
 	 *
 	 * # It also supports the callback style.
-	 * bar 0, (val) ->
+	 * bar 0, (err, val) ->
 	 * 	console.log val # output => 1
 	 * ```
 	###
