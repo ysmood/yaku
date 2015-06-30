@@ -518,7 +518,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[throw(err)](src/utils.coffee?source#L345)**
+- ### **[throw(err)](src/utils.coffee?source#L337)**
 
     Throw an error to break the program.
 
