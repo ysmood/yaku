@@ -70,7 +70,7 @@ do (root = this or window) -> class Yaku
 	 * ```
 	###
 	catch: (onRejected) ->
-		@then undefined, onRejected
+		@then $nil, onRejected
 
 	###*
 	 * The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
@@ -211,44 +211,8 @@ do (root = this or window) -> class Yaku
 	@onUnhandledRejection: (reason, p) ->
 		return if not isObject console
 
-		stackInfo = []
-
-		trim = (str) -> str.replace /^\s+|\s+$/g
-
-		if isLongStackTrace and p[$promiseTrace]
-			push = (trace) ->
-				stackInfo.push trim trace
-
-			if p[$settlerTrace]
-				push p[$settlerTrace]
-
-			# Hope you guys could understand how the back trace works.
-			# We only have to iter through the tree from the bottom to root.
-			iter = (node) ->
-				return if not node
-				iter node._next
-				push node[$promiseTrace]
-				iter node._pre
-
-			iter p
-
-		stackStr = '\n' + stackInfo.join('\n')
-
-		clean = (stack) ->
-			if typeof __filename == 'string'
-				stack.replace ///.+#{__filename}.+\n?///g, ''
-
-		console.error 'Unhandled Rejection:', (
-			if reason
-				if reason.stack
-					clean trim reason.stack
-				else
-					reason
-			else
-				reason
-		), clean(stackStr)
-
-		return
+		info = genStackInfo reason, p
+		console.error 'Unhandled Rejection:', info[0], info[1]
 
 	isLongStackTrace = false
 
@@ -277,6 +241,7 @@ do (root = this or window) -> class Yaku
 	$tryCatchFn = null
 	$tryErr = { e: null }
 	$noop = {}
+	$nil = undefined
 
 	isObject = (obj) ->
 		typeof obj == 'object'
@@ -291,7 +256,7 @@ do (root = this or window) -> class Yaku
 	 * @param  {String | Number} key
 	###
 	release = (obj, key) ->
-		obj[key] = undefined
+		obj[key] = $nil
 		return
 
 	###*
@@ -418,7 +383,7 @@ do (root = this or window) -> class Yaku
 	genTraceInfo = (noTitle) ->
 		(new Error).stack
 			.replace 'Error',
-				(if noTitle then '' else 'From previous event:')
+				(if noTitle then '' else $fromPrevious)
 
 	# ************************** Promise Constant **************************
 
@@ -437,6 +402,8 @@ do (root = this or window) -> class Yaku
 	$circularChain = 'promise_circular_chain'
 
 	$invalid_argument = 'invalid_argument'
+
+	$fromPrevious = 'From previous event:'
 
 	# Default state
 	_state: $pending
@@ -513,7 +480,7 @@ do (root = this or window) -> class Yaku
 
 		# 2.2.7.3
 		# 2.2.7.4
-		if handler == undefined
+		if handler == $nil
 			settlePromise p2, p1._state, p1._value
 			return
 
@@ -545,6 +512,47 @@ do (root = this or window) -> class Yaku
 
 		return
 
+	genStackInfo = (reason, p) ->
+		stackInfo = []
+
+		trim = (str) -> str.replace /^\s+|\s+$/g
+
+		if isLongStackTrace and p[$promiseTrace]
+			push = (trace) ->
+				stackInfo.push trim trace
+
+			if p[$settlerTrace]
+				push p[$settlerTrace]
+
+			# Hope you guys could understand how the back trace works.
+			# We only have to iter through the tree from the bottom to root.
+			iter = (node) ->
+				return if not node
+				iter node._next
+				push node[$promiseTrace]
+				iter node._pre
+
+			iter p
+
+		stackStr = '\n' + stackInfo.join('\n')
+
+		clean = (stack, cleanPrev) ->
+			if cleanPrev
+				stack = stack.slice 0, stack.indexOf('\n' + $fromPrevious)
+
+			if typeof __filename == 'string'
+				stack.replace ///.+#{__filename}.+\n?///g, ''
+
+		return [(
+			if reason
+				if reason.stack
+					clean (trim reason.stack), true
+				else
+					reason
+			else
+				reason
+		), clean(stackStr)]
+
 	callHanler = (handler, value) ->
 		# 2.2.5
 		handler value
@@ -565,9 +573,13 @@ do (root = this or window) -> class Yaku
 		p._state = state
 		p._value = value
 
-		if state == $rejected and
-		(not p._pre or p._pre._state == $resolved)
-			scheduleUnhandledRejection p
+		if state == $rejected
+			if isLongStackTrace and value and value.stack
+				stack = genStackInfo value, p
+				value.stack = stack[0] + stack[1]
+
+			if not p._pre or p._pre._state == $resolved
+				scheduleUnhandledRejection p
 
 		i = 0
 		len = p._pCount
