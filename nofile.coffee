@@ -99,7 +99,6 @@ module.exports = (task, option) ->
 						all = ''
 						kit.warp([
 							'src/yaku.coffee'
-							'src/utils.coffee'
 							'test/basic.coffee'
 						])
 						.load kit.drives.auto 'compile'
