@@ -1,4 +1,4 @@
-- v0.2.6
+- v0.2.7
 
   - opt: long stack trace
 

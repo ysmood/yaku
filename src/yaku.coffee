@@ -515,7 +515,7 @@ do (root = this or window) -> class Yaku
 	genStackInfo = (reason, p) ->
 		stackInfo = []
 
-		trim = (str) -> str.replace /^\s+|\s+$/g
+		trim = (str) -> str.replace /^\s+|\s+$/g, ''
 
 		if isLongStackTrace and p[$promiseTrace]
 			push = (trace) ->
@@ -537,8 +537,8 @@ do (root = this or window) -> class Yaku
 		stackStr = '\n' + stackInfo.join('\n')
 
 		clean = (stack, cleanPrev) ->
-			if cleanPrev
-				stack = stack.slice 0, stack.indexOf('\n' + $fromPrevious)
+			if cleanPrev and (i = stack.indexOf('\n' + $fromPrevious)) > 0
+				stack = stack.slice 0, i
 
 			if typeof __filename == 'string'
 				stack.replace ///.+#{__filename}.+\n?///g, ''
