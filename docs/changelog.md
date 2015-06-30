@@ -1,3 +1,7 @@
+- v0.2.6
+
+  - opt: long stack trace
+
 - v0.2.5
 
   - add: some useful utils

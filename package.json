@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "An ES6 Promise/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "scripts": {
@@ -28,11 +28,11 @@
     "lib/utils.js"
   ],
   "devDependencies": {
-    "bluebird": "2.9.27",
+    "bluebird": "2.9.30",
     "coffee-script": "1.9.3",
     "coffeelint": "1.10.1",
-    "es6-promise": "2.2.0",
-    "nokit": "0.8.0",
+    "es6-promise": "2.3.0",
+    "nokit": "0.8.3",
     "promises-aplus-tests": "*",
     "q": "1.4.1",
     "uglify-js": "2.4.23"
