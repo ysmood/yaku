@@ -219,6 +219,9 @@ do (root = this or window) -> class Yaku
 	###*
 	 * It is used to enable the long stack trace.
 	 * Once it is enabled, it can't be reverted.
+	 * While it is very helpful in development and testing environments,
+	 * it is not recommended to use it in production. It will slow down your
+	 * application and waste your memory.
 	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'

@@ -296,10 +296,13 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L228)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L231)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
+    While it is very helpful in development and testing environments,
+    it is not recommended to use it in production. It will slow down your
+    application and waste your memory.
 
     - **<u>example</u>**:
 
