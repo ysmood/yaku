@@ -156,6 +156,16 @@ if utils
 
 		utils.async 2, list
 
+	test 'async error', $val, ->
+		list = [
+			-> utils.sleep 10, 1
+			-> throw $val
+			-> utils.sleep 10, 3
+		]
+
+		utils.async 2, list
+		.catch (err) -> err
+
 	test 'async iter progress', 10, ->
 		iter = ->
 			i = 0
@@ -176,6 +186,13 @@ if utils
 			Promise.resolve 'b'
 			(v) -> v + 'c'
 		])(0)
+
+	test 'flow error', $val, ->
+		(utils.flow [
+			'a'
+			Promise.resolve 'b'
+			(v) -> throw $val
+		])(0).catch (err) -> err
 
 	test 'flow iter', [0, 1, 2, 3], ->
 		list = []

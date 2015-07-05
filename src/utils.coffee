@@ -79,8 +79,9 @@ utils = module.exports =
 		saveResults ?= true
 
 		if isArray list
+			iterIndex = 0
 			iter = ->
-				[el] = list.splice 0, 1
+				el = list[iterIndex++]
 				if el == undefined
 					utils.end
 				else if isFunction el
@@ -100,7 +101,7 @@ utils = module.exports =
 				try
 					task = iter()
 				catch err
-					return Promise.reject err
+					return reject err
 
 				if isIterDone or task == utils.end
 					isIterDone = true
@@ -119,7 +120,7 @@ utils = module.exports =
 						resutls.push ret
 					progress? ret
 					addTask()
-				.catch (err) ->
+				, (err) ->
 					running--
 					reject err
 
@@ -233,8 +234,9 @@ utils = module.exports =
 	###
 	flow: (fns...) -> (val) ->
 		genIter = (arr) ->
+			iterIndex = 0
 			(val) ->
-				[fn] = arr.splice 0, 1
+				fn = arr[iterIndex++]
 				if fn == undefined
 					utils.end
 				else if isFunction fn
@@ -258,7 +260,7 @@ utils = module.exports =
 				try
 					fn = iter val
 				catch err
-					Promise.reject err
+					return Promise.reject err
 
 				return val if fn == utils.end
 
