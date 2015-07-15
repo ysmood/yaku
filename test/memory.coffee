@@ -1,13 +1,15 @@
 Promise = require '../src/yaku'
-utils = require '../src/utils'
 
 p = Promise.resolve()
+count = 0
 
 setInterval ->
     p = p.then ->
-        return utils.sleep 0, { data: 'ok' }
-
+        new Promise (r) ->
+            setTimeout ->
+                count++
+                r { data: 'ok' }
 
 setInterval ->
-    console.log process.memoryUsage()
+    console.log count, process.memoryUsage()
 , 1000
