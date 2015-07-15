@@ -69,6 +69,7 @@ utils = module.exports =
 		resutls = []
 		running = 0
 		isIterDone = false
+		iterIndex = 0
 
 		if not isNumber limit
 			progress = saveResults
@@ -79,9 +80,8 @@ utils = module.exports =
 		saveResults ?= true
 
 		if isArray list
-			iterIndex = 0
 			iter = ->
-				el = list[iterIndex++]
+				el = list[iterIndex]
 				if el == undefined
 					utils.end
 				else if isFunction el
@@ -98,10 +98,8 @@ utils = module.exports =
 
 		new Promise (resolve, reject) ->
 			addTask = ->
-				try
-					task = iter()
-				catch err
-					return reject err
+				task = iter()
+				index = iterIndex++
 
 				if isIterDone or task == utils.end
 					isIterDone = true
@@ -117,7 +115,7 @@ utils = module.exports =
 				p.then (ret) ->
 					running--
 					if saveResults
-						resutls.push ret
+						resutls[index] = ret
 					progress? ret
 					addTask()
 				, (err) ->

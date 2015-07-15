@@ -149,7 +149,7 @@ if utils
 
 	test 'async array', [1, 2, 3], ->
 		list = [
-			-> utils.sleep 10, 1
+			-> utils.sleep 20, 1
 			-> utils.sleep 10, 2
 			-> utils.sleep 10, 3
 		]
