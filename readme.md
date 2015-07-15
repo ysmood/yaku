@@ -384,7 +384,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
          kit.log 'all done!'
         ```
 
-- ### **[callbackify(fn, self)](src/utils.coffee?source#L146)**
+- ### **[callbackify(fn, self)](src/utils.coffee?source#L144)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -397,15 +397,15 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.coffee?source#L168)**
+- ### **[Deferred](src/utils.coffee?source#L166)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end](src/utils.coffee?source#L180)**
+- ### **[end](src/utils.coffee?source#L178)**
 
     The end symbol.
 
-- ### **[flow(fns)](src/utils.coffee?source#L235)**
+- ### **[flow(fns)](src/utils.coffee?source#L233)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -469,7 +469,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         walker 'test.com'
         ```
 
-- ### **[isPromise(obj)](src/utils.coffee?source#L281)**
+- ### **[isPromise(obj)](src/utils.coffee?source#L279)**
 
     Check if an object is a promise-like object.
 
@@ -477,7 +477,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L306)**
+- ### **[promisify(fn, self)](src/utils.coffee?source#L304)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -507,7 +507,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	console.log val # output => 1
         ```
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L325)**
+- ### **[sleep(time, val)](src/utils.coffee?source#L323)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -521,7 +521,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[throw(err)](src/utils.coffee?source#L339)**
+- ### **[throw(err)](src/utils.coffee?source#L337)**
 
     Throw an error to break the program.
 

@@ -1,6 +1,7 @@
-- v0.2.9
+- v0.3.0
 
   - opt: minor change, better performance
+  - fix: #8
 
 - v0.2.8
 
