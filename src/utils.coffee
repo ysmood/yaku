@@ -68,6 +68,7 @@ utils = module.exports =
 	async: (limit, list, saveResults, progress) ->
 		resutls = []
 		running = 0
+		reached = 0
 		isIterDone = false
 
 		if not isNumber limit
@@ -114,12 +115,14 @@ utils = module.exports =
 					p = Promise.resolve task
 
 				running++
-				p.then (ret) ->
-					running--
-					if saveResults
-						resutls.push ret
-					progress? ret
-					addTask()
+				reached++
+				p.then do (seq = reached - 1) ->
+					(ret) ->
+						running--
+						if saveResults
+							resutls[seq] = ret
+						progress? ret
+						addTask()
 				, (err) ->
 					running--
 					reject err
