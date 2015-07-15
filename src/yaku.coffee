@@ -584,6 +584,9 @@ do (root = this or window) -> class Yaku
 			if not p._pre or p._pre._state == $resolved
 				scheduleUnhandledRejection p
 
+		if not isLongStackTrace
+			p._pre = null
+
 		i = 0
 		len = p._pCount
 
