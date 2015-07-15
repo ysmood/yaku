@@ -18,7 +18,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.7KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.8KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - 100% compliant with Promise/A+ specs
 - Better performance than the native Promise
 - Designed to work on IE5+ and other major browsers
@@ -64,7 +64,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 | Name                 | Unit Test | 1ms async task | sync task | Helpers | file size |
 | -------------------- | --------- | -------------- | --------- | ------- | --------- |
-| Yaku                 | 872/872   | 283ms          | 68ms      | ++      | 3.7KB |
+| Yaku                 | 872/872   | 283ms          | 68ms      | ++      | 3.8KB |
 | [Bluebird][] v2.9    | 872/872   | 272ms          | 164ms     | +++++++ | 73KB      |
 | [ES6-promise][] v2.1 | 872/872   | 459ms          | 110ms     | +       | 18KB      |
 | [native][] iojs v1.8 | 872/872   | 826ms          | 605ms     | +       | 0KB       |
@@ -102,7 +102,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 # API
 
-- ### **[constructor(executor)](src/yaku.coffee?source#L24)**
+- ### **[constructor(executor)](src/yaku.coffee?source#L29)**
 
     This class follows the [Promises/A+](https://promisesaplus.com) and
     [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
@@ -126,7 +126,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         			reject 'no'
         ```
 
-- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L54)**
+- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L59)**
 
     Appends fulfillment and rejection handlers to the promise,
     and returns a new promise resolving to the return value of the called handler.
@@ -154,7 +154,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log v
         ```
 
-- ### **[catch(onRejected)](src/yaku.coffee?source#L72)**
+- ### **[catch(onRejected)](src/yaku.coffee?source#L77)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -178,7 +178,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log v
         ```
 
-- ### **[@resolve(value)](src/yaku.coffee?source#L88)**
+- ### **[@resolve(value)](src/yaku.coffee?source#L93)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -198,7 +198,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         p = Promise.resolve 10
         ```
 
-- ### **[@reject(reason)](src/yaku.coffee?source#L102)**
+- ### **[@reject(reason)](src/yaku.coffee?source#L107)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -215,7 +215,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         p = Promise.reject 10
         ```
 
-- ### **[@race(iterable)](src/yaku.coffee?source#L124)**
+- ### **[@race(iterable)](src/yaku.coffee?source#L129)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -243,7 +243,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log value # => 123
         ```
 
-- ### **[@all(iterable)](src/yaku.coffee?source#L161)**
+- ### **[@all(iterable)](src/yaku.coffee?source#L166)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -272,7 +272,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log values # => [123, 0]
         ```
 
-- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L211)**
+- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L216)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -296,7 +296,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L231)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L236)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.

@@ -1,3 +1,7 @@
+- v0.2.9
+
+  - opt: minor change, better performance
+
 - v0.2.8
 
   - fix: error handler bugs of `utils.async` and `utils.flow`.
