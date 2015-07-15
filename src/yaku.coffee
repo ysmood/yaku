@@ -1,7 +1,12 @@
 
 
-do (root = this or window) -> class Yaku
+do -> class Yaku
 	'use strict'
+
+	root = if typeof global == 'object'
+		global
+	else
+		window
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
