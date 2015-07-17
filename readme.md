@@ -5,8 +5,7 @@
 
 # Overview
 
-Yaku is full compatible with ES6's native [Promise][native], but much faster.
-
+Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
 If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code.
 It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][].
 
