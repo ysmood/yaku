@@ -10,7 +10,6 @@ do -> class Yaku
 	else
 		window
 
-
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
 	 * [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
@@ -349,17 +348,16 @@ do -> class Yaku
 		 * @private
 		 * @param {Function} fn The flush task.
 		###
-		scheduleFlush = Yaku.nextTick or do ->
-			try
-				root.process.nextTick
-			catch
-				setTimeout
+		Yaku.nextTick = try
+			root.process.nextTick
+		catch
+			setTimeout
 
 		(p, v) ->
 			fnQueue[fnQueueLen++] = p
 			fnQueue[fnQueueLen++] = v
 
-			scheduleFlush flush if fnQueueLen == 2
+			Yaku.nextTick flush if fnQueueLen == 2
 
 			return
 
