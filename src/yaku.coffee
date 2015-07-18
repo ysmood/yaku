@@ -503,7 +503,7 @@ do -> class Yaku
 
 		return
 
-	scheduleUnhandledRejection = genScheduler 100, (p) ->
+	scheduleUnhandledRejection = genScheduler 10, (genScheduler 10, (p) ->
 		# iter tree
 		iter = (node) ->
 			i = 0
@@ -519,6 +519,7 @@ do -> class Yaku
 			Yaku.onUnhandledRejection p._value, p
 
 		return
+	)
 
 	genStackInfo = (reason, p) ->
 		stackInfo = []
