@@ -244,6 +244,7 @@ do -> class Yaku
 	 * so many ways to polyfill it. Yaku won't do it for you, instead you
 	 * can choose what you prefer. For example, this project
 	 * [setImmediate](https://github.com/YuzuJS/setImmediate).
+	 * By default, Yaku will use `process.nextTick` on Node, `setTimeout` on browser.
 	 * @type {Function}
 	 * @example
 	 * ```coffee

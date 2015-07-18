@@ -310,12 +310,13 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.enableLongStackTrace()
         ```
 
-- ### **[@nextTick](src/yaku.coffee?source#L254)**
+- ### **[@nextTick](src/yaku.coffee?source#L255)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
     can choose what you prefer. For example, this project
     [setImmediate](https://github.com/YuzuJS/setImmediate).
+    By default, Yaku will use `process.nextTick` on Node, `setTimeout` on browser.
 
     - **<u>type</u>**: { _Function_ }
 
