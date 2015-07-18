@@ -496,6 +496,8 @@ do -> class Yaku
 
 		return
 
+	# Why are there two "genScheduler"s?
+	# Well, to support the babel's es7 async-await polyfill, I have to hack it.
 	scheduleUnhandledRejection = genScheduler 9, (genScheduler 9, (p) ->
 		# iter tree
 		iter = (node) ->
