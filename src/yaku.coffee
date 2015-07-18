@@ -3,10 +3,13 @@
 do -> class Yaku
 	'use strict'
 
+	$nil = undefined
+
 	root = if typeof global == 'object'
 		global
 	else
 		window
+
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
@@ -237,6 +240,20 @@ do -> class Yaku
 		isLongStackTrace = true
 		return
 
+	###*
+	 * Only Node has `process.nextTick` function. For browser there are
+	 * so many ways to polyfill it. Yaku won't do it for you, instead you
+	 * can choose what you prefer. For example, this project
+	 * [setImmediate](https://github.com/YuzuJS/setImmediate).
+	 * @type {Function}
+	 * @example
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * Promise.nextTick = window.setImmediate
+	 * ```
+	###
+	@nextTick: $nil
+
 # ********************** Private **********************
 
 	###
@@ -249,7 +266,6 @@ do -> class Yaku
 	$tryCatchFn = null
 	$tryErr = { e: null }
 	$noop = {}
-	$nil = undefined
 
 	isObject = (obj) ->
 		typeof obj == 'object'
@@ -333,39 +349,17 @@ do -> class Yaku
 		 * @private
 		 * @param {Function} fn The flush task.
 		###
-		scheduleFlush = do ->
-			doc = root.document
-
+		scheduleFlush = Yaku.nextTick or do ->
 			try
-				nextTick = root.process.nextTick
-				return ->
-					nextTick flush
-					return
-
-			if nextTick = root.setImmediate
-				->
-					nextTick flush
-					return
-
-			else if mutationObserver = root.MutationObserver
-				content = 1
-				node = doc.createTextNode ''
-				observer = new mutationObserver flush
-				observer.observe node, characterData: true
-				->
-					node.data = (content = -content)
-					return
-
-			else
-				->
-					setTimeout flush
-					return
+				root.process.nextTick
+			catch
+				setTimeout
 
 		(p, v) ->
 			fnQueue[fnQueueLen++] = p
 			fnQueue[fnQueueLen++] = v
 
-			scheduleFlush() if fnQueueLen == 2
+			scheduleFlush flush if fnQueueLen == 2
 
 			return
 
@@ -483,7 +477,7 @@ do -> class Yaku
 	 * @param {Yaku} p1
 	 * @param {Yaku} p2
 	###
-	scheduleHandler = genScheduler 1000, (p1, p2) ->
+	scheduleHandler = genScheduler 999, (p1, p2) ->
 		handler = if p1._state then p2._onFulfilled else p2._onRejected
 
 		# 2.2.7.3
@@ -503,7 +497,7 @@ do -> class Yaku
 
 		return
 
-	scheduleUnhandledRejection = genScheduler 10, (genScheduler 10, (p) ->
+	scheduleUnhandledRejection = genScheduler 9, (genScheduler 9, (p) ->
 		# iter tree
 		iter = (node) ->
 			i = 0
