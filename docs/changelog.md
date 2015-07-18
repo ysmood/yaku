@@ -1,3 +1,7 @@
+- v0.3.1
+
+  - add: nextTick api
+
 - v0.3.0
 
   - opt: minor change, better performance
