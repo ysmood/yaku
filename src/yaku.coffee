@@ -500,17 +500,18 @@ do -> class Yaku
 	# Well, to support the babel's es7 async-await polyfill, I have to hack it.
 	scheduleUnhandledRejection = genScheduler 9, (genScheduler 9, (p) ->
 		# iter tree
-		iter = (node) ->
+		hasHandler = (node) ->
 			i = 0
 			len = node._pCount
-			return if node._onRejected
 
 			while i < len
-				return if not iter node[i++]
+				child = node[i++]
+				return true if child._onRejected
+				return true if hasHandler child
 
-			return true
+			return
 
-		if iter p
+		if not hasHandler p
 			Yaku.onUnhandledRejection p._value, p
 
 		return
@@ -582,8 +583,7 @@ do -> class Yaku
 				stack = genStackInfo value, p
 				value.stack = stack[0] + stack[1]
 
-			if not p._pre or p._pre._state == $resolved
-				scheduleUnhandledRejection p
+			scheduleUnhandledRejection p
 
 		if not isLongStackTrace
 			p._pre = $nil

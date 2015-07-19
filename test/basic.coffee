@@ -105,9 +105,22 @@ test 'unhandled rejection', $val, ->
 
 		Yaku.onUnhandledRejection = (reason, p) ->
 			old reason, p
+			Yaku.onUnhandledRejection = old
 			r reason
 
 		Yaku.reject $val
+
+test 'unhandled rejection inside a catch', $val, ->
+	new Yaku (r) ->
+		old = Yaku.onUnhandledRejection
+
+		Yaku.onUnhandledRejection = (reason, p) ->
+			old reason, p
+			Yaku.onUnhandledRejection = old
+			r reason
+
+		Yaku.reject().catch ->
+			Yaku.reject $val
 
 randomPromise = (i) ->
 	new Yaku (r) ->
