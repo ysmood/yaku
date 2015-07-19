@@ -1,6 +1,6 @@
 
 
-do -> class Yaku
+class Yaku
 	'use strict'
 
 	$nil = undefined
