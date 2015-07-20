@@ -54,9 +54,11 @@ test = (name, shouldBe, fn) ->
 	if out and out.then
 		out.then (v) ->
 			report assert v, shouldBe
+		, (->)
 	else
 		report assert fn(), shouldBe
 
+Yaku.enableLongStackTrace()
 
 $val = { val: 'ok' }
 
@@ -99,28 +101,45 @@ test 'chain', 'ok', ->
 				r 'ok'
 			, 10
 
-test 'unhandled rejection', $val, ->
-	new Yaku (r) ->
-		old = Yaku.onUnhandledRejection
+Yaku.resolve().then ->
+	test 'unhandled rejection', $val, ->
+		new Yaku (r) ->
+			old = Yaku.onUnhandledRejection
 
-		Yaku.onUnhandledRejection = (reason, p) ->
-			old reason, p
-			Yaku.onUnhandledRejection = old
-			r reason
+			Yaku.onUnhandledRejection = (reason, p) ->
+				old reason, p
+				Yaku.onUnhandledRejection = old
+				r reason
 
-		Yaku.reject $val
+			setTimeout ->
+				Yaku.reject $val
+			, 3000
 
-test 'unhandled rejection inside a catch', $val, ->
-	new Yaku (r) ->
-		old = Yaku.onUnhandledRejection
+.then ->
+	test 'no unhandled rejection', $val, ->
+		new Yaku (resolve, reject) ->
+			old = Yaku.onUnhandledRejection
 
-		Yaku.onUnhandledRejection = (reason, p) ->
-			old reason, p
-			Yaku.onUnhandledRejection = old
-			r reason
+			Yaku.onUnhandledRejection = (reason, p) ->
+				Yaku.onUnhandledRejection = old
+				reject()
 
-		Yaku.reject().catch ->
-			Yaku.reject $val
+			Yaku.reject().catch ->
+				setTimeout ->
+					resolve $val
+				, 100
+
+.then ->
+	test 'unhandled rejection inside a catch', $val, ->
+		new Yaku (r) ->
+			old = Yaku.onUnhandledRejection
+
+			Yaku.onUnhandledRejection = (reason, p) ->
+				Yaku.onUnhandledRejection = old
+				r reason
+
+			Yaku.reject().catch ->
+				Yaku.reject $val
 
 randomPromise = (i) ->
 	new Yaku (r) ->
