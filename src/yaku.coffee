@@ -285,16 +285,6 @@ class Yaku
 		typeof obj == 'function'
 
 	###*
-	 * Release the specified key of an object.
-	 * @private
-	 * @param  {Object} obj
-	 * @param  {String | Number} key
-	###
-	release = (obj, key) ->
-		obj[key] = $nil
-		return
-
-	###*
 	 * Wrap a function into a try-catch.
 	 * @private
 	 * @return {Any | $tryErr}
@@ -340,10 +330,10 @@ class Yaku
 			i = 0
 			while i < fnQueueLen
 				fn fnQueue[i]
-				release fnQueue, i++
+				fnQueue[i++] = $nil
 
 			fnQueueLen = 0
-			fnQueue.length = initQueueSize
+			fnQueue.length = initQueueSize if fnQueue.length > initQueueSize
 
 			return
 
