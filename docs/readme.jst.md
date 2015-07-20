@@ -53,21 +53,22 @@ It supports both `AMD` and `CMD`. Raw usage without `AMD` or `CMD`:
 # Compare
 
 These comparisons only reflect some limited truth, no one is better than all others on all aspects.
+For more details see the [benchmark/readme.md](benchmark/readme.md)
 
 ```
-iojs v1.8.1
+iojs v1.8.4
 OS   darwin
 Arch x64
 CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 ```
 
-| Name                 | Unit Test | 1ms async task | sync task | Helpers | file size |
-| -------------------- | --------- | -------------- | --------- | ------- | --------- |
-| Yaku                 | 872/872   | 283ms          | 68ms      | +++     | <%= doc.size %>KB |
-| [Bluebird][] v2.9    | 872/872   | 272ms          | 164ms     | +++++++ | 73KB      |
-| [ES6-promise][] v2.1 | 872/872   | 459ms          | 110ms     | +       | 18KB      |
-| [native][] iojs v1.8 | 872/872   | 826ms          | 605ms     | +       | 0KB       |
-| [q][] v1.3           | 208/872   | 2710ms         | 2327ms    | +++     | 24K       |
+| Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
+| -------------------- | -------------------- | --------------- | ------- | --------- |
+| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | <%= doc.size %>KB |
+| [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
+| [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
+| [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
+| [q][] v1.3           | 2648ms / 646MB       | 2373ms / 580MB  | +++     | 24K       |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].

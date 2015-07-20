@@ -34,6 +34,7 @@ class Yaku
 	 * 		else
 	 * 			reject 'no'
 	 * 	, 3000
+	 * p.abort()
 	 * ```
 	###
 	constructor: (executor) ->

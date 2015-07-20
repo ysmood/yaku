@@ -53,21 +53,22 @@ It supports both `AMD` and `CMD`. Raw usage without `AMD` or `CMD`:
 # Compare
 
 These comparisons only reflect some limited truth, no one is better than all others on all aspects.
+For more details see the [benchmark/readme.md](benchmark/readme.md)
 
 ```
-iojs v1.8.1
+iojs v1.8.4
 OS   darwin
 Arch x64
 CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 ```
 
-| Name                 | Unit Test | 1ms async task | sync task | Helpers | file size |
-| -------------------- | --------- | -------------- | --------- | ------- | --------- |
-| Yaku                 | 872/872   | 283ms          | 68ms      | +++     | 3.5KB |
-| [Bluebird][] v2.9    | 872/872   | 272ms          | 164ms     | +++++++ | 73KB      |
-| [ES6-promise][] v2.1 | 872/872   | 459ms          | 110ms     | +       | 18KB      |
-| [native][] iojs v1.8 | 872/872   | 826ms          | 605ms     | +       | 0KB       |
-| [q][] v1.3           | 208/872   | 2710ms         | 2327ms    | +++     | 24K       |
+| Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
+| -------------------- | -------------------- | --------------- | ------- | --------- |
+| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.5KB |
+| [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
+| [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
+| [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
+| [q][] v1.3           | 2648ms / 646MB       | 2373ms / 580MB  | +++     | 24K       |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
@@ -101,7 +102,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 # API
 
-- ### **[constructor(executor)](src/yaku.coffee?source#L31)**
+- ### **[constructor(executor)](src/yaku.coffee?source#L40)**
 
     This class follows the [Promises/A+](https://promisesaplus.com) and
     [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
@@ -109,23 +110,32 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
     - **<u>param</u>**: `executor` { _Function_ }
 
-        Function object with two arguments resolve and reject.
+        Function object with three arguments resolve, reject and
+        the promise itself.
         The first argument fulfills the promise, the second argument rejects it.
         We can call these functions, once our operation is completed.
+        The third argument can be used to add custom handlers, such as `abort` or `progress`
+        helpers.
 
     - **<u>example</u>**:
 
         ```coffee
         Promise = require 'yaku'
-        p = new Promise (resolve, reject) ->
-        	setTimeout ->
+        p = new Promise (resolve, reject, self) ->
+        	self.abort = ->
+        		clearTimeout tmr
+        		reject new Error 'abort promise'
+
+        	tmr = setTimeout ->
         		if Math.random() > 0.5
         			resolve 'ok'
         		else
         			reject 'no'
+        	, 3000
+        p.abort()
         ```
 
-- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L61)**
+- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L73)**
 
     Appends fulfillment and rejection handlers to the promise,
     and returns a new promise resolving to the return value of the called handler.
@@ -153,7 +163,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log v
         ```
 
-- ### **[catch(onRejected)](src/yaku.coffee?source#L79)**
+- ### **[catch(onRejected)](src/yaku.coffee?source#L91)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -177,7 +187,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log v
         ```
 
-- ### **[@resolve(value)](src/yaku.coffee?source#L95)**
+- ### **[@resolve(value)](src/yaku.coffee?source#L107)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -197,7 +207,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         p = Promise.resolve 10
         ```
 
-- ### **[@reject(reason)](src/yaku.coffee?source#L109)**
+- ### **[@reject(reason)](src/yaku.coffee?source#L121)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -214,7 +224,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         p = Promise.reject 10
         ```
 
-- ### **[@race(iterable)](src/yaku.coffee?source#L131)**
+- ### **[@race(iterable)](src/yaku.coffee?source#L143)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -242,7 +252,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log value # => 123
         ```
 
-- ### **[@all(iterable)](src/yaku.coffee?source#L168)**
+- ### **[@all(iterable)](src/yaku.coffee?source#L180)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -271,7 +281,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log values # => [123, 0]
         ```
 
-- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L218)**
+- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L230)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -295,7 +305,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L238)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L250)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -310,7 +320,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.enableLongStackTrace()
         ```
 
-- ### **[@nextTick](src/yaku.coffee?source#L255)**
+- ### **[@nextTick](src/yaku.coffee?source#L267)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
