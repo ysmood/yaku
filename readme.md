@@ -334,7 +334,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 To use it you have to require it separately: `utils = require 'yaku/lib/utils'`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L68)**
+- ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L65)**
 
     An throttled version of `Promise.all`, it runs all the tasks under
     a concurrent limitation.
@@ -400,7 +400,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
          kit.log 'all done!'
         ```
 
-- ### **[callbackify(fn, self)](src/utils.coffee?source#L144)**
+- ### **[callbackify(fn, self)](src/utils.coffee?source#L147)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -413,15 +413,15 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.coffee?source#L166)**
+- ### **[Deferred](src/utils.coffee?source#L169)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end](src/utils.coffee?source#L178)**
+- ### **[end](src/utils.coffee?source#L181)**
 
     The end symbol.
 
-- ### **[flow(fns)](src/utils.coffee?source#L233)**
+- ### **[flow(fns)](src/utils.coffee?source#L236)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -485,7 +485,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         walker 'test.com'
         ```
 
-- ### **[isPromise(obj)](src/utils.coffee?source#L279)**
+- ### **[isPromise(obj)](src/utils.coffee?source#L282)**
 
     Check if an object is a promise-like object.
 
@@ -493,7 +493,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L304)**
+- ### **[promisify(fn, self)](src/utils.coffee?source#L307)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -523,7 +523,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	console.log val # output => 1
         ```
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L323)**
+- ### **[sleep(time, val)](src/utils.coffee?source#L326)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -537,7 +537,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[throw(err)](src/utils.coffee?source#L337)**
+- ### **[throw(err)](src/utils.coffee?source#L340)**
 
     Throw an error to break the program.
 
