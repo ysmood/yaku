@@ -258,10 +258,7 @@ utils = module.exports =
 
 		run = (preFn) ->
 			preFn.then (val) ->
-				try
-					fn = iter val
-				catch err
-					return Promise.reject err
+				fn = iter val
 
 				return val if fn == utils.end
 

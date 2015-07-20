@@ -177,8 +177,11 @@ test 'race', 0, ->
 
 if utils
 
-	test 'async array', [1, 2, 3], ->
+	test 'async array', [0, null, undefined, 1, 2, 3], ->
 		list = [
+			-> 0
+			-> null
+			-> undefined
 			-> utils.sleep 20, 1
 			-> utils.sleep 10, 2
 			-> utils.sleep 10, 3
