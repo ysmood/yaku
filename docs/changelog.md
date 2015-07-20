@@ -1,4 +1,4 @@
-- v0.3.2
+- v0.3.3
 
   - fix: an unhandled rejection bug when rejects inside a catch
   - opt: utils

@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "An ES6 Promise/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "scripts": {
@@ -13,9 +13,19 @@
     "url": "https://github.com/ysmood/yaku.git"
   },
   "keywords": [
-    "promise",
+    "light-weight",
     "es6",
-    "shim"
+    "promise",
+    "performance",
+    "promises",
+    "promises-a",
+    "promises-aplus",
+    "async",
+    "await",
+    "deferred",
+    "deferreds",
+    "future",
+    "flow control"
   ],
   "author": "http://ysmood.org",
   "license": "MIT",
