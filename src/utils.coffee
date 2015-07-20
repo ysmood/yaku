@@ -9,9 +9,6 @@ isArray = (obj) ->
 isFunction = (obj) ->
 	typeof obj == 'function'
 
-isObject = (obj) ->
-	typeof obj == 'object'
-
 utils = module.exports =
 
 	###*
@@ -277,7 +274,7 @@ utils = module.exports =
 	 * @return {Boolean}
 	###
 	isPromise: (obj) ->
-		isObject(obj) and isFunction(obj.then)
+		obj and isFunction(obj.then)
 
 	###*
 	 * Convert a node callback style function to a function that returns
