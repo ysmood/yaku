@@ -28,11 +28,11 @@
     "lib/utils.js"
   ],
   "devDependencies": {
-    "bluebird": "2.9.33",
+    "bluebird": "2.9.34",
     "coffee-script": "1.9.3",
     "coffeelint": "1.10.1",
     "es6-promise": "2.3.0",
-    "nokit": "0.9.1",
+    "nokit": "0.9.2",
     "promises-aplus-tests": "*",
     "q": "1.4.1",
     "uglify-js": "2.4.23"
