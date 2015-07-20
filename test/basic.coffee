@@ -59,8 +59,6 @@ test = (name, shouldBe, fn) ->
 	else
 		report assert fn(), shouldBe
 
-Yaku.enableLongStackTrace()
-
 $val = { val: 'ok' }
 
 test 'resolve', $val, ->

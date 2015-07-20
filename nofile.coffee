@@ -60,9 +60,11 @@ module.exports = (task, option) ->
 		if opts.grep == '.'
 			require './test/basic'
 
-		require('./test/compliance.coffee') {
-			grep: opts.grep
-		}
+		setTimeout ->
+			require('./test/compliance.coffee') {
+				grep: opts.grep
+			}
+		, 1000
 
 	option '--sync', 'sync benchmark'
 	task 'benchmark', ['build']

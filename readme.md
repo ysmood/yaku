@@ -485,7 +485,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         walker 'test.com'
         ```
 
-- ### **[isPromise(obj)](src/utils.coffee?source#L282)**
+- ### **[isPromise(obj)](src/utils.coffee?source#L279)**
 
     Check if an object is a promise-like object.
 
@@ -493,7 +493,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L307)**
+- ### **[promisify(fn, self)](src/utils.coffee?source#L304)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -523,7 +523,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	console.log val # output => 1
         ```
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L326)**
+- ### **[sleep(time, val)](src/utils.coffee?source#L323)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -537,7 +537,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[throw(err)](src/utils.coffee?source#L340)**
+- ### **[throw(err)](src/utils.coffee?source#L337)**
 
     Throw an error to break the program.
 
