@@ -107,13 +107,10 @@ Yaku.resolve().then ->
 			old = Yaku.onUnhandledRejection
 
 			Yaku.onUnhandledRejection = (reason, p) ->
-				old reason, p
 				Yaku.onUnhandledRejection = old
 				r reason
 
-			setTimeout ->
-				Yaku.reject $val
-			, 3000
+			Yaku.reject $val
 
 .then ->
 	test 'no unhandled rejection', $val, ->
