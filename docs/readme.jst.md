@@ -6,7 +6,7 @@
 # Overview
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
-If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code (minified size is 1.2KB).
+If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code (gzip size is 0.5KB).
 It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
@@ -49,6 +49,10 @@ It supports both `AMD` and `CMD`. Raw usage without `AMD` or `CMD`:
     var Promise = Yaku;
 </script>
 ```
+
+# Change Log
+
+[docs/changelog.md](docs/changelog.md)
 
 # Compare
 

@@ -2,6 +2,7 @@
 
   - fix: an unhandled rejection bug when rejects inside a catch
   - opt: utils
+  - add: constructor `self` api
 
 - v0.3.1
 
