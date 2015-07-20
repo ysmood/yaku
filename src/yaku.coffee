@@ -328,16 +328,8 @@ class Yaku
 		flush = ->
 			i = 0
 			while i < fnQueueLen
-				pIndex = i++
-				vIndex = i++
-
-				p = fnQueue[pIndex]
-				v = fnQueue[vIndex]
-
-				release fnQueue, pIndex
-				release fnQueue, vIndex
-
-				fn p, v
+				fn fnQueue[i]
+				release fnQueue, i++
 
 			fnQueueLen = 0
 			fnQueue.length = initQueueSize
@@ -352,13 +344,12 @@ class Yaku
 		Yaku.nextTick = try
 			root.process.nextTick
 		catch
-			setTimeout
+			setTimeout.bind root
 
-		(p, v) ->
-			fnQueue[fnQueueLen++] = p
+		(v) ->
 			fnQueue[fnQueueLen++] = v
 
-			Yaku.nextTick flush if fnQueueLen == 2
+			Yaku.nextTick flush if fnQueueLen == 1
 
 			return
 
@@ -464,8 +455,8 @@ class Yaku
 		p1[p1._pCount++] = p2
 
 		# 2.2.6
-		if p1._state != $pending
-			scheduleHandler p1, p2
+		if p1._state != $pending and p1._pCount > 0
+			scheduleHandler p1
 
 		# 2.2.7
 		p2
@@ -476,23 +467,33 @@ class Yaku
 	 * @param {Yaku} p1
 	 * @param {Yaku} p2
 	###
-	scheduleHandler = genScheduler 999, (p1, p2) ->
-		handler = if p1._state then p2._onFulfilled else p2._onRejected
+	scheduleHandler = genScheduler 999, (p1) ->
+		i = 0
+		len = p1._pCount
 
-		# 2.2.7.3
-		# 2.2.7.4
-		if handler == $nil
-			settlePromise p2, p1._state, p1._value
-			return
+		while i < len
+			p2 = p1[i++]
 
-		# 2.2.7.1
-		x = genTryCatcher(callHanler) handler, p1._value
-		if x == $tryErr
-			# 2.2.7.2
-			settlePromise p2, $rejected, x.e
-			return
+			continue if p2._state != $pending
 
-		settleWithX p2, x
+			# 2.2.2
+			# 2.2.3
+			handler = if p1._state then p2._onFulfilled else p2._onRejected
+
+			# 2.2.7.3
+			# 2.2.7.4
+			if handler == $nil
+				settlePromise p2, p1._state, p1._value
+				continue
+
+			# 2.2.7.1
+			x = genTryCatcher(callHanler) handler, p1._value
+			if x == $tryErr
+				# 2.2.7.2
+				settlePromise p2, $rejected, x.e
+				continue
+
+			settleWithX p2, x
 
 		return
 
@@ -588,14 +589,8 @@ class Yaku
 		if not isLongStackTrace
 			p._pre = $nil
 
-		i = 0
-		len = p._pCount
-
-		# 2.2.2
-		# 2.2.3
-		while i < len
-			# 2.2.4
-			scheduleHandler p, p[i++]
+		# 2.2.4
+		scheduleHandler p if p._pCount > 0
 
 		p
 
