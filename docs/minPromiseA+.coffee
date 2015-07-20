@@ -2,7 +2,7 @@
  * Before read this source file, open web page [Promises/A+](https://promisesaplus.com).
 ###
 
-do -> class Yaku
+class Yaku
 
 	###*
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
