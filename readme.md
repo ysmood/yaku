@@ -6,7 +6,7 @@
 # Overview
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
-If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code.
+If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code (minified size is 1.2KB).
 It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
@@ -63,7 +63,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 | Name                 | Unit Test | 1ms async task | sync task | Helpers | file size |
 | -------------------- | --------- | -------------- | --------- | ------- | --------- |
-| Yaku                 | 872/872   | 283ms          | 68ms      | ++      | 3.5KB |
+| Yaku                 | 872/872   | 283ms          | 68ms      | +++     | 3.5KB |
 | [Bluebird][] v2.9    | 872/872   | 272ms          | 164ms     | +++++++ | 73KB      |
 | [ES6-promise][] v2.1 | 872/872   | 459ms          | 110ms     | +       | 18KB      |
 | [native][] iojs v1.8 | 872/872   | 826ms          | 605ms     | +       | 0KB       |
