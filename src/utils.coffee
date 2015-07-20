@@ -93,9 +93,15 @@ utils = module.exports =
 
 		utils.end ?= {}
 
+		tryIter = ->
+			try
+				iter()
+			catch e
+				Promise.reject e
+
 		new Promise (resolve, reject) ->
 			addTask = ->
-				task = iter()
+				task = tryIter()
 				index = iterIndex++
 
 				if isIterDone or task == utils.end
