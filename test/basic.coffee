@@ -54,7 +54,8 @@ test = (name, shouldBe, fn) ->
 	if out and out.then
 		out.then (v) ->
 			report assert v, shouldBe
-		, (->)
+		, (v) ->
+			report assert v, shouldBe
 	else
 		report assert fn(), shouldBe
 
