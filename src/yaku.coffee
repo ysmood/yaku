@@ -14,33 +14,44 @@ class Yaku
 	 * This class follows the [Promises/A+](https://promisesaplus.com) and
 	 * [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
 	 * with some extra helpers.
-	 * @param  {Function} executor Function object with two arguments resolve and reject.
+	 * @param  {Function} executor Function object with three arguments resolve, reject and
+	 * the promise itself.
 	 * The first argument fulfills the promise, the second argument rejects it.
 	 * We can call these functions, once our operation is completed.
+	 * The third argument can be used to add custom handlers, such as `abort` or `progress`
+	 * helpers.
 	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
-	 * p = new Promise (resolve, reject) ->
-	 * 	setTimeout ->
+	 * p = new Promise (resolve, reject, self) ->
+	 * 	self.abort = ->
+	 * 		clearTimeout tmr
+	 * 		reject new Error 'abort promise'
+	 *
+	 * 	tmr = setTimeout ->
 	 * 		if Math.random() > 0.5
 	 * 			resolve 'ok'
 	 * 		else
 	 * 			reject 'no'
+	 * 	, 3000
 	 * ```
 	###
 	constructor: (executor) ->
+		self = @
+
 		if isLongStackTrace
-			@[$promiseTrace] = genTraceInfo()
+			self[$promiseTrace] = genTraceInfo()
 
 		return if executor == $noop
 
 		err = genTryCatcher(executor)(
-			genSettler(@, $resolved),
-			genSettler(@, $rejected)
+			genSettler self, $resolved
+			genSettler self, $rejected
+			self
 		)
 
 		if err == $tryErr
-			settlePromise @, $rejected, err.e
+			settlePromise self, $rejected, err.e
 
 	###*
 	 * Appends fulfillment and rejection handlers to the promise,
