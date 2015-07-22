@@ -228,10 +228,10 @@ class Yaku
 	 * ```
 	###
 	@onUnhandledRejection: (reason, p) ->
-		return if not isObject console
-
-		info = genStackInfo reason, p
-		console.error 'Unhandled Rejection:', info[0], info[1]
+		if root.console
+			info = genStackInfo reason, p
+			console.error 'Unhandled Rejection:', info[0], info[1]
+		return
 
 	isLongStackTrace = false
 
