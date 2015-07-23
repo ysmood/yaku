@@ -335,5 +335,5 @@ utils = module.exports =
 	 * ```
 	###
 	throw: (err) ->
-		setTimeout -> err
+		setTimeout -> throw err
 		return
