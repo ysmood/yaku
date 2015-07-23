@@ -346,7 +346,7 @@ class Yaku
 		Yaku.nextTick = try
 			root.process.nextTick
 		catch
-			setTimeout.bind root
+			-> setTimeout.apply root, arguments
 
 		(v) ->
 			fnQueue[fnQueueLen++] = v
