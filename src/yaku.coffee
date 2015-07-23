@@ -264,7 +264,11 @@ class Yaku
 	 * Promise.nextTick = window.setImmediate
 	 * ```
 	###
-	@nextTick: $nil
+	@nextTick: if root.process
+		root.process.nextTick
+	else
+		(fn) -> setTimeout fn
+
 
 # ********************** Private **********************
 
@@ -337,16 +341,6 @@ class Yaku
 			fnQueue.length = initQueueSize if fnQueue.length > initQueueSize
 
 			return
-
-		###*
-		 * Schedule a flush task on the next tick.
-		 * @private
-		 * @param {Function} fn The flush task.
-		###
-		Yaku.nextTick = try
-			root.process.nextTick
-		catch
-			-> setTimeout.apply root, arguments
 
 		(v) ->
 			fnQueue[fnQueueLen++] = v
