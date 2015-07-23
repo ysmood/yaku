@@ -261,7 +261,7 @@ class Yaku
 	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
-	 * Promise.nextTick = window.setImmediate
+	 * Promise.nextTick = (fn) -> window.setImmediate fn
 	 * ```
 	###
 	@nextTick: if root.process

@@ -338,7 +338,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
         ```coffee
         Promise = require 'yaku'
-        Promise.nextTick = window.setImmediate
+        Promise.nextTick = (fn) -> window.setImmediate fn
         ```
 
 
