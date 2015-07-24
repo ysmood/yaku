@@ -285,7 +285,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         	console.log values # => [123, 0]
         ```
 
-- ### **[@onUnhandledRejection(reason)](src/yaku.coffee?source#L230)**
+- ### **[@onUnhandledRejection(reason, p)](src/yaku.coffee?source#L231)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -294,6 +294,10 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
     - **<u>param</u>**: `reason` { _Any_ }
 
         The rejection reason.
+
+    - **<u>param</u>**: `p` { _Yaku_ }
+
+        The promise that was rejected.
 
     - **<u>example</u>**:
 
@@ -309,7 +313,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L250)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L251)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -324,7 +328,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
         Promise.enableLongStackTrace()
         ```
 
-- ### **[@nextTick](src/yaku.coffee?source#L267)**
+- ### **[@nextTick](src/yaku.coffee?source#L268)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you

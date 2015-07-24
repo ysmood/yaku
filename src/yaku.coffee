@@ -214,6 +214,7 @@ class Yaku
 	 * format to display the error stack, overwrite it.
 	 * If it is set, auto `console.error` unhandled rejection will be disabed.
 	 * @param {Any} reason The rejection reason.
+    * @param {Yaku} p The promise that was rejected.
 	 * @example
 	 * ```coffee
 	 * Promise = require 'yaku'
