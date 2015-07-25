@@ -18,11 +18,11 @@ ideas: [docs/lazyTree.md][].
 # Features
 
 - The minified file is only 3.5KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
-- 100% compliant with Promise/A+ specs
+- 100% compliant with Promises/A+ specs
 - Better performance than the native Promise
 - Designed to work on IE5+ and other major browsers
 - [Better][docs/debugHelperComparison.md] `possibly unhandled rejection` and `long stack trace` than [Bluebird][]
-- Well commented source code with every Promise/A+ spec
+- Well commented source code with every Promises/A+ spec
 
 # Quick Start
 
@@ -54,17 +54,10 @@ It supports both `AMD` and `CMD`. Raw usage without `AMD` or `CMD`:
 
 [docs/changelog.md](docs/changelog.md)
 
-# Compare
+# Compare to Other Promise Libs
 
 These comparisons only reflect some limited truth, no one is better than all others on all aspects.
-For more details see the [benchmark/readme.md](benchmark/readme.md)
-
-```
-iojs v1.8.4
-OS   darwin
-Arch x64
-CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
-```
+For more details see the [benchmark/readme.md](benchmark/readme.md). There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
 | Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
 | -------------------- | -------------------- | --------------- | ------- | --------- |
@@ -573,7 +566,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
 # Unit Test
 
-This project use [promises-aplus-tests][] to test the compliance of Promise/A+ specification. There are about 900 test cases.
+This project use [promises-aplus-tests][] to test the compliance of Promises/A+ specification. There are about 900 test cases.
 
 Use `npm run no -- test` to run the unit test.
 
