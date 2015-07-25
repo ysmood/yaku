@@ -358,7 +358,7 @@ class Yaku
 	###
 	assertIterable = (obj) ->
 		return if obj instanceof Array
-		throw genTypeError $invalid_argument
+		throw genTypeError 'invalid_argument'
 
 	###*
 	 * Generate type error object.
@@ -384,13 +384,8 @@ class Yaku
 	$resolved = 1
 	$pending = 2
 
-	$promiseTrace = '_pStack'
-	$settlerTrace = '_sStack'
-
-	# These are some symbols. They won't be used to store data.
-	$circularChain = 'promise_circular_chain'
-
-	$invalid_argument = 'invalid_argument'
+	$promiseTrace = '_pt'
+	$settlerTrace = '_st'
 
 	$fromPrevious = 'From previous event:'
 
@@ -600,7 +595,7 @@ class Yaku
 	settleWithX = (p, x) ->
 		# 2.3.1
 		if x == p and x
-			settlePromise p, $rejected, genTypeError($circularChain)
+			settlePromise p, $rejected, genTypeError('promise_circular_chain')
 			return
 
 		# 2.3.2
