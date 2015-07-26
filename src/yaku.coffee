@@ -443,7 +443,7 @@ class Yaku
 		if isFunction onRejected
 			p2._onRejected = onRejected
 
-		p2._pre = p1
+		p2._pre = p1 if isLongStackTrace
 		p1[p1._pCount++] = p2
 
 		# 2.2.6
@@ -491,6 +491,12 @@ class Yaku
 
 	# iter tree
 	hashOnRejected = (node) ->
+		# A node shouldn't be checked twice.
+		if node._umark
+			return true
+		else
+			node._umark = true
+
 		i = 0
 		len = node._pCount
 
@@ -504,12 +510,8 @@ class Yaku
 	# Why are there two "genScheduler"s?
 	# Well, to support the babel's es7 async-await polyfill, I have to hack it.
 	scheduleUnhandledRejection = genScheduler 9, (genScheduler 9, (p) ->
-		# Check if current node is the souce node of the rejection.
-		if (not p._pre or hashOnRejected(p._pre)) and not hashOnRejected p
+		if not hashOnRejected p
 			Yaku.onUnhandledRejection p._value, p
-
-		if not isLongStackTrace
-			p._pre = $nil
 
 		return
 	)
