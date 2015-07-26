@@ -153,6 +153,16 @@ Yaku.resolve().then ->
 				r(count)
 			, 50
 
+.then ->
+	test 'long stack trace', 2, ->
+		Yaku.enableLongStackTrace()
+
+		Yaku.resolve()
+		.then ->
+			abc()
+		.catch (err) ->
+			err.stack.match(/From previous event:/g).length
+
 randomPromise = (i) ->
 	new Yaku (r) ->
 		setTimeout ->
