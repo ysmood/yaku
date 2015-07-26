@@ -109,7 +109,8 @@ Yaku.resolve().then ->
 				Yaku.onUnhandledRejection = old
 				r reason
 
-			Yaku.reject $val
+			Yaku.resolve().then ->
+			    Yaku.reject $val
 
 .then ->
 	test 'no unhandled rejection', $val, ->
