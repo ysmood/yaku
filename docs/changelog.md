@@ -1,7 +1,8 @@
-- v0.3.6
+- v0.3.7
 
   - fix: #10 old IE support
   - fix: a bug of utils.throw
+  - fix: an unhandled rejection bug
 
 - v0.3.3
 
