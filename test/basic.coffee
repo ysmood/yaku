@@ -137,6 +137,21 @@ Yaku.resolve().then ->
 			Yaku.reject().catch ->
 				Yaku.reject $val
 
+.then ->
+	test 'unhandled rejection only once', 1, ->
+		old = Yaku.onUnhandledRejection
+
+		count = 0
+		Yaku.onUnhandledRejection = -> count++
+
+		Yaku.reject().then -> $val
+
+		new Yaku (r) ->
+			setTimeout ->
+				Yaku.onUnhandledRejection = old
+				r(count)
+			, 50
+
 randomPromise = (i) ->
 	new Yaku (r) ->
 		setTimeout ->
