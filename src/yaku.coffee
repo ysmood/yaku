@@ -505,8 +505,12 @@ class Yaku
 	# Well, to support the babel's es7 async-await polyfill, I have to hack it.
 	scheduleUnhandledRejection = genScheduler 9, (genScheduler 9, (p) ->
 		# Check if current node is the souce node of the rejection.
-		if (not p._pre or p._pre._state == $resolved) and not hashOnRejected p
+		if (not p._pre or hashOnRejected(p._pre)) and not hashOnRejected p
 			Yaku.onUnhandledRejection p._value, p
+
+		if not isLongStackTrace
+			p._pre = $nil
+
 		return
 	)
 
@@ -577,9 +581,6 @@ class Yaku
 				value.stack = stack[0] + stack[1]
 
 			scheduleUnhandledRejection p
-
-		if not isLongStackTrace
-			p._pre = $nil
 
 		# 2.2.4
 		scheduleHandler p if p._pCount > 0
