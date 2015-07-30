@@ -1,12 +1,14 @@
 # Lazy Tree Structure
 
+> This is how Yaku was piled up.
+
 The base idea of promise is keeping all data and data handlers inside the promise world, promise will help to box them, proxy them and unbox them. You may have already heard of it before, most people like to call it [Monad][]. But this isn't all, you need to know another interesting idea to have a better understand on what abstraction promise does for you. I call it Lazy Tree, a dynamic tree constructed by promises.
 
-We are already familiar with the tree structure. In functional programming world, expressions domains the world, everything is just a mathematical concept, no need for space and time. But in the real world, things get dirty, we cannot throw the input into a function, and it magically give us the answer as if there's no side effect. The function will consume memory, the CPU will emit some radiation. Promise is something that glues the space and time.
+We are already familiar with the tree structure. In functional programming world, expressions domains the world, everything is just a mathematical concept, no need for space and time. But in the real world, things get dirty, we cannot throw the input into a function, and it magically give us the answer as if there's no side effect. The function will consume memory, the CPU will emit some radiation. Promise is something that glues the space, time and the real world.
 
-**Rather than laid on space, a Lazy Tree is a tree that laid on both space and time, it's 4 dimensional.**
+**Rather than laid on space, a Lazy Tree is a tree that laid on both space and time, it's 4 dimensional (x, y, time and err).**
 
-That's the biggest difference between callback style async flow control and promise. The callback style only define the tree on a 2 dimensional way, the tree won't grow as time pass by.
+That's the biggest difference between callback style async flow control and promise. The callback style only define the tree on a 2 dimensional way, append the tree won't grow as time pass by.
 
 The code is complex, to simplify it, let's see some graphics.
 

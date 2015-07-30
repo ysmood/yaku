@@ -1,5 +1,5 @@
 ###*
- * Before read this source file, open web page [Promises/A+](https://promisesaplus.com).
+ * Before reading this source file, open web page [Promises/A+](https://promisesaplus.com).
 ###
 
 class Yaku
@@ -40,9 +40,6 @@ class Yaku
 	$rejected = 0
 	$resolved = 1
 	$pending = 2
-
-	# These are some symbols. They won't be used to store data.
-	$circularError = 'circular promise resolution chain'
 
 	# Default state
 	_state: $pending
@@ -154,7 +151,7 @@ class Yaku
 	settleWithX = (p, x) ->
 		# 2.3.1
 		if x == p and x
-			settlePromise p, $rejected, new TypeError $circularError
+			settlePromise p, $rejected, new TypeError 'promise_circular_chain'
 			return
 
 		# 2.3.2
@@ -215,11 +212,4 @@ class Yaku
 
 		return
 
-	# CMD & AMD Support
-	try
-		module.exports = Yaku
-	catch
-		try
-			define -> Yaku
-		catch
-			window.Yaku = Yaku
+	module.exports = Yaku

@@ -21,6 +21,7 @@ class Yaku
 	 * The third argument can be used to add custom handlers, such as `abort` or `progress`
 	 * helpers.
 	 * @example
+	 * Here's an abort example.
 	 * ```coffee
 	 * Promise = require 'yaku'
 	 * p = new Promise (resolve, reject, self) ->
@@ -34,7 +35,31 @@ class Yaku
 	 * 		else
 	 * 			reject 'no'
 	 * 	, 3000
+	 *
 	 * p.abort()
+	 * ```
+	 * @example
+	 * Here's a progress example.
+	 * ```coffee
+	 * Promise = require 'yaku'
+	 * p = new Promise (resolve, reject, self) ->
+	 * 	count = 0
+	 * 	all = 100
+	 * 	tmr = setInterval ->
+	 * 		try
+	 * 			self.progress? count, all
+	 * 		catch err
+	 * 			reject err
+	 *
+	 * 		if count < all
+	 * 			count++
+	 * 		else
+	 * 			resolve()
+	 * 			clearInterval tmr
+	 * 	, 1000
+	 *
+	 * p.progress = (curr, all) ->
+	 * 	console.log curr, '/', all
 	 * ```
 	###
 	constructor: (executor) ->

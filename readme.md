@@ -99,7 +99,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 # API
 
-- ### **[constructor(executor)](src/yaku.coffee?source#L40)**
+- ### **[constructor(executor)](src/yaku.coffee?source#L65)**
 
     This class follows the [Promises/A+](https://promisesaplus.com) and
     [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
@@ -116,6 +116,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
+        Here's an abort example.
         ```coffee
         Promise = require 'yaku'
         p = new Promise (resolve, reject, self) ->
@@ -129,10 +130,36 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         		else
         			reject 'no'
         	, 3000
+
         p.abort()
         ```
 
-- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L73)**
+    - **<u>example</u>**:
+
+        Here's a progress example.
+        ```coffee
+        Promise = require 'yaku'
+        p = new Promise (resolve, reject, self) ->
+        	count = 0
+        	all = 100
+        	tmr = setInterval ->
+        		try
+        			self.progress? count, all
+        		catch err
+        			reject err
+
+        		if count < all
+        			count++
+        		else
+        			resolve()
+        			clearInterval tmr
+        	, 1000
+
+        p.progress = (curr, all) ->
+        	console.log curr, '/', all
+        ```
+
+- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L98)**
 
     Appends fulfillment and rejection handlers to the promise,
     and returns a new promise resolving to the return value of the called handler.
@@ -160,7 +187,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         	console.log v
         ```
 
-- ### **[catch(onRejected)](src/yaku.coffee?source#L91)**
+- ### **[catch(onRejected)](src/yaku.coffee?source#L116)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -184,7 +211,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         	console.log v
         ```
 
-- ### **[@resolve(value)](src/yaku.coffee?source#L107)**
+- ### **[@resolve(value)](src/yaku.coffee?source#L132)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -204,7 +231,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         p = Promise.resolve 10
         ```
 
-- ### **[@reject(reason)](src/yaku.coffee?source#L121)**
+- ### **[@reject(reason)](src/yaku.coffee?source#L146)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -221,7 +248,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         p = Promise.reject 10
         ```
 
-- ### **[@race(iterable)](src/yaku.coffee?source#L143)**
+- ### **[@race(iterable)](src/yaku.coffee?source#L168)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -249,7 +276,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         	console.log value # => 123
         ```
 
-- ### **[@all(iterable)](src/yaku.coffee?source#L180)**
+- ### **[@all(iterable)](src/yaku.coffee?source#L205)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -278,7 +305,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         	console.log values # => [123, 0]
         ```
 
-- ### **[@onUnhandledRejection(reason, p)](src/yaku.coffee?source#L231)**
+- ### **[@onUnhandledRejection(reason, p)](src/yaku.coffee?source#L256)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -306,7 +333,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.reject('v').catch ->
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L251)**
+- ### **[@enableLongStackTrace](src/yaku.coffee?source#L276)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -321,7 +348,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.enableLongStackTrace()
         ```
 
-- ### **[@nextTick](src/yaku.coffee?source#L268)**
+- ### **[@nextTick](src/yaku.coffee?source#L293)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
