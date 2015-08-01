@@ -33,8 +33,8 @@ npm install yaku
 ```
 
 Then:
-```coffee
-Promise = require 'yaku'
+```js
+var Promise = require('yaku');
 ```
 
 ## Browser
@@ -99,7 +99,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 # API
 
-<%= doc['src/yaku.coffee'] %>
+<%= doc['src/yaku.js'] %>
 
 # Utils
 

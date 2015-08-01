@@ -17,7 +17,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.5KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.2KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - 100% compliant with Promises/A+ specs
 - Better performance than the native Promise
 - Designed to work on IE5+ and other major browsers
@@ -33,8 +33,8 @@ npm install yaku
 ```
 
 Then:
-```coffee
-Promise = require 'yaku'
+```js
+var Promise = require('yaku');
 ```
 
 ## Browser
@@ -61,7 +61,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 | Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
 | -------------------- | -------------------- | --------------- | ------- | --------- |
-| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.5KB |
+| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.2KB |
 | [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
 | [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
 | [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
@@ -99,7 +99,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 # API
 
-- ### **[constructor(executor)](src/yaku.coffee?source#L65)**
+- ### **[Yaku(executor)](src/yaku.js?source#L75)**
 
     This class follows the [Promises/A+](https://promisesaplus.com) and
     [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
@@ -117,49 +117,55 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
     - **<u>example</u>**:
 
         Here's an abort example.
-        ```coffee
-        Promise = require 'yaku'
-        p = new Promise (resolve, reject, self) ->
-        	self.abort = ->
-        		clearTimeout tmr
-        		reject new Error 'abort promise'
+        ```js
+        var Promise = require('yaku');
+        var p = new Promise(function (resolve, reject, self) {
+            self.abort = function () {
+                clearTimeout(tmr);
+                reject(new Error('abort promise'));
+            };
 
-        	tmr = setTimeout ->
-        		if Math.random() > 0.5
-        			resolve 'ok'
-        		else
-        			reject 'no'
-        	, 3000
+            var tmr = setTimeout(function () {
+                if (Math.random() > 0.5)
+                    resolve('ok');
+                else
+                    reject('no');
+            }, 3000);
+        });
 
-        p.abort()
+        p.abort();
         ```
 
     - **<u>example</u>**:
 
         Here's a progress example.
-        ```coffee
-        Promise = require 'yaku'
-        p = new Promise (resolve, reject, self) ->
-        	count = 0
-        	all = 100
-        	tmr = setInterval ->
-        		try
-        			self.progress? count, all
-        		catch err
-        			reject err
+        ```js
+        var Promise = require('yaku');
+        var p = new Promise(function (resolve, reject, self) {
+            var count = 0;
+            var all = 100;
+            var tmr = setInterval(function () {
+                try {
+                    self.progress && self.progress(count, all);
+                } catch (err) {
+                    reject(err);
+                }
 
-        		if count < all
-        			count++
-        		else
-        			resolve()
-        			clearInterval tmr
-        	, 1000
+                if (count < all)
+                    count++;
+                else {
+                    resolve();
+                    clearInterval(tmr);
+                }
+            }, 1000);
+        });
 
-        p.progress = (curr, all) ->
-        	console.log curr, '/', all
+        p.progress = function (curr, all) {
+            console.log(curr, '/', all);
+        };
         ```
 
-- ### **[then(onFulfilled, onRejected)](src/yaku.coffee?source#L98)**
+- ### **[then(onFulfilled, onRejected)](src/yaku.js?source#L111)**
 
     Appends fulfillment and rejection handlers to the promise,
     and returns a new promise resolving to the return value of the called handler.
@@ -179,15 +185,16 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
     - **<u>example</u>**:
 
         the current Promise.
-        ```coffee
-        Promise = require 'yaku'
-        p = Promise.resolve 10
+        ```js
+        var Promise = require('yaku');
+        var p = Promise.resolve(10);
 
-        p.then (v) ->
-        	console.log v
+        p.then(function (v) {
+            console.log(v);
+        });
         ```
 
-- ### **[catch(onRejected)](src/yaku.coffee?source#L116)**
+- ### **[catch(onRejected)](src/yaku.js?source#L131)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -203,15 +210,16 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise = require 'yaku'
-        p = Promise.reject 10
+        ```js
+        var Promise = require('yaku');
+        var p = Promise.reject(10);
 
-        p.catch (v) ->
-        	console.log v
+        p['catch'](function (v) {
+            console.log(v);
+        });
         ```
 
-- ### **[@resolve(value)](src/yaku.coffee?source#L132)**
+- ### **[Yaku.resolve(value)](src/yaku.js?source#L158)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -226,12 +234,12 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise = require 'yaku'
-        p = Promise.resolve 10
+        ```js
+        var Promise = require('yaku');
+        var p = Promise.resolve(10);
         ```
 
-- ### **[@reject(reason)](src/yaku.coffee?source#L146)**
+- ### **[Yaku.reject(reason)](src/yaku.js?source#L172)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -243,12 +251,12 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise = require 'yaku'
-        p = Promise.reject 10
+        ```js
+        var Promise = require('yaku');
+        var p = Promise.reject(10);
         ```
 
-- ### **[@race(iterable)](src/yaku.coffee?source#L168)**
+- ### **[Yaku.race(iterable)](src/yaku.js?source#L196)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -266,17 +274,18 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise = require 'yaku'
-        Promise.race [
-        	123
-        	Promise.resolve 0
-        ]
-        .then (value) ->
-        	console.log value # => 123
+        ```js
+        var Promise = require('yaku');
+        Promise.race([
+            123,
+            Promise.resolve(0)
+        ])
+        .then(function (value) {
+            console.log(value); // => 123
+        });
         ```
 
-- ### **[@all(iterable)](src/yaku.coffee?source#L205)**
+- ### **[Yaku.all(iterable)](src/yaku.js?source#L235)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -295,17 +304,18 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise = require 'yaku'
-        Promise.all [
-        	123
-        	Promise.resolve 0
-        ]
-        .then (values) ->
-        	console.log values # => [123, 0]
+        ```js
+        var Promise = require('yaku');
+        Promise.all([
+            123,
+            Promise.resolve(0)
+        ])
+        .then(function (values) {
+            console.log(values); // => [123, 0]
+        });
         ```
 
-- ### **[@onUnhandledRejection(reason, p)](src/yaku.coffee?source#L256)**
+- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L284)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -321,19 +331,20 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise = require 'yaku'
-        Promise.onUnhandledRejection = (reason) ->
-        	console.error reason
+        ```js
+        var Promise = require('yaku');
+        Promise.onUnhandledRejection = function (reason) {
+            console.error(reason);
+        };
 
         # The console will log an unhandled rejection error message.
-        Promise.reject('my reason')
+        Promise.reject('my reason');
 
         # The below won't log the unhandled rejection error message.
-        Promise.reject('v').catch ->
+        Promise.reject('v').catch(function () {});
         ```
 
-- ### **[@enableLongStackTrace](src/yaku.coffee?source#L276)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L303)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -343,12 +354,12 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise = require 'yaku'
-        Promise.enableLongStackTrace()
+        ```js
+        var Promise = require('yaku');
+        Promise.enableLongStackTrace();
         ```
 
-- ### **[@nextTick](src/yaku.coffee?source#L293)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L320)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
@@ -360,9 +371,9 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise = require 'yaku'
-        Promise.nextTick = (fn) -> window.setImmediate fn
+        ```js
+        var Promise = require('yaku');
+        Promise.nextTick = function (fn) { window.setImmediate(fn); };
         ```
 
 
@@ -372,7 +383,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 To use it you have to require it separately: `utils = require 'yaku/lib/utils'`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L65)**
+- ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L69)**
 
     An throttled version of `Promise.all`, it runs all the tasks under
     a concurrent limitation.
@@ -405,40 +416,44 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>example</u>**:
 
-        ```coffee
-        kit = require 'nokit'
-        utils = require 'yaku/lib/utils'
+        ```js
+        var kit = require('nokit');
+        var utils = require('yaku/lib/utils');
 
-        urls = [
-         'http://a.com'
-         'http://b.com'
-         'http://c.com'
+        var urls = [
+         'http://a.com',
+         'http://b.com',
+         'http://c.com',
          'http://d.com'
-        ]
-        tasks = [
-         -> kit.request url[0]
-         -> kit.request url[1]
-         -> kit.request url[2]
-         -> kit.request url[3]
-        ]
+        ];
+        var tasks = [
+         function () { return kit.request(url[0]); },
+         function () { return kit.request(url[1]); },
+         function () { return kit.request(url[2]); },
+         function () { return kit.request(url[3]); }
+        ];
 
-        utils.async(tasks).then ->
-         kit.log 'all done!'
+        utils.async(tasks).then(function () {
+         kit.log('all done!');
+        });
 
-        utils.async(2, tasks).then ->
-         kit.log 'max concurrent limit is 2'
+        utils.async(2, tasks).then(function () {
+         kit.log('max concurrent limit is 2');
+        });
 
-        utils.async 3, ->
-         url = urls.pop()
-         if url
-             kit.request url
+        utils.async(3, function () {
+         var url = urls.pop();
+         if (url)
+             return kit.request(url);
          else
-             utils.end
-        .then ->
-         kit.log 'all done!'
+             return utils.end;
+        })
+        .then(function () {
+         kit.log('all done!');
+        });
         ```
 
-- ### **[callbackify(fn, self)](src/utils.coffee?source#L147)**
+- ### **[callbackify(fn, self)](src/utils.coffee?source#L151)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -451,15 +466,15 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.coffee?source#L169)**
+- ### **[Deferred](src/utils.coffee?source#L173)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end](src/utils.coffee?source#L181)**
+- ### **[end](src/utils.coffee?source#L185)**
 
     The end symbol.
 
-- ### **[flow(fns)](src/utils.coffee?source#L236)**
+- ### **[flow(fns)](src/utils.coffee?source#L247)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -480,50 +495,57 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
     - **<u>example</u>**:
 
         It helps to decouple sequential pipeline code logic.
-        ```coffee
-        kit = require 'nokit'
-        utils = require 'yaku/lib/utils'
+        ```js
+        var kit = require('nokit');
+        var utils = require('yaku/lib/utils');
 
-        createUrl = (name) ->
-        	return "http://test.com/" + name
+        function createUrl (name) {
+        	return "http://test.com/" + name;
+        }
 
-        curl = (url) ->
-        	kit.request(url).then (body) ->
-        		kit.log 'get'
-        		body
+        function curl (url) {
+        	return kit.request(url).then(function (body) {
+        		kit.log('get');
+        		return body;
+        	});
+        }
 
-        save = (str) ->
-        	kit.outputFile('a.txt', str).then ->
-        		kit.log 'saved'
+        function save (str) {
+        	kit.outputFile('a.txt', str).then(function () {
+        		kit.log('saved');
+        	});
+        }
 
-        download = utils.flow createUrl, curl, save
-        # same as "download = utils.flow [createUrl, curl, save]"
+        var download = utils.flow(createUrl, curl, save);
+        # same as "download = utils.flow([createUrl, curl, save])"
 
-        download 'home'
+        download('home');
         ```
 
     - **<u>example</u>**:
 
         Walk through first link of each page.
-        ```coffee
-        kit = require 'nokit'
-        utils = require 'yaku/lib/utils'
+        ```js
+        var kit = require('nokit');
+        var utils = require('yaku/lib/utils');
 
-        list = []
-        iter = (url) ->
-        	return utils.end if not url
+        var list = [];
+        function iter (url) {
+        	if (!url) return utils.end;
 
-        	kit.request url
-        	.then (body) ->
-        		list.push body
-        		m = body.match /href="(.+?)"/
-        		m[0] if m
+        	return kit.request(url)
+        	.then(function (body) {
+        		list.push(body);
+        		var m = body.match(/href="(.+?)"/);
+        		if (m) return m[0];
+        	});
+        }
 
-        walker = utils.flow iter
-        walker 'test.com'
+        var walker = utils.flow(iter);
+        walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.coffee?source#L279)**
+- ### **[isPromise(obj)](src/utils.coffee?source#L290)**
 
     Check if an object is a promise-like object.
 
@@ -531,7 +553,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L304)**
+- ### **[promisify(fn, self)](src/utils.coffee?source#L319)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -546,22 +568,26 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>example</u>**:
 
-        ```coffee
-        foo = (val, cb) ->
-        	setTimeout ->
-        		cb null, val + 1
+        ```js
+        function foo (val, cb) {
+        	setTimeout(function () {
+        		cb(null, val + 1);
+        	});
+        }
 
-        bar = utils.promisify(foo)
+        var bar = utils.promisify(foo);
 
-        bar(0).then (val) ->
+        bar(0).then(function (val) {
         	console.log val # output => 1
+        });
 
         # It also supports the callback style.
-        bar 0, (err, val) ->
-        	console.log val # output => 1
+        bar(0, function (err, val) {
+        	console.log(val); // output => 1
+        });
         ```
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L323)**
+- ### **[sleep(time, val)](src/utils.coffee?source#L338)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -575,7 +601,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[throw(err)](src/utils.coffee?source#L337)**
+- ### **[throw(err)](src/utils.coffee?source#L353)**
 
     Throw an error to break the program.
 
@@ -583,10 +609,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>example</u>**:
 
-        ```coffee
-        Promise.resolve().then ->
-        	# This error won't be caught by promise.
-        	utils.throw 'break the program!'
+        ```js
+        Promise.resolve().then(function () {
+        	// This error won't be caught by promise.
+        	utils.throw('break the program!');
+        });
         ```
 
 

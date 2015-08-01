@@ -7,7 +7,7 @@ module.exports = (task, option) ->
 
 	task 'doc', ['code', 'utils'], 'build doc', ->
 		size = kit.statSync('lib/yaku.min.js').size / 1024
-		kit.warp 'src/*.coffee'
+		kit.warp 'src/*.{coffee,js}'
 		.load kit.drives.comment2md {
 			tpl: 'docs/readme.jst.md'
 			doc: {
@@ -16,7 +16,7 @@ module.exports = (task, option) ->
 		}
 		.run()
 
-	task 'code', 'build source code', ->
+	task 'code', ['lint'], 'build source code', ->
 		addLicense = (str) ->
 			{ version } = kit.require './package', __dirname
 			return """
@@ -27,9 +27,7 @@ module.exports = (task, option) ->
 			*/\n
 			""" + str
 
-		kit.warp 'src/yaku.coffee'
-		.load kit.drives.auto 'lint'
-		.load kit.drives.auto 'compile'
+		kit.warp 'src/yaku.js'
 		.load (f) ->
 			f.dest.name = 'yaku.min'
 			kit.outputFile 'lib/yaku.js', addLicense(f.contents)
@@ -37,6 +35,9 @@ module.exports = (task, option) ->
 		.load (f) ->
 			f.set addLicense f.contents
 		.run 'lib'
+
+	task 'lint', 'lint js files', ->
+		kit.spawn 'eslint', ['src/yaku.js']
 
 	task 'utils', 'build utils', ->
 		kit.warp 'src/utils.coffee'
@@ -67,7 +68,7 @@ module.exports = (task, option) ->
 		, 1000
 
 	option '--sync', 'sync benchmark'
-	task 'benchmark', ['build']
+	task 'benchmark'
 	, 'compare performance between different libraries'
 	, (opts) ->
 		process.env.NODE_ENV = 'production'

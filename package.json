@@ -42,9 +42,23 @@
     "coffee-script": "1.9.3",
     "coffeelint": "1.10.1",
     "es6-promise": "2.3.0",
+    "eslint": "^1.0.0",
     "nokit": "0.9.2",
     "promises-aplus-tests": "*",
     "q": "1.4.1",
     "uglify-js": "2.4.23"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "rules": {
+      "curly": 0,
+      "no-use-before-define": 0,
+      "no-underscore-dangle": 0,
+      "no-path-concat": 0
+    }
   }
 }

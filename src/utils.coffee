@@ -29,37 +29,41 @@ utils = module.exports =
 	 * passed to this function.
 	 * @return {Promise}
 	 * @example
-	 * ```coffee
-	 * kit = require 'nokit'
-	 * utils = require 'yaku/lib/utils'
+	 * ```js
+	 * var kit = require('nokit');
+	 * var utils = require('yaku/lib/utils');
 	 *
-	 * urls = [
-	 *  'http://a.com'
-	 *  'http://b.com'
-	 *  'http://c.com'
+	 * var urls = [
+	 *  'http://a.com',
+	 *  'http://b.com',
+	 *  'http://c.com',
 	 *  'http://d.com'
-	 * ]
-	 * tasks = [
-	 *  -> kit.request url[0]
-	 *  -> kit.request url[1]
-	 *  -> kit.request url[2]
-	 *  -> kit.request url[3]
-	 * ]
+	 * ];
+	 * var tasks = [
+	 *  function () { return kit.request(url[0]); },
+	 *  function () { return kit.request(url[1]); },
+	 *  function () { return kit.request(url[2]); },
+	 *  function () { return kit.request(url[3]); }
+	 * ];
 	 *
-	 * utils.async(tasks).then ->
-	 *  kit.log 'all done!'
+	 * utils.async(tasks).then(function () {
+	 *  kit.log('all done!');
+	 * });
 	 *
-	 * utils.async(2, tasks).then ->
-	 *  kit.log 'max concurrent limit is 2'
+	 * utils.async(2, tasks).then(function () {
+	 *  kit.log('max concurrent limit is 2');
+	 * });
 	 *
-	 * utils.async 3, ->
-	 *  url = urls.pop()
-	 *  if url
-	 *      kit.request url
+	 * utils.async(3, function () {
+	 *  var url = urls.pop();
+	 *  if (url)
+	 *      return kit.request(url);
 	 *  else
-	 *      utils.end
-	 * .then ->
-	 *  kit.log 'all done!'
+	 *      return utils.end;
+	 * })
+	 * .then(function () {
+	 *  kit.log('all done!');
+	 * });
 	 * ```
 	###
 	async: (limit, list, saveResults, progress) ->
@@ -192,45 +196,52 @@ utils = module.exports =
 	 * @return {Function} `(val) -> Promise` A function that will return a promise.
 	 * @example
 	 * It helps to decouple sequential pipeline code logic.
-	 * ```coffee
-	 * kit = require 'nokit'
-	 * utils = require 'yaku/lib/utils'
+	 * ```js
+	 * var kit = require('nokit');
+	 * var utils = require('yaku/lib/utils');
 	 *
-	 * createUrl = (name) ->
-	 * 	return "http://test.com/" + name
+	 * function createUrl (name) {
+	 * 	return "http://test.com/" + name;
+	 * }
 	 *
-	 * curl = (url) ->
-	 * 	kit.request(url).then (body) ->
-	 * 		kit.log 'get'
-	 * 		body
+	 * function curl (url) {
+	 * 	return kit.request(url).then(function (body) {
+	 * 		kit.log('get');
+	 * 		return body;
+	 * 	});
+	 * }
 	 *
-	 * save = (str) ->
-	 * 	kit.outputFile('a.txt', str).then ->
-	 * 		kit.log 'saved'
+	 * function save (str) {
+	 * 	kit.outputFile('a.txt', str).then(function () {
+	 * 		kit.log('saved');
+	 * 	});
+	 * }
 	 *
-	 * download = utils.flow createUrl, curl, save
-	 * # same as "download = utils.flow [createUrl, curl, save]"
+	 * var download = utils.flow(createUrl, curl, save);
+	 * # same as "download = utils.flow([createUrl, curl, save])"
 	 *
-	 * download 'home'
+	 * download('home');
 	 * ```
 	 * @example
 	 * Walk through first link of each page.
-	 * ```coffee
-	 * kit = require 'nokit'
-	 * utils = require 'yaku/lib/utils'
+	 * ```js
+	 * var kit = require('nokit');
+	 * var utils = require('yaku/lib/utils');
 	 *
-	 * list = []
-	 * iter = (url) ->
-	 * 	return utils.end if not url
+	 * var list = [];
+	 * function iter (url) {
+	 * 	if (!url) return utils.end;
 	 *
-	 * 	kit.request url
-	 * 	.then (body) ->
-	 * 		list.push body
-	 * 		m = body.match /href="(.+?)"/
-	 * 		m[0] if m
+	 * 	return kit.request(url)
+	 * 	.then(function (body) {
+	 * 		list.push(body);
+	 * 		var m = body.match(/href="(.+?)"/);
+	 * 		if (m) return m[0];
+	 * 	});
+	 * }
 	 *
-	 * walker = utils.flow iter
-	 * walker 'test.com'
+	 * var walker = utils.flow(iter);
+	 * walker('test.com');
 	 * ```
 	###
 	flow: (fns...) -> (val) ->
@@ -286,19 +297,23 @@ utils = module.exports =
 	 * @param  {Any} self The `this` to bind to the fn.
 	 * @return {Function}
 	 * @example
-	 * ```coffee
-	 * foo = (val, cb) ->
-	 * 	setTimeout ->
-	 * 		cb null, val + 1
+	 * ```js
+	 * function foo (val, cb) {
+	 * 	setTimeout(function () {
+	 * 		cb(null, val + 1);
+	 * 	});
+	 * }
 	 *
-	 * bar = utils.promisify(foo)
+	 * var bar = utils.promisify(foo);
 	 *
-	 * bar(0).then (val) ->
+	 * bar(0).then(function (val) {
 	 * 	console.log val # output => 1
+	 * });
 	 *
 	 * # It also supports the callback style.
-	 * bar 0, (err, val) ->
-	 * 	console.log val # output => 1
+	 * bar(0, function (err, val) {
+	 * 	console.log(val); // output => 1
+	 * });
 	 * ```
 	###
 	promisify: (fn, self) ->
@@ -328,10 +343,11 @@ utils = module.exports =
 	 * Throw an error to break the program.
 	 * @param  {Any} err
 	 * @example
-	 * ```coffee
-	 * Promise.resolve().then ->
-	 * 	# This error won't be caught by promise.
-	 * 	utils.throw 'break the program!'
+	 * ```js
+	 * Promise.resolve().then(function () {
+	 * 	// This error won't be caught by promise.
+	 * 	utils.throw('break the program!');
+	 * });
 	 * ```
 	###
 	throw: (err) ->

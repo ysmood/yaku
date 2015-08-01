@@ -1,2 +1,2 @@
 
-require('./template') 'yaku', require('../lib/yaku')
+require('./template') 'yaku', require('../src/yaku')
