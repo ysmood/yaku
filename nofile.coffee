@@ -101,7 +101,7 @@ module.exports = (task, option) ->
 					kit.readFile 'test/browser.html', (html) ->
 						all = ''
 						kit.warp([
-							'src/yaku.coffee'
+							'src/yaku.js'
 							'test/basic.coffee'
 						])
 						.load kit.drives.auto 'compile'
