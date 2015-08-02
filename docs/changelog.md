@@ -1,3 +1,7 @@
+- v0.3.9
+
+  - minor changes
+
 - v0.3.8
 
   - fix: #10 old IE support
