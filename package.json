@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "description": "An ES6 Promises/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "scripts": {
@@ -43,7 +43,7 @@
     "coffeelint": "1.10.1",
     "es6-promise": "2.3.0",
     "eslint": "^1.0.0",
-    "nokit": "0.9.2",
+    "nokit": "0.10.0",
     "promises-aplus-tests": "*",
     "q": "1.4.1",
     "uglify-js": "2.4.23"

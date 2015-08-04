@@ -72,6 +72,17 @@ test 'resolve promise like value', $val, ->
 				fulfil $val
 		}
 
+test 'constructor abort', $val, ->
+	p = new Yaku (resolve, reject) ->
+		tmr = setTimeout resolve, 100, 'done'
+		this.abort = (reason) ->
+			clearTimeout tmr
+			reject reason
+
+	p.abort $val
+
+	p.catch (e) -> e
+
 test 'constructor throw', $val, ->
 	new Yaku (resolve) ->
 		throw $val

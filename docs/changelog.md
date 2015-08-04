@@ -1,3 +1,7 @@
+- v0.4.0
+
+  - **API CHANGE** constructor's context is now promise itself
+
 - v0.3.9
 
   - minor changes

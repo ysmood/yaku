@@ -99,7 +99,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 # API
 
-- ### **[Yaku(executor)](src/yaku.js?source#L75)**
+- ### **[Yaku(executor)](src/yaku.js?source#L76)**
 
     This class follows the [Promises/A+](https://promisesaplus.com) and
     [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
@@ -111,16 +111,16 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         the promise itself.
         The first argument fulfills the promise, the second argument rejects it.
         We can call these functions, once our operation is completed.
-        The third argument can be used to add custom handlers, such as `abort` or `progress`
-        helpers.
+        The `this` context of the executor is the promise itself, it can be used to add custom handlers,
+        such as `abort` or `progress` helpers.
 
     - **<u>example</u>**:
 
         Here's an abort example.
         ```js
         var Promise = require('yaku');
-        var p = new Promise(function (resolve, reject, self) {
-            self.abort = function () {
+        var p = new Promise(function (resolve, reject) {
+            this.abort = function () {
                 clearTimeout(tmr);
                 reject(new Error('abort promise'));
             };
@@ -141,7 +141,8 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Here's a progress example.
         ```js
         var Promise = require('yaku');
-        var p = new Promise(function (resolve, reject, self) {
+        var p = new Promise(function (resolve, reject) {
+            var self = this;
             var count = 0;
             var all = 100;
             var tmr = setInterval(function () {

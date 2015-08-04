@@ -22,14 +22,14 @@
      * the promise itself.
      * The first argument fulfills the promise, the second argument rejects it.
      * We can call these functions, once our operation is completed.
-     * The third argument can be used to add custom handlers, such as `abort` or `progress`
-     * helpers.
+     * The `this` context of the executor is the promise itself, it can be used to add custom handlers,
+     * such as `abort` or `progress` helpers.
      * @example
      * Here's an abort example.
      * ```js
      * var Promise = require('yaku');
-     * var p = new Promise(function (resolve, reject, self) {
-     *     self.abort = function () {
+     * var p = new Promise(function (resolve, reject) {
+     *     this.abort = function () {
      *         clearTimeout(tmr);
      *         reject(new Error('abort promise'));
      *     };
@@ -48,7 +48,8 @@
      * Here's a progress example.
      * ```js
      * var Promise = require('yaku');
-     * var p = new Promise(function (resolve, reject, self) {
+     * var p = new Promise(function (resolve, reject) {
+     *     var self = this;
      *     var count = 0;
      *     var all = 100;
      *     var tmr = setInterval(function () {
@@ -79,10 +80,9 @@
         if (isLongStackTrace) self[$promiseTrace] = genTraceInfo();
 
         if (executor !== $noop) {
-            err = genTryCatcher(executor)(
+            err = genTryCatcher(executor, self)(
                 genSettler(self, $resolved),
-                genSettler(self, $rejected),
-                self
+                genSettler(self, $rejected)
             );
 
             if (err === $tryErr)
@@ -332,6 +332,7 @@
     // ******************************* Utils ********************************
 
     var $tryCatchFn
+    , $tryCatchThis
     , $tryErr = { e: null }
     , $noop = {};
 
@@ -350,7 +351,7 @@
      */
     function tryCatcher () {
         try {
-            return $tryCatchFn.apply(this, arguments);
+            return $tryCatchFn.apply($tryCatchThis, arguments);
         } catch (e) {
             $tryErr.e = e;
             return $tryErr;
@@ -363,8 +364,9 @@
      * @param  {Function} fn
      * @return {Function}
      */
-    function genTryCatcher (fn) {
+    function genTryCatcher (fn, self) {
         $tryCatchFn = fn;
+        $tryCatchThis = self;
         return tryCatcher;
     }
 
@@ -700,7 +702,7 @@
      */
     function settleXthen (p, x, xthen) {
         // 2.3.3.3
-        var err = genTryCatcher(xthen).call(x, function (y) {
+        var err = genTryCatcher(xthen, x)(function (y) {
             // 2.3.3.3.3
             if (x) {
                 x = null;
