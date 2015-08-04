@@ -121,7 +121,7 @@ Yaku.resolve().then ->
 				r reason
 
 			Yaku.resolve().then ->
-			    Yaku.reject $val
+				Yaku.reject $val
 
 .then ->
 	test 'no unhandled rejection', $val, ->
@@ -251,14 +251,14 @@ if utils
 	test 'flow array', 'bc', ->
 		(utils.flow [
 			'a'
-			Promise.resolve 'b'
+			Yaku.resolve 'b'
 			(v) -> v + 'c'
 		])(0)
 
 	test 'flow error', $val, ->
 		(utils.flow [
 			'a'
-			Promise.resolve 'b'
+			Yaku.resolve 'b'
 			(v) -> throw $val
 		])(0).catch (err) -> err
 
@@ -286,6 +286,6 @@ if utils
 			setTimeout ->
 				cb null, val + 1
 
-		new Promise (r) ->
+		new Yaku (r) ->
 			fn 0, (err, val) ->
 				r val
