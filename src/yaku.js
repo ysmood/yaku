@@ -29,20 +29,14 @@
      * ```js
      * var Promise = require('yaku');
      * var p = new Promise(function (resolve, reject) {
-     *     this.abort = function () {
+     *     var tmr = setTimeout(resolve, 3000);
+     *     this.abort = function (reason) {
      *         clearTimeout(tmr);
-     *         reject(new Error('abort promise'));
+     *         reject(reason);
      *     };
-     *
-     *     var tmr = setTimeout(function () {
-     *         if (Math.random() > 0.5)
-     *             resolve('ok');
-     *         else
-     *             reject('no');
-     *     }, 3000);
      * });
      *
-     * p.abort();
+     * p.abort(new Error('abort'));
      * ```
      * @example
      * Here's a progress example.
@@ -315,6 +309,12 @@
      * ```js
      * var Promise = require('yaku');
      * Promise.nextTick = function (fn) { window.setImmediate(fn); };
+     * ```
+     * @example
+     * You can even use sync resolution if you really know what you are doing.
+     * ```js
+     * var Promise = require('yaku');
+     * Promise.nextTick = function (fn) { fn() };
      * ```
      */
     Yaku.nextTick = root.process ?

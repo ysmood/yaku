@@ -99,7 +99,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 # API
 
-- ### **[Yaku(executor)](src/yaku.js?source#L76)**
+- ### **[Yaku(executor)](src/yaku.js?source#L70)**
 
     This class follows the [Promises/A+](https://promisesaplus.com) and
     [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
@@ -120,20 +120,14 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         ```js
         var Promise = require('yaku');
         var p = new Promise(function (resolve, reject) {
-            this.abort = function () {
+            var tmr = setTimeout(resolve, 3000);
+            this.abort = function (reason) {
                 clearTimeout(tmr);
-                reject(new Error('abort promise'));
+                reject(reason);
             };
-
-            var tmr = setTimeout(function () {
-                if (Math.random() > 0.5)
-                    resolve('ok');
-                else
-                    reject('no');
-            }, 3000);
         });
 
-        p.abort();
+        p.abort(new Error('abort'));
         ```
 
     - **<u>example</u>**:
@@ -166,7 +160,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         };
         ```
 
-- ### **[then(onFulfilled, onRejected)](src/yaku.js?source#L111)**
+- ### **[then(onFulfilled, onRejected)](src/yaku.js?source#L105)**
 
     Appends fulfillment and rejection handlers to the promise,
     and returns a new promise resolving to the return value of the called handler.
@@ -195,7 +189,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[catch(onRejected)](src/yaku.js?source#L131)**
+- ### **[catch(onRejected)](src/yaku.js?source#L125)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -220,7 +214,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.resolve(value)](src/yaku.js?source#L158)**
+- ### **[Yaku.resolve(value)](src/yaku.js?source#L152)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -240,7 +234,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         var p = Promise.resolve(10);
         ```
 
-- ### **[Yaku.reject(reason)](src/yaku.js?source#L172)**
+- ### **[Yaku.reject(reason)](src/yaku.js?source#L166)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -257,7 +251,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         var p = Promise.reject(10);
         ```
 
-- ### **[Yaku.race(iterable)](src/yaku.js?source#L196)**
+- ### **[Yaku.race(iterable)](src/yaku.js?source#L190)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -286,7 +280,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.all(iterable)](src/yaku.js?source#L235)**
+- ### **[Yaku.all(iterable)](src/yaku.js?source#L229)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -316,7 +310,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L284)**
+- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L278)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -345,7 +339,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.reject('v').catch(function () {});
         ```
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L303)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L297)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -375,6 +369,14 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         ```js
         var Promise = require('yaku');
         Promise.nextTick = function (fn) { window.setImmediate(fn); };
+        ```
+
+    - **<u>example</u>**:
+
+        You can even use sync resolution if you really know what you are doing.
+        ```js
+        var Promise = require('yaku');
+        Promise.nextTick = function (fn) { fn() };
         ```
 
 
