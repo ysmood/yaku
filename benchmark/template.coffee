@@ -1,5 +1,5 @@
 kit = require 'nokit'
-cs = kit.require 'colors/safe'
+cs = kit.require 'brush'
 
 ###*
  * The test will run 10 ^ 5 promises.
