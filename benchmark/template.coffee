@@ -39,10 +39,7 @@ module.exports = (name, Promise) ->
 	resolver = if process.argv[2] == 'sync'
 		(resolve) -> resolve()
 	else
-		(resolve) ->
-			setTimeout ->
-				resolve()
-			, 1
+		(resolve) -> setTimeout resolve, 1
 
 	asyncTask = ->
 		new Promise(resolver).then checkEnd
