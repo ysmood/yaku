@@ -289,3 +289,58 @@ if utils
 		new Yaku (r) ->
 			fn 0, (err, val) ->
 				r val
+
+	test 'source', 'out: 4', ->
+		one = utils.source()
+
+		x = 1
+		tmr = setInterval ->
+			one.emit x++
+		, 0
+
+		two = one (v) -> v * v
+
+		three = two (v) -> 'out: ' + v
+
+		new Yaku (r) ->
+			count = 0
+			three (v) ->
+				if count++ == 1
+					clearInterval tmr
+					r v
+
+	test 'source error', 'error', ->
+		one = utils.source()
+
+		x = 1
+		tmr = setInterval ->
+			one.emit x++
+			one.error 'error' if x == 2
+		, 0
+
+		two = one (v) -> v * v
+
+		three = two (v) -> 'out: ' + v
+
+		new Yaku (r) ->
+			count = 0
+			three (->), (err) ->
+				clearInterval tmr
+				r err
+
+	test 'source clear', 'ok', ->
+		one = utils.source()
+
+		tmr = setInterval ->
+			one.emit 'err'
+		, 0
+
+		new Yaku (r) ->
+			setTimeout ->
+				clearInterval tmr
+				r 'ok'
+			, 10
+			one (v) ->
+				r v
+			one.handlers = []
+

@@ -340,6 +340,72 @@ utils = module.exports =
 			setTimeout (-> r val), time
 
 	###*
+	 * Create a composable event source function.
+	 * @return {Function} `((v) ->, (reason) ->) -> source` The fucntion's
+	 * members:
+	 * ```
+	 * {
+	 * 	emit: (v) ->
+	 * 	error: (reason) ->
+	 *  handlers: Array
+	 * }
+	 * ```
+	 * @example
+	 * ```coffee
+	 * linear = utils.source()
+	 *
+	 * x = 0
+	 * setInterval ->
+	 * 	linear.emit x++
+	 * , 1000
+	 *
+	 * # wait for a moment then emit the value
+	 * quad = linear (x) -> utils.sleep 2000, x * x
+	 *
+	 * quad (v) -> console.log v
+	 *
+	 * # Dispose all children.
+	 * linear.handlers = []
+	 * ```
+	###
+	source: ->
+		src = (resolver, rejector) ->
+			nSrc = utils.source()
+			src.handlers.push {
+				resolver
+				rejector
+				nEmit: nSrc.emit
+				nError: nSrc.error
+			}
+
+			nSrc
+
+		src.emit = (val) ->
+			for handler in src.handlers
+				Promise.resolve(val).then(
+					handler.resolver
+					handler.rejector
+				).then(
+					handler.nEmit
+					handler.nError
+				)
+			return
+
+		src.error = (reason) ->
+			for handler in src.handlers
+				Promise.reject(reason).catch(
+					handler.rejector
+				).then(
+					handler.nEmit
+					handler.nError
+				)
+			return
+
+		src.handlers = []
+
+		src
+
+	###*
 	 * Throw an error to break the program.
 	 * @param  {Any} err
 	 * @example
