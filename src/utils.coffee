@@ -156,7 +156,7 @@ utils = module.exports =
 
 			if arguments.length == 1
 				args = [cb]
-				cb == null
+				cb = null
 
 			fn.apply self, args
 			.then (val) ->
