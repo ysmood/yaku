@@ -1,7 +1,7 @@
 # This test should work on both Nodejs and Browser.
 
-window.Yaku = require '../src/yaku'
-window.utils = require '../src/utils.coffee'
+Yaku = require '../src/yaku'
+utils = require '../src/utils.coffee'
 
 log = do -> (val) ->
 	if not JSON?
