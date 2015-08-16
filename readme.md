@@ -451,7 +451,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         });
         ```
 
-- ### **[callbackify(fn, self)](src/utils.coffee?source#L151)**
+- ### **[callbackify(fn, self)](src/utils.coffee?source#L149)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -464,15 +464,19 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.coffee?source#L173)**
+- ### **[Deferred](src/utils.coffee?source#L171)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end](src/utils.coffee?source#L185)**
+- ### **[end()](src/utils.coffee?source#L184)**
 
     The end symbol.
 
-- ### **[flow(fns)](src/utils.coffee?source#L247)**
+    - **<u>return</u>**: { _Promise_ }
+
+        A promise that will end the current pipeline.
+
+- ### **[flow(fns)](src/utils.coffee?source#L246)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -543,7 +547,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.coffee?source#L290)**
+- ### **[isPromise(obj)](src/utils.coffee?source#L287)**
 
     Check if an object is a promise-like object.
 
@@ -551,7 +555,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L319)**
+- ### **[promisify(fn, self)](src/utils.coffee?source#L316)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -585,7 +589,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L338)**
+- ### **[sleep(time, val)](src/utils.coffee?source#L335)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -599,17 +603,19 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[source()](src/utils.coffee?source#L371)**
+- ### **[source()](src/utils.coffee?source#L388)**
 
     Create a composable event source function.
+    Promise can't resolve multiple times, this function makes it possible, so
+    that you can easily map, filter and debounce events in a promise way.
 
     - **<u>return</u>**: { _Function_ }
 
-        `((v) ->, (reason) ->) -> source` The fucntion's
+        `((value) ->, (reason) ->) -> source` The fucntion's
         members:
         ```js
         {
-        	emit: function (v) {},
+        	emit: function (value) {},
         	error: function (reason) {},
         	handlers: Array
         }
@@ -621,20 +627,40 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         var linear = utils.source();
 
         var x = 0;
-        setInterval(function () {
+        setInterval(() => {
         	linear.emit(x++);
         }, 1000);
 
         // Wait for a moment then emit the value.
-        var quad = linear(function (x) { return utils.sleep(2000, x * x); });
+        var quad = linear(x => utils.sleep(2000, x * x));
 
-        quad(function (v) { console.log(v); });
+        quad(
+        	value => { console.log(value); },
+        	reason => { console.error(reason); }
+        );
 
-        # Dispose all children.
+        // Dispose all children.
         linear.handlers = [];
         ```
 
-- ### **[throw(err)](src/utils.coffee?source#L419)**
+    - **<u>example</u>**:
+
+        ```js
+        var filter = fn => v => fn(v) ? v : utils.end();
+
+        var keyup = utils.source((emit) => {
+        	document.querySelector('input').onkeyup = emit;
+        });
+
+        var keyupText = keyup(e => e.target.value);
+
+        // Now we only get the input when the text length is greater than 3.
+        var keyupTextGT3 = keyupText(filter(text => text.length > 3));
+
+        keyupTextGT3(v => console.log(v));
+        ```
+
+- ### **[throw(err)](src/utils.coffee?source#L438)**
 
     Throw an error to break the program.
 
