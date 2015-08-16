@@ -343,29 +343,29 @@ utils = module.exports =
 	 * Create a composable event source function.
 	 * @return {Function} `((v) ->, (reason) ->) -> source` The fucntion's
 	 * members:
-	 * ```
+	 * ```js
 	 * {
-	 * 	emit: (v) ->
-	 * 	error: (reason) ->
-	 *  handlers: Array
+	 * 	emit: function (v) {},
+	 * 	error: function (reason) {},
+	 * 	handlers: Array
 	 * }
 	 * ```
 	 * @example
-	 * ```coffee
-	 * linear = utils.source()
+	 * ```js
+	 * var linear = utils.source();
 	 *
-	 * x = 0
-	 * setInterval ->
-	 * 	linear.emit x++
-	 * , 1000
+	 * var x = 0;
+	 * setInterval(function () {
+	 * 	linear.emit(x++);
+	 * }, 1000);
 	 *
-	 * # wait for a moment then emit the value
-	 * quad = linear (x) -> utils.sleep 2000, x * x
+	 * // Wait for a moment then emit the value.
+	 * var quad = linear(function (x) { return utils.sleep(2000, x * x); });
 	 *
-	 * quad (v) -> console.log v
+	 * quad(function (v) { console.log(v); });
 	 *
 	 * # Dispose all children.
-	 * linear.handlers = []
+	 * linear.handlers = [];
 	 * ```
 	###
 	source: ->
