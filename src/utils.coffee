@@ -40,30 +40,24 @@ utils = module.exports =
 	 *  'http://d.com'
 	 * ];
 	 * var tasks = [
-	 *  function () { return kit.request(url[0]); },
-	 *  function () { return kit.request(url[1]); },
-	 *  function () { return kit.request(url[2]); },
-	 *  function () { return kit.request(url[3]); }
+	 *  () => kit.request(url[0]),
+	 *  () => kit.request(url[1]),
+	 *  () => kit.request(url[2]),
+	 *  () => kit.request(url[3])
 	 * ];
 	 *
-	 * utils.async(tasks).then(function () {
-	 *  kit.log('all done!');
-	 * });
+	 * utils.async(tasks).then(() => kit.log('all done!'));
 	 *
-	 * utils.async(2, tasks).then(function () {
-	 *  kit.log('max concurrent limit is 2');
-	 * });
+	 * utils.async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
 	 *
-	 * utils.async(3, function () {
+	 * utils.async(3, () => {
 	 *  var url = urls.pop();
 	 *  if (url)
 	 *      return kit.request(url);
 	 *  else
 	 *      return utils.end;
 	 * })
-	 * .then(function () {
-	 *  kit.log('all done!');
-	 * });
+	 * .then(() => kit.log('all done!'));
 	 * ```
 	###
 	async: (limit, list, saveResults, progress) ->
@@ -204,14 +198,14 @@ utils = module.exports =
 	 * }
 	 *
 	 * function curl (url) {
-	 * 	return kit.request(url).then(function (body) {
+	 * 	return kit.request(url).then((body) => {
 	 * 		kit.log('get');
 	 * 		return body;
 	 * 	});
 	 * }
 	 *
 	 * function save (str) {
-	 * 	kit.outputFile('a.txt', str).then(function () {
+	 * 	kit.outputFile('a.txt', str).then(() => {
 	 * 		kit.log('saved');
 	 * 	});
 	 * }
@@ -232,7 +226,7 @@ utils = module.exports =
 	 * 	if (!url) return utils.end;
 	 *
 	 * 	return kit.request(url)
-	 * 	.then(function (body) {
+	 * 	.then((body) => {
 	 * 		list.push(body);
 	 * 		var m = body.match(/href="(.+?)"/);
 	 * 		if (m) return m[0];
@@ -281,7 +275,7 @@ utils = module.exports =
 
 	###*
 	 * Check if an object is a promise-like object.
-	 * @param  {Object}  obj
+	 * @param  {Any}  obj
 	 * @return {Boolean}
 	###
 	isPromise: (obj) ->
@@ -296,19 +290,19 @@ utils = module.exports =
 	 * @example
 	 * ```js
 	 * function foo (val, cb) {
-	 * 	setTimeout(function () {
+	 * 	setTimeout(() => {
 	 * 		cb(null, val + 1);
 	 * 	});
 	 * }
 	 *
 	 * var bar = utils.promisify(foo);
 	 *
-	 * bar(0).then(function (val) {
+	 * bar(0).then((val) => {
 	 * 	console.log val # output => 1
 	 * });
 	 *
 	 * # It also supports the callback style.
-	 * bar(0, function (err, val) {
+	 * bar(0, (err, val) => {
 	 * 	console.log(val); // output => 1
 	 * });
 	 * ```
@@ -331,6 +325,10 @@ utils = module.exports =
 	 * @param  {Integer} time The unit is millisecond.
 	 * @param  {Any} val What the value this promise will resolve.
 	 * @return {Promise}
+	 * @example
+	 * ```js
+	 * utils.sleep(1000).then(() => console.log('after one second'));
+	 * ```
 	###
 	sleep: (time, val) ->
 		new Promise (r) ->
@@ -340,6 +338,7 @@ utils = module.exports =
 	 * Create a composable event source function.
 	 * Promise can't resolve multiple times, this function makes it possible, so
 	 * that you can easily map, filter and debounce events in a promise way.
+	 * @param {Function} executor `(emit, error) ->` It's optional.
 	 * @return {Function} `((value) ->, (reason) ->) -> source` The fucntion's
 	 * members:
 	 * ```js
@@ -359,7 +358,12 @@ utils = module.exports =
 	 * }, 1000);
 	 *
 	 * // Wait for a moment then emit the value.
-	 * var quad = linear(x => utils.sleep(2000, x * x));
+	 * var quad = linear(async x => {
+	 * 	await utils.sleep(2000);
+	 * 	return x * x;
+	 * });
+	 *
+	 * another = linear(x => -x);
 	 *
 	 * quad(
 	 * 	value => { console.log(value); },
@@ -429,7 +433,7 @@ utils = module.exports =
 	 * @param  {Any} err
 	 * @example
 	 * ```js
-	 * Promise.resolve().then(function () {
+	 * Promise.resolve().then(() => {
 	 * 	// This error won't be caught by promise.
 	 * 	utils.throw('break the program!');
 	 * });

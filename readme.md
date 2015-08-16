@@ -17,7 +17,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.2KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB), 1.5KB gzipped
+- The minified file is only 3.2KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and ES6
@@ -114,9 +114,9 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Here's an abort example.
         ```js
         var Promise = require('yaku');
-        var p = new Promise(function (resolve, reject) {
+        var p = new Promise((resolve, reject) => {
             var tmr = setTimeout(resolve, 3000);
-            this.abort = function (reason) {
+            this.abort = (reason) => {
                 clearTimeout(tmr);
                 reject(reason);
             };
@@ -130,11 +130,11 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Here's a progress example.
         ```js
         var Promise = require('yaku');
-        var p = new Promise(function (resolve, reject) {
+        var p = new Promise((resolve, reject) => {
             var self = this;
             var count = 0;
             var all = 100;
-            var tmr = setInterval(function () {
+            var tmr = setInterval(() => {
                 try {
                     self.progress && self.progress(count, all);
                 } catch (err) {
@@ -150,7 +150,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
             }, 1000);
         });
 
-        p.progress = function (curr, all) {
+        p.progress = (curr, all) => {
             console.log(curr, '/', all);
         };
         ```
@@ -179,7 +179,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         var Promise = require('yaku');
         var p = Promise.resolve(10);
 
-        p.then(function (v) {
+        p.then((v) => {
             console.log(v);
         });
         ```
@@ -204,7 +204,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         var Promise = require('yaku');
         var p = Promise.reject(10);
 
-        p['catch'](function (v) {
+        p['catch']((v) => {
             console.log(v);
         });
         ```
@@ -270,7 +270,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
             123,
             Promise.resolve(0)
         ])
-        .then(function (value) {
+        .then((value) => {
             console.log(value); // => 123
         });
         ```
@@ -300,7 +300,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
             123,
             Promise.resolve(0)
         ])
-        .then(function (values) {
+        .then((values) => {
             console.log(values); // => [123, 0]
         });
         ```
@@ -323,7 +323,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
         ```js
         var Promise = require('yaku');
-        Promise.onUnhandledRejection = function (reason) {
+        Promise.onUnhandledRejection = (reason) => {
             console.error(reason);
         };
 
@@ -331,7 +331,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.reject('my reason');
 
         # The below won't log the unhandled rejection error message.
-        Promise.reject('v').catch(function () {});
+        Promise.reject('v').catch(() => {});
         ```
 
 - ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L297)**
@@ -363,7 +363,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
         ```js
         var Promise = require('yaku');
-        Promise.nextTick = function (fn) { window.setImmediate(fn); };
+        Promise.nextTick = fn => window.setImmediate(fn);
         ```
 
     - **<u>example</u>**:
@@ -371,7 +371,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         You can even use sync resolution if you really know what you are doing.
         ```js
         var Promise = require('yaku');
-        Promise.nextTick = function (fn) { fn() };
+        Promise.nextTick = fn => fn();
         ```
 
 
@@ -381,7 +381,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 To use it you have to require it separately: `utils = require 'yaku/lib/utils'`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L69)**
+- ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L63)**
 
     An throttled version of `Promise.all`, it runs all the tasks under
     a concurrent limitation.
@@ -425,33 +425,27 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
          'http://d.com'
         ];
         var tasks = [
-         function () { return kit.request(url[0]); },
-         function () { return kit.request(url[1]); },
-         function () { return kit.request(url[2]); },
-         function () { return kit.request(url[3]); }
+         () => kit.request(url[0]),
+         () => kit.request(url[1]),
+         () => kit.request(url[2]),
+         () => kit.request(url[3])
         ];
 
-        utils.async(tasks).then(function () {
-         kit.log('all done!');
-        });
+        utils.async(tasks).then(() => kit.log('all done!'));
 
-        utils.async(2, tasks).then(function () {
-         kit.log('max concurrent limit is 2');
-        });
+        utils.async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
 
-        utils.async(3, function () {
+        utils.async(3, () => {
          var url = urls.pop();
          if (url)
              return kit.request(url);
          else
              return utils.end;
         })
-        .then(function () {
-         kit.log('all done!');
-        });
+        .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.coffee?source#L149)**
+- ### **[callbackify(fn, self)](src/utils.coffee?source#L143)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -464,11 +458,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.coffee?source#L171)**
+- ### **[Deferred](src/utils.coffee?source#L165)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end()](src/utils.coffee?source#L184)**
+- ### **[end()](src/utils.coffee?source#L178)**
 
     The end symbol.
 
@@ -476,7 +470,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         A promise that will end the current pipeline.
 
-- ### **[flow(fns)](src/utils.coffee?source#L246)**
+- ### **[flow(fns)](src/utils.coffee?source#L240)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -506,14 +500,14 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         }
 
         function curl (url) {
-        	return kit.request(url).then(function (body) {
+        	return kit.request(url).then((body) => {
         		kit.log('get');
         		return body;
         	});
         }
 
         function save (str) {
-        	kit.outputFile('a.txt', str).then(function () {
+        	kit.outputFile('a.txt', str).then(() => {
         		kit.log('saved');
         	});
         }
@@ -536,7 +530,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	if (!url) return utils.end;
 
         	return kit.request(url)
-        	.then(function (body) {
+        	.then((body) => {
         		list.push(body);
         		var m = body.match(/href="(.+?)"/);
         		if (m) return m[0];
@@ -547,15 +541,15 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.coffee?source#L287)**
+- ### **[isPromise(obj)](src/utils.coffee?source#L281)**
 
     Check if an object is a promise-like object.
 
-    - **<u>param</u>**: `obj` { _Object_ }
+    - **<u>param</u>**: `obj` { _Any_ }
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L316)**
+- ### **[promisify(fn, self)](src/utils.coffee?source#L310)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -572,24 +566,24 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         ```js
         function foo (val, cb) {
-        	setTimeout(function () {
+        	setTimeout(() => {
         		cb(null, val + 1);
         	});
         }
 
         var bar = utils.promisify(foo);
 
-        bar(0).then(function (val) {
+        bar(0).then((val) => {
         	console.log val # output => 1
         });
 
         # It also supports the callback style.
-        bar(0, function (err, val) {
+        bar(0, (err, val) => {
         	console.log(val); // output => 1
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L335)**
+- ### **[sleep(time, val)](src/utils.coffee?source#L333)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -603,11 +597,21 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[source()](src/utils.coffee?source#L388)**
+    - **<u>example</u>**:
+
+        ```js
+        utils.sleep(1000).then(() => console.log('after one second'));
+        ```
+
+- ### **[source(executor)](src/utils.coffee?source#L392)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
     that you can easily map, filter and debounce events in a promise way.
+
+    - **<u>param</u>**: `executor` { _Function_ }
+
+        `(emit, error) ->` It's optional.
 
     - **<u>return</u>**: { _Function_ }
 
@@ -632,7 +636,12 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         }, 1000);
 
         // Wait for a moment then emit the value.
-        var quad = linear(x => utils.sleep(2000, x * x));
+        var quad = linear(async x => {
+        	await utils.sleep(2000);
+        	return x * x;
+        });
+
+        another = linear(x => -x);
 
         quad(
         	value => { console.log(value); },
@@ -660,7 +669,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         keyupTextGT3(v => console.log(v));
         ```
 
-- ### **[throw(err)](src/utils.coffee?source#L438)**
+- ### **[throw(err)](src/utils.coffee?source#L442)**
 
     Throw an error to break the program.
 
@@ -669,7 +678,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
     - **<u>example</u>**:
 
         ```js
-        Promise.resolve().then(function () {
+        Promise.resolve().then(() => {
         	// This error won't be caught by promise.
         	utils.throw('break the program!');
         });

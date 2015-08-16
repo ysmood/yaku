@@ -17,7 +17,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only <%= doc.size %>KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB), 1.5KB gzipped
+- The minified file is only <%= doc.size %>KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and ES6

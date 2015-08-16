@@ -28,9 +28,9 @@
      * Here's an abort example.
      * ```js
      * var Promise = require('yaku');
-     * var p = new Promise(function (resolve, reject) {
+     * var p = new Promise((resolve, reject) => {
      *     var tmr = setTimeout(resolve, 3000);
-     *     this.abort = function (reason) {
+     *     this.abort = (reason) => {
      *         clearTimeout(tmr);
      *         reject(reason);
      *     };
@@ -42,11 +42,11 @@
      * Here's a progress example.
      * ```js
      * var Promise = require('yaku');
-     * var p = new Promise(function (resolve, reject) {
+     * var p = new Promise((resolve, reject) => {
      *     var self = this;
      *     var count = 0;
      *     var all = 100;
-     *     var tmr = setInterval(function () {
+     *     var tmr = setInterval(() => {
      *         try {
      *             self.progress && self.progress(count, all);
      *         } catch (err) {
@@ -62,7 +62,7 @@
      *     }, 1000);
      * });
      *
-     * p.progress = function (curr, all) {
+     * p.progress = (curr, all) => {
      *     console.log(curr, '/', all);
      * };
      * ```
@@ -97,7 +97,7 @@
          * var Promise = require('yaku');
          * var p = Promise.resolve(10);
          *
-         * p.then(function (v) {
+         * p.then((v) => {
          *     console.log(v);
          * });
          * ```
@@ -117,7 +117,7 @@
          * var Promise = require('yaku');
          * var p = Promise.reject(10);
          *
-         * p['catch'](function (v) {
+         * p['catch']((v) => {
          *     console.log(v);
          * });
          * ```
@@ -182,7 +182,7 @@
      *     123,
      *     Promise.resolve(0)
      * ])
-     * .then(function (value) {
+     * .then((value) => {
      *     console.log(value); // => 123
      * });
      * ```
@@ -221,7 +221,7 @@
      *     123,
      *     Promise.resolve(0)
      * ])
-     * .then(function (values) {
+     * .then((values) => {
      *     console.log(values); // => [123, 0]
      * });
      * ```
@@ -264,7 +264,7 @@
      * @example
      * ```js
      * var Promise = require('yaku');
-     * Promise.onUnhandledRejection = function (reason) {
+     * Promise.onUnhandledRejection = (reason) => {
      *     console.error(reason);
      * };
      *
@@ -272,7 +272,7 @@
      * Promise.reject('my reason');
      *
      * # The below won't log the unhandled rejection error message.
-     * Promise.reject('v').catch(function () {});
+     * Promise.reject('v').catch(() => {});
      * ```
      */
     Yaku.onUnhandledRejection = function (reason, p) {
@@ -308,13 +308,13 @@
      * @example
      * ```js
      * var Promise = require('yaku');
-     * Promise.nextTick = function (fn) { window.setImmediate(fn); };
+     * Promise.nextTick = fn => window.setImmediate(fn);
      * ```
      * @example
      * You can even use sync resolution if you really know what you are doing.
      * ```js
      * var Promise = require('yaku');
-     * Promise.nextTick = function (fn) { fn() };
+     * Promise.nextTick = fn => fn();
      * ```
      */
     Yaku.nextTick = root.process ?
