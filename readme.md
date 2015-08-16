@@ -6,7 +6,7 @@
 # Overview
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
-If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code (gzip size is 0.5KB).
+If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code (gzipped size is 0.5KB).
 It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
@@ -17,11 +17,11 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.2KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
-- 100% compliant with Promises/A+ specs
-- Better performance than the native Promise
+- The minified file is only 3.2KB ([Bluebird][] / 73KB, [ES6-promise][] / 18KB), 1.5KB gzipped
+- [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
+- Much better performance than the native Promise
+- 100% compliant with Promises/A+ specs and ES6
 - Designed to work on IE5+ and other major browsers
-- [Better][docs/debugHelperComparison.md] `possibly unhandled rejection` and `long stack trace` than [Bluebird][]
 - Well commented source code with every Promises/A+ spec
 
 # Quick Start
@@ -40,7 +40,7 @@ var Promise = require('yaku');
 ## Browser
 
 Use something like [Browserify][] or [Webpack][], or download the `yaku.js` file from [release page][].
-It supports both `AMD` and `CMD`. Raw usage without `AMD` or `CMD`:
+It supports both `AMD`, `CMD` and `CommonJS`. Raw usage without `AMD`, `CMD` or `CommonJS`:
 
 ```html
 <script type="text/javascript" src ="yaku.js"></script>
@@ -74,11 +74,6 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 # FAQ
 
-- Better long stack trace support?
-
-  > Latest Node.js and browsers are already support it. If you enabled it, Yaku will take advantage of it
-  > without much overhead. Such as this library [longjohn][] for Node.js, or this article for [Chrome][crhome-lst].
-
 - `catch` on old brwoser (IE7, IE8 etc)?
 
   > In ECMA-262 spec, `catch` cannot be used as method name. If you use `coffee-script`, it will handle the `catch` automatically, else you have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
@@ -88,10 +83,10 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
   > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
   > should work well with ES6 native promise. If you need fancy and magic, go for [Bluebird][].
 
-- Why use [CoffeeScript][], not Javascript?
+- Better long stack trace support?
 
-  > If it is really a problemn for people to use it, I will take time to translate it to JS.
-  > Else, I'd like to keep the code as simple as CoffeeScript.
+  > Latest Node.js and browsers are already support it. If you enabled it, Yaku will take advantage of it
+  > without much overhead. Such as this library [longjohn][] for Node.js, or this article for [Chrome][crhome-lst].
 
 - The name Yaku is weird?
 
@@ -604,7 +599,42 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Promise_ }
 
-- ### **[throw(err)](src/utils.coffee?source#L353)**
+- ### **[source()](src/utils.coffee?source#L371)**
+
+    Create a composable event source function.
+
+    - **<u>return</u>**: { _Function_ }
+
+        `((v) ->, (reason) ->) -> source` The fucntion's
+        members:
+        ```
+        {
+        	emit: (v) ->
+        	error: (reason) ->
+         handlers: Array
+        }
+        ```
+
+    - **<u>example</u>**:
+
+        ```coffee
+        linear = utils.source()
+
+        x = 0
+        setInterval ->
+        	linear.emit x++
+        , 1000
+
+        # wait for a moment then emit the value
+        quad = linear (x) -> utils.sleep 2000, x * x
+
+        quad (v) -> console.log v
+
+        # Dispose all children.
+        linear.handlers = []
+        ```
+
+- ### **[throw(err)](src/utils.coffee?source#L419)**
 
     Throw an error to break the program.
 

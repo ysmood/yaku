@@ -16,34 +16,44 @@ module.exports = (task, option) ->
 		}
 		.run()
 
+	addLicense = (str) ->
+		{ version } = kit.require './package', __dirname
+		return """
+		/*
+		 Yaku v#{version}
+		 (c) 2015 Yad Smood. http://ysmood.org
+		 License MIT
+		*/\n
+		""" + str
+
 	task 'code', ['lint'], 'build source code', ->
-		addLicense = (str) ->
-			{ version } = kit.require './package', __dirname
-			return """
-			/*
-			 Yaku v#{version}
-			 (c) 2015 Yad Smood. http://ysmood.org
-			 License MIT
-			*/\n
-			""" + str
 
 		kit.warp 'src/yaku.js'
 		.load (f) ->
 			f.dest.name = 'yaku.min'
 			kit.outputFile 'lib/yaku.js', addLicense(f.contents)
 		.load kit.drives.auto 'compress'
-		.load (f) ->
-			f.set addLicense f.contents
+		.load (f) -> f.set addLicense f.contents
 		.run 'lib'
 
 	task 'lint', 'lint js files', ->
 		kit.spawn 'eslint', ['src/yaku.js']
 
-	task 'utils', 'build utils', ->
+	task 'utils', ['code'], 'build utils', ->
 		kit.warp 'src/utils.coffee'
 		.load kit.drives.auto 'lint'
 		.load kit.drives.auto 'compile'
+		.load (f) -> f.set addLicense f.contents
 		.run 'lib'
+		.then ->
+			kit.spawn 'webpack'
+		.then ->
+			kit.warp 'lib/yaku.with-utils.js'
+			.load kit.drives.auto 'compress'
+			.load (f) ->
+				f.set addLicense f.contents
+				f.dest.name += '.min'
+			.run 'lib'
 
 	option '--debug', 'run with remote debug server'
 	option '--port <8219>', 'remote debug server port', 8219
