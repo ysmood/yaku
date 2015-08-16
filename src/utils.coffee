@@ -95,8 +95,6 @@ utils = module.exports =
 		else
 			return throw new TypeError 'wrong argument type: ' + list
 
-		utils.end ?= {}
-
 		tryIter = ->
 			try
 				iter()
@@ -181,8 +179,9 @@ utils = module.exports =
 
 	###*
 	 * The end symbol.
+	 * @return {Promise} A promise that will end the current pipeline.
 	###
-	end: {}
+	end: -> new Promise ->
 
 	###*
 	 * Creates a function that is the composition of the provided functions.
@@ -265,8 +264,6 @@ utils = module.exports =
 		else
 			return throw new TypeError 'wrong argument type: ' + fn
 
-		utils.end ?= {}
-
 		run = (preFn) ->
 			preFn.then (val) ->
 				fn = iter val
@@ -341,11 +338,13 @@ utils = module.exports =
 
 	###*
 	 * Create a composable event source function.
-	 * @return {Function} `((v) ->, (reason) ->) -> source` The fucntion's
+	 * Promise can't resolve multiple times, this function makes it possible, so
+	 * that you can easily map, filter and debounce events in a promise way.
+	 * @return {Function} `((value) ->, (reason) ->) -> source` The fucntion's
 	 * members:
 	 * ```js
 	 * {
-	 * 	emit: function (v) {},
+	 * 	emit: function (value) {},
 	 * 	error: function (reason) {},
 	 * 	handlers: Array
 	 * }
@@ -355,25 +354,43 @@ utils = module.exports =
 	 * var linear = utils.source();
 	 *
 	 * var x = 0;
-	 * setInterval(function () {
+	 * setInterval(() => {
 	 * 	linear.emit(x++);
 	 * }, 1000);
 	 *
 	 * // Wait for a moment then emit the value.
-	 * var quad = linear(function (x) { return utils.sleep(2000, x * x); });
+	 * var quad = linear(x => utils.sleep(2000, x * x));
 	 *
-	 * quad(function (v) { console.log(v); });
+	 * quad(
+	 * 	value => { console.log(value); },
+	 * 	reason => { console.error(reason); }
+	 * );
 	 *
-	 * # Dispose all children.
+	 * // Dispose all children.
 	 * linear.handlers = [];
 	 * ```
+	 * @example
+	 * ```js
+	 * var filter = fn => v => fn(v) ? v : utils.end();
+	 *
+	 * var keyup = utils.source((emit) => {
+	 * 	document.querySelector('input').onkeyup = emit;
+	 * });
+	 *
+	 * var keyupText = keyup(e => e.target.value);
+	 *
+	 * // Now we only get the input when the text length is greater than 3.
+	 * var keyupTextGT3 = keyupText(filter(text => text.length > 3));
+	 *
+	 * keyupTextGT3(v => console.log(v));
+	 * ```
 	###
-	source: ->
-		src = (resolver, rejector) ->
+	source: (executor) ->
+		src = (onEmit, onError) ->
 			nSrc = utils.source()
 			src.handlers.push {
-				resolver
-				rejector
+				onEmit
+				onError
 				nEmit: nSrc.emit
 				nError: nSrc.error
 			}
@@ -383,8 +400,8 @@ utils = module.exports =
 		src.emit = (val) ->
 			for handler in src.handlers
 				Promise.resolve(val).then(
-					handler.resolver
-					handler.rejector
+					handler.onEmit
+					handler.onError
 				).then(
 					handler.nEmit
 					handler.nError
@@ -394,7 +411,7 @@ utils = module.exports =
 		src.error = (reason) ->
 			for handler in src.handlers
 				Promise.reject(reason).catch(
-					handler.rejector
+					handler.onError
 				).then(
 					handler.nEmit
 					handler.nError
@@ -402,6 +419,8 @@ utils = module.exports =
 			return
 
 		src.handlers = []
+
+		executor? src.emit, src.error
 
 		src
 
