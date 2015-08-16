@@ -45,15 +45,6 @@ module.exports = (task, option) ->
 		.load kit.drives.auto 'compile'
 		.load (f) -> f.set addLicense f.contents
 		.run 'lib'
-		.then ->
-			kit.spawn 'webpack'
-		.then ->
-			kit.warp 'lib/yaku.with-utils.js'
-			.load kit.drives.auto 'compress'
-			.load (f) ->
-				f.set addLicense f.contents
-				f.dest.name += '.min'
-			.run 'lib'
 
 	option '--debug', 'run with remote debug server'
 	option '--port <8219>', 'remote debug server port', 8219
@@ -105,24 +96,18 @@ module.exports = (task, option) ->
 	task 'browser', 'Unit test on browser', (opts) ->
 		http = require 'http'
 
+		kit.spawn 'webpack', ['--progress', '--watch']
+
 		server = http.createServer (req, res) ->
 			switch req.url
 				when '/'
 					kit.readFile 'test/browser.html', (html) ->
-						all = ''
-						kit.warp([
-							'src/yaku.js'
-							'test/basic.coffee'
-						])
-						.load kit.drives.auto 'compile'
-						.load (f) ->
-							all += f.contents + '\n\n'
-							f.contents = null
-						.run().then ->
+						kit.readFile 'lib/test-basic.js'
+						.then (js) ->
 							res.end """
 								<html>
 									<body></body>
-									<script>#{all}</script>
+									<script>#{js}</script>
 								</html>"""
 				when '/log'
 					req.on 'data', (c) ->

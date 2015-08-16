@@ -1,10 +1,7 @@
 # This test should work on both Nodejs and Browser.
 
-if module? and module.exports?
-	Yaku = require '../src/yaku'
-	utils = require '../src/utils'
-else
-	Yaku = window.Yaku
+window.Yaku = require '../src/yaku'
+window.utils = require '../src/utils.coffee'
 
 log = do -> (val) ->
 	if not JSON?
@@ -210,137 +207,135 @@ test 'race', 0, ->
 			, 30
 	]
 
-if utils
+test 'async array', [0, null, undefined, 1, 2, 3], ->
+	list = [
+		-> 0
+		-> null
+		-> undefined
+		-> utils.sleep 20, 1
+		-> utils.sleep 10, 2
+		-> utils.sleep 10, 3
+	]
 
-	test 'async array', [0, null, undefined, 1, 2, 3], ->
-		list = [
-			-> 0
-			-> null
-			-> undefined
-			-> utils.sleep 20, 1
-			-> utils.sleep 10, 2
-			-> utils.sleep 10, 3
-		]
+	utils.async 2, list
 
-		utils.async 2, list
+test 'async error', $val, ->
+	list = [
+		-> utils.sleep 10, 1
+		-> throw $val
+		-> utils.sleep 10, 3
+	]
 
-	test 'async error', $val, ->
-		list = [
-			-> utils.sleep 10, 1
-			-> throw $val
-			-> utils.sleep 10, 3
-		]
+	utils.async 2, list
+	.catch (err) -> err
 
-		utils.async 2, list
-		.catch (err) -> err
+test 'async iter progress', 10, ->
+	iter = ->
+		i = 0
+		->
+			if i++ == 10
+				return utils.end
+			new Yaku (r) ->
+				setTimeout (-> r 1), 10
 
-	test 'async iter progress', 10, ->
-		iter = ->
-			i = 0
-			->
-				if i++ == 10
-					return utils.end
-				new Yaku (r) ->
-					setTimeout (-> r 1), 10
+	count = 0
+	utils.async 3, iter(), false, (ret) ->
+		count += ret
+	.then -> count
 
-		count = 0
-		utils.async 3, iter(), false, (ret) ->
-			count += ret
-		.then -> count
+test 'flow array', 'bc', ->
+	(utils.flow [
+		'a'
+		Yaku.resolve 'b'
+		(v) -> v + 'c'
+	])(0)
 
-	test 'flow array', 'bc', ->
-		(utils.flow [
-			'a'
-			Yaku.resolve 'b'
-			(v) -> v + 'c'
-		])(0)
+test 'flow error', $val, ->
+	(utils.flow [
+		'a'
+		Yaku.resolve 'b'
+		(v) -> throw $val
+	])(0).catch (err) -> err
 
-	test 'flow error', $val, ->
-		(utils.flow [
-			'a'
-			Yaku.resolve 'b'
-			(v) -> throw $val
-		])(0).catch (err) -> err
-
-	test 'flow iter', [0, 1, 2, 3], ->
-		list = []
-		(utils.flow (v) ->
-			return utils.end if v == 3
-			Yaku.resolve().then ->
-				list.push v
-				++v
-		)(0)
-		.then (v) ->
+test 'flow iter', [0, 1, 2, 3], ->
+	list = []
+	(utils.flow (v) ->
+		return utils.end if v == 3
+		Yaku.resolve().then ->
 			list.push v
-			list
+			++v
+	)(0)
+	.then (v) ->
+		list.push v
+		list
 
-	test 'promisify promise', 1, ->
-		fn = utils.promisify (val, cb) ->
-			setTimeout ->
-				cb null, val + 1
+test 'promisify promise', 1, ->
+	fn = utils.promisify (val, cb) ->
+		setTimeout ->
+			cb null, val + 1
 
-		fn 0
+	fn 0
 
-	test 'promisify callback', 1, ->
-		fn = utils.promisify (val, cb) ->
-			setTimeout ->
-				cb null, val + 1
+test 'promisify callback', 1, ->
+	fn = utils.promisify (val, cb) ->
+		setTimeout ->
+			cb null, val + 1
 
-		new Yaku (r) ->
-			fn 0, (err, val) ->
-				r val
+	new Yaku (r) ->
+		fn 0, (err, val) ->
+			r val
 
-	test 'source', 'out: 4', ->
-		one = utils.source()
+test 'source', 'out: 4', ->
+	one = utils.source()
 
-		x = 1
-		tmr = setInterval ->
-			one.emit x++
-		, 0
+	x = 1
+	tmr = setInterval ->
+		one.emit x++
+	, 0
 
-		two = one (v) -> v * v
+	two = one (v) -> v * v
 
-		three = two (v) -> 'out: ' + v
+	three = two (v) -> 'out: ' + v
 
-		new Yaku (r) ->
-			count = 0
-			three (v) ->
-				if count++ == 1
-					clearInterval tmr
-					r v
-
-	test 'source error', 'error', ->
-		one = utils.source()
-
-		x = 1
-		tmr = setInterval ->
-			one.emit x++
-			one.error 'error' if x == 2
-		, 0
-
-		two = one (v) -> v * v
-
-		three = two (v) -> 'out: ' + v
-
-		new Yaku (r) ->
-			count = 0
-			three (->), (err) ->
+	new Yaku (r) ->
+		count = 0
+		three (v) ->
+			if count++ == 1
 				clearInterval tmr
-				r err
-
-	test 'source clear', 'ok', ->
-		one = utils.source()
-
-		tmr = setInterval ->
-			one.emit 'err'
-		, 0
-
-		new Yaku (r) ->
-			setTimeout ->
-				clearInterval tmr
-				r 'ok'
-			, 10
-			one (v) ->
 				r v
-			one.handlers = []
+
+test 'source error', 'error', ->
+	one = utils.source()
+
+	x = 1
+	tmr = setInterval ->
+		one.emit x++
+		one.error 'error' if x == 2
+	, 0
+
+	two = one (v) -> v * v
+
+	three = two (v) -> 'out: ' + v
+
+	new Yaku (r) ->
+		count = 0
+		three (->), (err) ->
+			clearInterval tmr
+			r err
+
+test 'source clear', 'ok', ->
+	one = utils.source()
+
+	tmr = setInterval ->
+		one.emit 'err'
+	, 0
+
+	new Yaku (r) ->
+		setTimeout ->
+			clearInterval tmr
+			r 'ok'
+		, 10
+		one (v) ->
+			r v
+		one.handlers = []
 
