@@ -338,13 +338,16 @@ utils = module.exports =
 	 * Create a composable event source function.
 	 * Promise can't resolve multiple times, this function makes it possible, so
 	 * that you can easily map, filter and debounce events in a promise way.
-	 * @param {Function} executor `(emit, error) ->` It's optional.
-	 * @return {Function} `((value) ->, (reason) ->) -> source` The fucntion's
+	 * @param {Function} executor `(emit) ->` It's optional.
+	 * @return {Function} `(value) ->` The fucntion's
 	 * members:
 	 * ```js
 	 * {
-	 * 	emit: function (value) {},
-	 * 	error: function (reason) {},
+	 * 	on: (onEmit, onError) => { \/* ... *\/ },
+	 *
+	 * 	// Get current value from it.
+	 * 	value: Promise,
+	 *
 	 * 	handlers: Array
 	 * }
 	 * ```
@@ -354,23 +357,23 @@ utils = module.exports =
 	 *
 	 * var x = 0;
 	 * setInterval(() => {
-	 * 	linear.emit(x++);
+	 * 	linear(x++);
 	 * }, 1000);
 	 *
 	 * // Wait for a moment then emit the value.
-	 * var quad = linear(async x => {
+	 * var quad = linear.on(async x => {
 	 * 	await utils.sleep(2000);
 	 * 	return x * x;
 	 * });
 	 *
-	 * another = linear(x => -x);
+	 * another = linear.on(x => -x);
 	 *
-	 * quad(
+	 * quad.on(
 	 * 	value => { console.log(value); },
 	 * 	reason => { console.error(reason); }
 	 * );
 	 *
-	 * // Dispose all children.
+	 * // Dispose all children. You can also dispose some specific handlers.
 	 * linear.handlers = [];
 	 * ```
 	 * @example
@@ -381,50 +384,43 @@ utils = module.exports =
 	 * 	document.querySelector('input').onkeyup = emit;
 	 * });
 	 *
-	 * var keyupText = keyup(e => e.target.value);
+	 * var keyupText = keyup.on(e => e.target.value);
 	 *
 	 * // Now we only get the input when the text length is greater than 3.
-	 * var keyupTextGT3 = keyupText(filter(text => text.length > 3));
+	 * var keyupTextGT3 = keyupText.on(filter(text => text.length > 3));
 	 *
 	 * keyupTextGT3(v => console.log(v));
 	 * ```
 	###
 	source: (executor) ->
-		src = (onEmit, onError) ->
-			nSrc = utils.source()
-			src.handlers.push {
-				onEmit
-				onError
-				nEmit: nSrc.emit
-				nError: nSrc.error
-			}
-
-			nSrc
-
-		src.emit = (val) ->
+		src = (val) ->
+			src.value = val = Promise.resolve val
 			for handler in src.handlers
-				Promise.resolve(val).then(
+				val.then(
 					handler.onEmit
 					handler.onError
 				).then(
-					handler.nEmit
-					handler.nError
+					handler.nextSrc
+					handler.nextSrcErr
 				)
 			return
 
-		src.error = (reason) ->
-			for handler in src.handlers
-				Promise.reject(reason).catch(
-					handler.onError
-				).then(
-					handler.nEmit
-					handler.nError
-				)
-			return
+		src.on = (onEmit, onError) ->
+			nextSrc = utils.source()
+			src.handlers.push {
+				onEmit
+				onError
+				nextSrc: nextSrc
+				nextSrcErr: (reason) ->
+					nextSrc Promise.reject reason
+			}
+
+			nextSrc
 
 		src.handlers = []
+		src.value = Promise.resolve()
 
-		executor? src.emit, src.error
+		executor? src
 
 		src
 

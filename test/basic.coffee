@@ -47,14 +47,17 @@ test = (name, shouldBe, fn) ->
 			"""
 			process?.exit(1)
 
-	out = fn()
-	if out and out.then
-		out.then (v) ->
-			report assert v, shouldBe
-		, (v) ->
-			report assert v, shouldBe
-	else
-		report assert fn(), shouldBe
+	try
+		out = fn()
+		if out and out.then
+			out.then (v) ->
+				report assert v, shouldBe
+			, (v) ->
+				report assert v, shouldBe
+		else
+			report assert fn(), shouldBe
+	catch err
+		report false, err
 
 $val = { val: 'ok' }
 
@@ -290,16 +293,16 @@ test 'source', 'out: 4', ->
 
 	x = 1
 	tmr = setInterval ->
-		one.emit x++
+		one x++
 	, 0
 
-	two = one (v) -> v * v
+	two = one.on (v) -> v * v
 
-	three = two (v) -> 'out: ' + v
+	three = two.on (v) -> 'out: ' + v
 
 	new Yaku (r) ->
 		count = 0
-		three (v) ->
+		three.on (v) ->
 			if count++ == 1
 				clearInterval tmr
 				r v
@@ -309,33 +312,33 @@ test 'source error', 'error', ->
 
 	x = 1
 	tmr = setInterval ->
-		one.emit x++
-		one.error 'error' if x == 2
+		one x++
+		one Yaku.reject 'error' if x == 2
 	, 0
 
-	two = one (v) -> v * v
+	two = one.on (v) -> v * v
 
-	three = two (v) -> 'out: ' + v
+	three = two.on (v) -> 'out: ' + v
 
 	new Yaku (r) ->
 		count = 0
-		three (->), (err) ->
+		three.on (->), (err) ->
 			clearInterval tmr
 			r err
 
 test 'source clear', 'ok', ->
-	one = utils.source()
-
-	tmr = setInterval ->
-		one.emit 'err'
-	, 0
+	tmr = null
+	one = utils.source (emit) ->
+		tmr = setInterval ->
+			emit 'err'
+		, 0
 
 	new Yaku (r) ->
 		setTimeout ->
 			clearInterval tmr
 			r 'ok'
 		, 10
-		one (v) ->
+		one.on (v) ->
 			r v
 		one.handlers = []
 
