@@ -76,7 +76,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 - `catch` on old brwoser (IE7, IE8 etc)?
 
-  > In ECMA-262 spec, `catch` cannot be used as method name. If you use `coffee-script`, it will handle the `catch` automatically, else you have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
+  > In ECMA-262 spec, `catch` cannot be used as method name. You have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
 
 - Will Yaku implement `done`, `finally`, `promisify`, etc?
 
@@ -184,7 +184,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[catch(onRejected)](src/yaku.js?source#L125)**
+- ### **[Yaku.resolve(onRejected, value)](src/yaku.js?source#L152)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -208,12 +208,25 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
             console.log(v);
         });
         ```
+        /
+                "catch": function (onRejected) {
+                    return this.then($nil, onRejected);
+                },
 
-- ### **[Yaku.resolve(value)](src/yaku.js?source#L152)**
+                // Default state
+                _state: $pending,
 
-    The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
-    If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
-    adopting its eventual state; otherwise the returned promise will be fulfilled with the value.
+                // The number of current promises that attach to this Yaku instance.
+                _pCount: 0,
+
+                // The parent Yaku.
+                _pre: null
+            };
+
+            /**
+        The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
+        If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
+        adopting its eventual state; otherwise the returned promise will be fulfilled with the value.
 
     - **<u>param</u>**: `value` { _Any_ }
 
@@ -603,7 +616,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.coffee?source#L392)**
+- ### **[source(executor)](src/utils.coffee?source#L395)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
@@ -611,16 +624,19 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>param</u>**: `executor` { _Function_ }
 
-        `(emit, error) ->` It's optional.
+        `(emit) ->` It's optional.
 
     - **<u>return</u>**: { _Function_ }
 
-        `((value) ->, (reason) ->) -> source` The fucntion's
+        `(value) ->` The fucntion's
         members:
         ```js
         {
-        	emit: function (value) {},
-        	error: function (reason) {},
+        	on: (onEmit, onError) => { /* ... */ },
+
+        	// Get current value from it.
+        	value: Promise,
+
         	handlers: Array
         }
         ```
@@ -632,23 +648,23 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         var x = 0;
         setInterval(() => {
-        	linear.emit(x++);
+        	linear(x++);
         }, 1000);
 
         // Wait for a moment then emit the value.
-        var quad = linear(async x => {
+        var quad = linear.on(async x => {
         	await utils.sleep(2000);
         	return x * x;
         });
 
-        another = linear(x => -x);
+        another = linear.on(x => -x);
 
-        quad(
+        quad.on(
         	value => { console.log(value); },
         	reason => { console.error(reason); }
         );
 
-        // Dispose all children.
+        // Dispose all children. You can also dispose some specific handlers.
         linear.handlers = [];
         ```
 
@@ -661,15 +677,15 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	document.querySelector('input').onkeyup = emit;
         });
 
-        var keyupText = keyup(e => e.target.value);
+        var keyupText = keyup.on(e => e.target.value);
 
         // Now we only get the input when the text length is greater than 3.
-        var keyupTextGT3 = keyupText(filter(text => text.length > 3));
+        var keyupTextGT3 = keyupText.on(filter(text => text.length > 3));
 
         keyupTextGT3(v => console.log(v));
         ```
 
-- ### **[throw(err)](src/utils.coffee?source#L442)**
+- ### **[throw(err)](src/utils.coffee?source#L438)**
 
     Throw an error to break the program.
 

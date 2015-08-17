@@ -76,7 +76,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 - `catch` on old brwoser (IE7, IE8 etc)?
 
-  > In ECMA-262 spec, `catch` cannot be used as method name. If you use `coffee-script`, it will handle the `catch` automatically, else you have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
+  > In ECMA-262 spec, `catch` cannot be used as method name. You have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
 
 - Will Yaku implement `done`, `finally`, `promisify`, etc?
 
