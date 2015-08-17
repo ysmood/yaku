@@ -278,7 +278,7 @@
     Yaku.onUnhandledRejection = function (reason, p) {
         if (root.console) {
             var info = genStackInfo(reason, p);
-            console.error("Unhandled Rejection:", info[0], info[1]);
+            console.error("Unhandled Rejection:", info[0], info[1] || "");
         }
     };
 
