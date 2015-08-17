@@ -366,7 +366,7 @@ utils = module.exports =
 	 * 	return x * x;
 	 * });
 	 *
-	 * another = linear.on(x => -x);
+	 * var another = linear.on(x => -x);
 	 *
 	 * quad.on(
 	 * 	value => { console.log(value); },
@@ -377,6 +377,7 @@ utils = module.exports =
 	 * linear.handlers = [];
 	 * ```
 	 * @example
+	 * Use it with DOM.
 	 * ```js
 	 * var filter = fn => v => fn(v) ? v : utils.end();
 	 *
@@ -390,6 +391,16 @@ utils = module.exports =
 	 * var keyupTextGT3 = keyupText.on(filter(text => text.length > 3));
 	 *
 	 * keyupTextGT3(v => console.log(v));
+	 * ```
+	 * @example
+	 * Merge two sources into one.
+	 * ```js
+	 * let one = utils.source(emit => setInterval(emit, 100, 'one'));
+	 * let two = utils.source(emit => setInterval(emit, 200, 'two'));
+	 * let merge = arr => arr.forEach(src => src.on(emit));
+	 *
+	 * let three = merge([one, two]);
+	 * three.on(v => console.log(v));
 	 * ```
 	###
 	source: (executor) ->

@@ -616,7 +616,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.coffee?source#L395)**
+- ### **[source(executor)](src/utils.coffee?source#L406)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
@@ -657,7 +657,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	return x * x;
         });
 
-        another = linear.on(x => -x);
+        var another = linear.on(x => -x);
 
         quad.on(
         	value => { console.log(value); },
@@ -670,6 +670,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>example</u>**:
 
+        Use it with DOM.
         ```js
         var filter = fn => v => fn(v) ? v : utils.end();
 
@@ -685,7 +686,19 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         keyupTextGT3(v => console.log(v));
         ```
 
-- ### **[throw(err)](src/utils.coffee?source#L438)**
+    - **<u>example</u>**:
+
+        Merge two sources into one.
+        ```js
+        let one = utils.source(emit => setInterval(emit, 100, 'one'));
+        let two = utils.source(emit => setInterval(emit, 200, 'two'));
+        let merge = arr => arr.forEach(src => src.on(emit));
+
+        let three = merge([one, two]);
+        three.on(v => console.log(v));
+        ```
+
+- ### **[throw(err)](src/utils.coffee?source#L449)**
 
     Throw an error to break the program.
 
