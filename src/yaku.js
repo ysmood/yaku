@@ -67,7 +67,7 @@
      * };
      * ```
      */
-    Yaku = function Yaku (executor) {
+    Yaku = function (executor) {
         var self = this,
             err;
 
