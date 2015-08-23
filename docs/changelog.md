@@ -1,6 +1,7 @@
-- v0.6.0
+- v0.6.1
 
   - add: `utils.source`
+  - fix: a stack info typo
 
 - v0.4.0
 
