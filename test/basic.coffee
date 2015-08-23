@@ -57,7 +57,7 @@ test = (name, shouldBe, fn) ->
 		else
 			report assert fn(), shouldBe
 	catch err
-		report false, err
+		report { a: err && err.stack, b: shouldBe }
 
 $val = { val: 'ok' }
 

@@ -98,7 +98,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 # Utils
 
-To use it you have to require it separately: `utils = require 'yaku/lib/utils'`.
+To use it you have to require it separately: `yutils = require 'yaku/lib/utils'`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
 <%= doc['src/utils.coffee'] %>
