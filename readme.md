@@ -184,7 +184,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.resolve(onRejected, value)](src/yaku.js?source#L152)**
+- ### **[catch(onRejected)](src/yaku.js?source#L125)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -208,25 +208,12 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
             console.log(v);
         });
         ```
-        /
-                "catch": function (onRejected) {
-                    return this.then($nil, onRejected);
-                },
 
-                // Default state
-                _state: $pending,
+- ### **[Yaku.resolve(value)](src/yaku.js?source#L152)**
 
-                // The number of current promises that attach to this Yaku instance.
-                _pCount: 0,
-
-                // The parent Yaku.
-                _pre: null
-            };
-
-            /**
-        The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
-        If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
-        adopting its eventual state; otherwise the returned promise will be fulfilled with the value.
+    The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
+    If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
+    adopting its eventual state; otherwise the returned promise will be fulfilled with the value.
 
     - **<u>param</u>**: `value` { _Any_ }
 
@@ -391,7 +378,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 # Utils
 
-To use it you have to require it separately: `utils = require 'yaku/lib/utils'`.
+To use it you have to require it separately: `yutils = require 'yaku/lib/utils'`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
 - ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L63)**
@@ -616,7 +603,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.coffee?source#L406)**
+- ### **[source(executor)](src/utils.coffee?source#L410)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
@@ -637,7 +624,8 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	// Get current value from it.
         	value: Promise,
 
-        	handlers: Array
+        	// All the children spawned from current source.
+        	children: Array
         }
         ```
 
@@ -664,8 +652,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	reason => { console.error(reason); }
         );
 
-        // Dispose all children. You can also dispose some specific handlers.
-        linear.handlers = [];
+        // Dispose a specific source.
+        linear.children.splice(linear.children.indexOf(quad));
+
+        // Dispose all children.
+        linear.children = [];
         ```
 
     - **<u>example</u>**:
@@ -698,7 +689,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         three.on(v => console.log(v));
         ```
 
-- ### **[throw(err)](src/utils.coffee?source#L449)**
+- ### **[throw(err)](src/utils.coffee?source#L450)**
 
     Throw an error to break the program.
 
