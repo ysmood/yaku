@@ -326,7 +326,7 @@ test 'source error', 'error', ->
 			clearInterval tmr
 			r err
 
-test 'source clear', 'ok', ->
+test 'source children', 'ok', ->
 	tmr = null
 	one = utils.source (emit) ->
 		tmr = setInterval ->
@@ -340,5 +340,5 @@ test 'source clear', 'ok', ->
 		, 10
 		one.on (v) ->
 			r v
-		one.handlers = []
+		one.children = []
 

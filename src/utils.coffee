@@ -348,7 +348,8 @@ utils = module.exports =
 	 * 	// Get current value from it.
 	 * 	value: Promise,
 	 *
-	 * 	handlers: Array
+	 * 	// All the children spawned from current source.
+	 * 	children: Array
 	 * }
 	 * ```
 	 * @example
@@ -373,8 +374,11 @@ utils = module.exports =
 	 * 	reason => { console.error(reason); }
 	 * );
 	 *
-	 * // Dispose all children. You can also dispose some specific handlers.
-	 * linear.handlers = [];
+	 * // Dispose a specific source.
+	 * linear.children.splice(linear.children.indexOf(quad));
+	 *
+	 * // Dispose all children.
+	 * linear.children = [];
 	 * ```
 	 * @example
 	 * Use it with DOM.
@@ -406,29 +410,26 @@ utils = module.exports =
 	source: (executor) ->
 		src = (val) ->
 			src.value = val = Promise.resolve val
-			for handler in src.handlers
+			for child in src.children
 				val.then(
-					handler.onEmit
-					handler.onError
+					child.onEmit
+					child.onError
 				).then(
-					handler.nextSrc
-					handler.nextSrcErr
+					child
+					child.nextSrcErr
 				)
 			return
 
 		src.on = (onEmit, onError) ->
-			nextSrc = utils.source()
-			src.handlers.push {
-				onEmit
-				onError
-				nextSrc: nextSrc
-				nextSrcErr: (reason) ->
-					nextSrc Promise.reject reason
-			}
+			src.children.push nextSrc = utils.source()
+			nextSrc.onEmit = onEmit
+			nextSrc.onError = onError
+			nextSrc.nextSrcErr = (reason) ->
+				nextSrc Promise.reject reason
 
 			nextSrc
 
-		src.handlers = []
+		src.children = []
 		src.value = Promise.resolve()
 
 		executor? src
