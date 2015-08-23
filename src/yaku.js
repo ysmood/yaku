@@ -591,10 +591,11 @@
             if (cleanPrev && (i = stack.indexOf("\n" + $fromPrevious)) > 0)
                 stack = stack.slice(0, i);
 
-            if (typeof __filename === "string") {
-                filename = __filename;
-                stack.replace(RegExp(".+" + filename + ".+\\n?", "g"), "");
-            }
+            return typeof __filename === "string" ?
+                (
+                    filename = __filename,
+                    stack.replace(RegExp(".+" + filename + ".+\\n?", "g"), "")
+                ) : stack;
         }
 
         return [(
