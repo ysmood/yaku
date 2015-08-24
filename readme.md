@@ -622,7 +622,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
 # Source
 
-- ### **[source(executor)](src/source.js?source#L82)**
+- ### **[source(executor)](src/source.js?source#L83)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so

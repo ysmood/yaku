@@ -28,10 +28,11 @@ module.exports = (task, option) ->
 
 	task 'code', ['lint'], 'build source code', ->
 
-		kit.warp 'src/yaku.js'
+		kit.warp 'src/{yaku,source}.js'
 		.load (f) ->
-			f.dest.name = 'yaku.min'
-			kit.outputFile 'lib/yaku.js', addLicense(f.contents)
+			path = 'lib/' + f.dest.name + f.dest.ext
+			f.dest.name += '.min'
+			kit.outputFile path, addLicense(f.contents)
 		.load kit.drives.auto 'compress'
 		.load (f) -> f.set addLicense f.contents
 		.run 'lib'
