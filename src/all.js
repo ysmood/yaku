@@ -1,12 +1,12 @@
-var Promise = require("./yaku");
+var Yaku = require("./yaku");
 
 var utils = require("./utils.coffee");
 var source = require("./source");
 
 for (var key in utils) {
-    Promise[key] = utils[key];
+    Yaku[key] = utils[key];
 }
 
-Promise.source = source;
+Yaku.source = source;
 
-module.exports = Promise;
+window.Yaku = Yaku;
