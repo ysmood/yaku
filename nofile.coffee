@@ -40,6 +40,10 @@ module.exports = (task, option) ->
 	task 'lint', 'lint js files', ->
 		kit.spawn 'eslint', ['src/yaku.js']
 
+	task 'all', ['lint'], 'bundle all', ->
+		process.env.NODE_ENV = 'production'
+		kit.spawn 'webpack'
+
 	task 'utils', ['code'], 'build utils', ->
 		kit.warp 'src/utils.coffee'
 		.load kit.drives.auto 'lint'

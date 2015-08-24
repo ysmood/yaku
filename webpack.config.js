@@ -3,6 +3,7 @@ var webpack=require('webpack');
 module.exports = {
 	entry: {
 		'test-basic': './test/basic.coffee',
+		'all': './src/all',
 	},
 
 	output: {
