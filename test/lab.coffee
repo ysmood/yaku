@@ -1,11 +1,11 @@
 Promise = require '../src/yaku'
-utils = require '../src/utils'
 
-list = [
-    -> utils.sleep 10, 1
-    -> throw 10
-    -> utils.sleep 10, 3
-]
+p = Promise.resolve 10
 
-utils.async 2, list
-.catch (err) -> err
+p.then(->)
+
+p.then (v) ->
+    console.log v
+    pp = new Promise ->
+    pp.id = 'pp'
+    pp
