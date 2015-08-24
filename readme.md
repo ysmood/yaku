@@ -603,93 +603,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.coffee?source#L410)**
-
-    Create a composable event source function.
-    Promise can't resolve multiple times, this function makes it possible, so
-    that you can easily map, filter and debounce events in a promise way.
-
-    - **<u>param</u>**: `executor` { _Function_ }
-
-        `(emit) ->` It's optional.
-
-    - **<u>return</u>**: { _Function_ }
-
-        `(value) ->` The fucntion's
-        members:
-        ```js
-        {
-        	on: (onEmit, onError) => { /* ... */ },
-
-        	// Get current value from it.
-        	value: Promise,
-
-        	// All the children spawned from current source.
-        	children: Array
-        }
-        ```
-
-    - **<u>example</u>**:
-
-        ```js
-        var linear = utils.source();
-
-        var x = 0;
-        setInterval(() => {
-        	linear(x++);
-        }, 1000);
-
-        // Wait for a moment then emit the value.
-        var quad = linear.on(async x => {
-        	await utils.sleep(2000);
-        	return x * x;
-        });
-
-        var another = linear.on(x => -x);
-
-        quad.on(
-        	value => { console.log(value); },
-        	reason => { console.error(reason); }
-        );
-
-        // Dispose a specific source.
-        linear.children.splice(linear.children.indexOf(quad));
-
-        // Dispose all children.
-        linear.children = [];
-        ```
-
-    - **<u>example</u>**:
-
-        Use it with DOM.
-        ```js
-        var filter = fn => v => fn(v) ? v : utils.end();
-
-        var keyup = utils.source((emit) => {
-        	document.querySelector('input').onkeyup = emit;
-        });
-
-        var keyupText = keyup.on(e => e.target.value);
-
-        // Now we only get the input when the text length is greater than 3.
-        var keyupTextGT3 = keyupText.on(filter(text => text.length > 3));
-
-        keyupTextGT3(v => console.log(v));
-        ```
-
-    - **<u>example</u>**:
-
-        Merge two sources into one.
-        ```js
-        let one = utils.source(emit => setInterval(emit, 100, 'one'));
-        let two = utils.source(emit => setInterval(emit, 200, 'two'));
-        let merge = arr => arr.forEach(src => src.on(emit));
-
-        let three = merge([one, two]);
-        three.on(v => console.log(v));
-        ```
-
-- ### **[throw(err)](src/utils.coffee?source#L450)**
+- ### **[throw(err)](src/utils.coffee?source#L348)**
 
     Throw an error to break the program.
 
@@ -702,6 +616,100 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         	// This error won't be caught by promise.
         	utils.throw('break the program!');
         });
+        ```
+
+
+
+# Source
+
+- ### **[source(executor)](src/source.js?source#L82)**
+
+    Create a composable event source function.
+    Promise can't resolve multiple times, this function makes it possible, so
+    that you can easily map, filter and debounce events in a promise way.
+
+    - **<u>param</u>**: `executor` { _Function_ }
+
+        `(emit) ->` It's optional.
+
+    - **<u>return</u>**: { _Function_ }
+
+        `(onEmit, onError) ->` The fucntion's
+        members:
+        ```js
+        {
+         emit: (value) => { /* ... */ },
+
+         // Get current value from it.
+         value: Promise,
+
+         // All the children spawned from current source.
+         children: Array
+        }
+        ```
+
+    - **<u>example</u>**:
+
+        ```js
+        var source = require("yaku/lib/source");
+        var linear = source();
+
+        var x = 0;
+        setInterval(() => {
+         linear.emit(x++);
+        }, 1000);
+
+        // Wait for a moment then emit the value.
+        var quad = linear(async x => {
+            await sleep(2000);
+            return x * x;
+        });
+
+        var another = linear(x => -x);
+
+        quad(
+            value => { console.log(value); },
+            reason => { console.error(reason); }
+        );
+
+        // Emit error
+        linear.emit(Promise.reject("reason"));
+
+        // Dispose a specific source.
+        linear.children.splice(linear.children.indexOf(quad));
+
+        // Dispose all children.
+        linear.children = [];
+        ```
+
+    - **<u>example</u>**:
+
+        Use it with DOM.
+        ```js
+        var filter = fn => v => fn(v) ? v : new Promise(() => {});
+
+        var keyup = source((emit) => {
+         document.querySelector('input').onkeyup = emit;
+        });
+
+        var keyupText = keyup(e => e.target.value);
+
+        // Now we only get the input when the text length is greater than 3.
+        var keyupTextGT3 = keyupText(filter(text => text.length > 3));
+
+        keyupTextGT3(v => console.log(v));
+        ```
+
+    - **<u>example</u>**:
+
+        Merge two sources into one.
+        ```js
+        let one = source(emit => setInterval(emit, 100, 'one'));
+        let two = source(emit => setInterval(emit, 200, 'two'));
+        let merge = arr => arr.forEach(src => src(emit));
+
+        let three = merge([one, two]);
+        three(v => console.log(v));
         ```
 
 

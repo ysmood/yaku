@@ -43,6 +43,9 @@ var Promise = require("./yaku");
  *     reason => { console.error(reason); }
  * );
  *
+ * // Emit error
+ * linear.emit(Promise.reject("reason"));
+ *
  * // Dispose a specific source.
  * linear.children.splice(linear.children.indexOf(quad));
  *
