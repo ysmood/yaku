@@ -103,6 +103,10 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
 <%= doc['src/utils.coffee'] %>
 
+# Source
+
+<%= doc['src/source.js'] %>
+
 # Unit Test
 
 This project use [promises-aplus-tests][] to test the compliance of Promises/A+ specification. There are about 900 test cases.

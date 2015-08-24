@@ -2,6 +2,7 @@
 
 Yaku = require '../src/yaku'
 utils = require '../src/utils.coffee'
+source = require '../src/source'
 
 log = do -> (val) ->
 	if not JSON?
@@ -289,46 +290,46 @@ test 'promisify callback', 1, ->
 			r val
 
 test 'source', 'out: 4', ->
-	one = utils.source()
+	one = source()
 
 	x = 1
 	tmr = setInterval ->
-		one x++
+		one.emit x++
 	, 0
 
-	two = one.on (v) -> v * v
+	two = one (v) -> v * v
 
-	three = two.on (v) -> 'out: ' + v
+	three = two (v) -> 'out: ' + v
 
 	new Yaku (r) ->
 		count = 0
-		three.on (v) ->
+		three (v) ->
 			if count++ == 1
 				clearInterval tmr
 				r v
 
 test 'source error', 'error', ->
-	one = utils.source()
+	one = source()
 
 	x = 1
 	tmr = setInterval ->
-		one x++
-		one Yaku.reject 'error' if x == 2
+		one.emit x++
+		one.emit Yaku.reject 'error' if x == 2
 	, 0
 
-	two = one.on (v) -> v * v
+	two = one (v) -> v * v
 
-	three = two.on (v) -> 'out: ' + v
+	three = two (v) -> 'out: ' + v
 
 	new Yaku (r) ->
 		count = 0
-		three.on (->), (err) ->
+		three (->), (err) ->
 			clearInterval tmr
 			r err
 
 test 'source children', 'ok', ->
 	tmr = null
-	one = utils.source (emit) ->
+	one = source (emit) ->
 		tmr = setInterval ->
 			emit 'err'
 		, 0
@@ -338,7 +339,7 @@ test 'source children', 'ok', ->
 			clearInterval tmr
 			r 'ok'
 		, 10
-		one.on (v) ->
+		one (v) ->
 			r v
 		one.children = []
 
