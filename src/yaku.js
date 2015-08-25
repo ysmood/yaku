@@ -393,7 +393,8 @@
         function flush () {
             var i = 0;
             while (i < fnQueueLen) {
-                fn(fnQueue[i]);
+                fn(fnQueue[i], fnQueue[i + 1]);
+                fnQueue[i++] = $nil;
                 fnQueue[i++] = $nil;
             }
 
@@ -401,10 +402,11 @@
             if (fnQueue.length > initQueueSize) fnQueue.length = initQueueSize;
         }
 
-        return function (v) {
+        return function (v, arg) {
             fnQueue[fnQueueLen++] = v;
+            fnQueue[fnQueueLen++] = arg;
 
-            if (fnQueueLen === 1) Yaku.nextTick(flush);
+            if (fnQueueLen === 2) Yaku.nextTick(flush);
         };
     }
 
@@ -444,39 +446,31 @@
      * @param {Yaku} p1
      * @param {Yaku} p2
      */
-    var scheduleHandler = genScheduler(999, function (p1) {
-        var i = 0
-        , len = p1._pCount
-        , x
+    var scheduleHandler = genScheduler(999, function (p1, p2) {
+        var x
         , p2
         , handler;
 
-        while (i < len) {
-            p2 = p1[i++];
+        // 2.2.2
+        // 2.2.3
+        handler = p1._state ? p2._onFulfilled : p2._onRejected;
 
-            if (p2._state !== $pending) continue;
-
-            // 2.2.2
-            // 2.2.3
-            handler = p1._state ? p2._onFulfilled : p2._onRejected;
-
-            // 2.2.7.3
-            // 2.2.7.4
-            if (handler === $nil) {
-                settlePromise(p2, p1._state, p1._value);
-                continue;
-            }
-
-            // 2.2.7.1
-            x = genTryCatcher(callHanler)(handler, p1._value);
-            if (x === $tryErr) {
-                // 2.2.7.2
-                settlePromise(p2, $rejected, x.e);
-                continue;
-            }
-
-            settleWithX(p2, x);
+        // 2.2.7.3
+        // 2.2.7.4
+        if (handler === $nil) {
+            settlePromise(p2, p1._state, p1._value);
+            return;
         }
+
+        // 2.2.7.1
+        x = genTryCatcher(callHanler)(handler, p1._value);
+        if (x === $tryErr) {
+            // 2.2.7.2
+            settlePromise(p2, $rejected, x.e);
+            return;
+        }
+
+        settleWithX(p2, x);
     })
 
     // Why are there two "genScheduler"s?
@@ -533,8 +527,8 @@
         p1[p1._pCount++] = p2;
 
         // 2.2.6
-        if (p1._state !== $pending && p1._pCount > 0)
-            scheduleHandler(p1);
+        if (p1._state !== $pending)
+            scheduleHandler(p1, p2);
 
         // 2.2.7
         return p2;
@@ -622,6 +616,11 @@
      * @param  {Any} value
      */
     function settlePromise (p, state, value) {
+        var i = 0
+        , len = p._pCount
+        , p2
+        , stack;
+
         // 2.1.2
         // 2.1.3
         if (p._state === $pending) {
@@ -631,7 +630,7 @@
 
             if (state === $rejected) {
                 if (isLongStackTrace && value && value.stack) {
-                    var stack = genStackInfo(value, p);
+                    stack = genStackInfo(value, p);
                     value.stack = stack[0] + stack[1];
                 }
 
@@ -639,7 +638,13 @@
             }
 
             // 2.2.4
-            if (p._pCount > 0) scheduleHandler(p);
+            while (i < len) {
+                p2 = p[i++];
+
+                if (p2._state !== $pending) continue;
+
+                scheduleHandler(p, p2);
+            }
         }
 
         return p;
