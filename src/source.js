@@ -6,18 +6,19 @@ var Promise = require("./yaku");
  * Create a composable event source function.
  * Promise can't resolve multiple times, this function makes it possible, so
  * that you can easily map, filter and debounce events in a promise way.
+ * For real world example: [Double Click Demo](https://jsfiddle.net/ysmood/musds0sv/).
  * @param {Function} executor `(emit) ->` It's optional.
  * @return {Function} `(onEmit, onError) ->` The fucntion's
  * members:
  * ```js
  * {
- *  emit: (value) => { \/* ... *\/ },
+ *     emit: (value) => { \/* ... *\/ },
  *
- *  // Get current value from it.
- *  value: Promise,
+ *     // Get current value from it.
+ *     value: Promise,
  *
- *  // All the children spawned from current source.
- *  children: Array
+ *     // All the children spawned from current source.
+ *     children: Array
  * }
  * ```
  * @example
@@ -27,7 +28,7 @@ var Promise = require("./yaku");
  *
  * var x = 0;
  * setInterval(() => {
- *  linear.emit(x++);
+ *     linear.emit(x++);
  * }, 1000);
  *
  * // Wait for a moment then emit the value.
@@ -58,7 +59,7 @@ var Promise = require("./yaku");
  * var filter = fn => v => fn(v) ? v : new Promise(() => {});
  *
  * var keyup = source((emit) => {
- *  document.querySelector('input').onkeyup = emit;
+ *     document.querySelector('input').onkeyup = emit;
  * });
  *
  * var keyupText = keyup(e => e.target.value);
