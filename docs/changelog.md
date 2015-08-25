@@ -1,3 +1,7 @@
+- v0.7.3
+
+  - fix: a multiple resovle bug
+
 - v0.7.2
 
   - add: `utils.source`
