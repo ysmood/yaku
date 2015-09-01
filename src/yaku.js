@@ -150,10 +150,7 @@
      * ```
      */
     Yaku.resolve = function (val) {
-        if (val instanceof Yaku)
-            return val;
-        else
-            return settleWithX(newEmptyYaku(), val);
+        return val instanceof Yaku ? val : settleWithX(newEmptyYaku(), val);
     };
 
     /**
