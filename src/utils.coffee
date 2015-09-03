@@ -211,7 +211,7 @@ utils = module.exports =
 	 * }
 	 *
 	 * var download = utils.flow(createUrl, curl, save);
-	 * # same as "download = utils.flow([createUrl, curl, save])"
+	 * // same as "download = utils.flow([createUrl, curl, save])"
 	 *
 	 * download('home');
 	 * ```
@@ -298,10 +298,10 @@ utils = module.exports =
 	 * var bar = utils.promisify(foo);
 	 *
 	 * bar(0).then((val) => {
-	 * 	console.log val # output => 1
+	 * 	console.log val // output => 1
 	 * });
 	 *
-	 * # It also supports the callback style.
+	 * // It also supports the callback style.
 	 * bar(0, (err, val) => {
 	 * 	console.log(val); // output => 1
 	 * });

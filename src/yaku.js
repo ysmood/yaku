@@ -268,10 +268,10 @@
      *     console.error(reason);
      * };
      *
-     * # The console will log an unhandled rejection error message.
+     * // The console will log an unhandled rejection error message.
      * Promise.reject('my reason');
      *
-     * # The below won't log the unhandled rejection error message.
+     * // The below won't log the unhandled rejection error message.
      * Promise.reject('v').catch(() => {});
      * ```
      */
