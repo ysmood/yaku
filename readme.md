@@ -83,6 +83,10 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
   > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
   > should work well with ES6 native promise. If you need fancy and magic, go for [Bluebird][].
 
+- How to use it with Babel?
+
+  > Fairly easy, with node `global.Promise = require("yaku");`, with browser `window.Promise = require("yaku");`.
+
 - Better long stack trace support?
 
   > Latest Node.js and browsers are already support it. If you enabled it, Yaku will take advantage of it
