@@ -133,7 +133,10 @@
         _pCount: 0,
 
         // The parent Yaku.
-        _pre: null
+        _pre: null,
+
+        // A unique type flag, it helps different versions of Yaku know each other.
+        _Yaku: 1
     };
 
     /**
@@ -150,7 +153,7 @@
      * ```
      */
     Yaku.resolve = function (val) {
-        return val instanceof Yaku ? val : settleWithX(newEmptyYaku(), val);
+        return isYaku(val) ? val : settleWithX(newEmptyYaku(), val);
     };
 
     /**
@@ -483,6 +486,8 @@
         })
     );
 
+    function isYaku (val) { return val && val._Yaku; }
+
     /**
      * Create an empty promise.
      * @private
@@ -676,7 +681,7 @@
             }
 
             if (isFunction(xthen)) {
-                if (isLongStackTrace && x instanceof Yaku)
+                if (isLongStackTrace && isYaku(x))
                     p._next = x;
 
                 settleXthen(p, x, xthen);
