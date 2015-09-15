@@ -1,3 +1,7 @@
+- v0.7.5
+
+  - minor: add an unique type flag of Yaku
+
 - v0.7.4
 
   - fix: a multiple resovle bug

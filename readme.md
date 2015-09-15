@@ -17,7 +17,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.2KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.3KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and ES6
@@ -61,7 +61,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 | Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
 | -------------------- | -------------------- | --------------- | ------- | --------- |
-| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.2KB |
+| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.3KB |
 | [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
 | [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
 | [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
@@ -213,7 +213,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.resolve(value)](src/yaku.js?source#L152)**
+- ### **[Yaku.resolve(value)](src/yaku.js?source#L155)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -233,7 +233,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         var p = Promise.resolve(10);
         ```
 
-- ### **[Yaku.reject(reason)](src/yaku.js?source#L166)**
+- ### **[Yaku.reject(reason)](src/yaku.js?source#L169)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -250,7 +250,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         var p = Promise.reject(10);
         ```
 
-- ### **[Yaku.race(iterable)](src/yaku.js?source#L190)**
+- ### **[Yaku.race(iterable)](src/yaku.js?source#L193)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -279,7 +279,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.all(iterable)](src/yaku.js?source#L229)**
+- ### **[Yaku.all(iterable)](src/yaku.js?source#L232)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -309,7 +309,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L278)**
+- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L281)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -338,7 +338,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.reject('v').catch(() => {});
         ```
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L297)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L300)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -353,7 +353,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L320)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L323)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
