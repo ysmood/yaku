@@ -8,7 +8,7 @@ var Promise = require("./yaku");
  * that you can easily map, filter and debounce events in a promise way.
  * For real world example: [Double Click Demo](https://jsfiddle.net/ysmood/musds0sv/).
  * @param {Function} executor `(emit) ->` It's optional.
- * @return {Function} `(onEmit, onError) ->` The fucntion's
+ * @return {Function} `(onEmit, onError) ->` The function's
  * members:
  * ```js
  * {

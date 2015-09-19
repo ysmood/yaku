@@ -25,7 +25,7 @@ utils = module.exports =
 	 * it can never end.
 	 * @param {Boolean} saveResults Whether to save each promise's result or
 	 * not. Default is true.
-	 * @param {Function} progress If a task ends, the resolve value will be
+	 * @param {Function} progress If a task ends, the resolved value will be
 	 * passed to this function.
 	 * @return {Promise}
 	 * @example

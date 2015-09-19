@@ -313,7 +313,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
-    If it is set, auto `console.error` unhandled rejection will be disabed.
+    If it is set, auto `console.error` unhandled rejection will be disabled.
 
     - **<u>param</u>**: `reason` { _Any_ }
 
@@ -411,7 +411,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>param</u>**: `progress` { _Function_ }
 
-        If a task ends, the resolve value will be
+        If a task ends, the resolved value will be
         passed to this function.
 
     - **<u>return</u>**: { _Promise_ }
@@ -641,7 +641,7 @@ To use it you have to require it separately: `var ysource = require("yaku/lib/so
 
     - **<u>return</u>**: { _Function_ }
 
-        `(onEmit, onError) ->` The fucntion's
+        `(onEmit, onError) ->` The function's
         members:
         ```js
         {

@@ -261,7 +261,7 @@
     /**
      * Catch all possibly unhandled rejections. If you want to use specific
      * format to display the error stack, overwrite it.
-     * If it is set, auto `console.error` unhandled rejection will be disabed.
+     * If it is set, auto `console.error` unhandled rejection will be disabled.
      * @param {Any} reason The rejection reason.
      * @param {Yaku} p The promise that was rejected.
      * @example
@@ -441,7 +441,7 @@
     }
 
 
-    // *************************** Promise Hepers ****************************
+    // *************************** Promise Helpers ****************************
 
     /**
      * Resolve the value returned by onFulfilled or onRejected.
@@ -539,7 +539,7 @@
         return p2;
     }
 
-    // iter tree
+    // iterate tree
     function hashOnRejected (node) {
         // A node shouldn't be checked twice.
         if (node._umark)
@@ -574,7 +574,7 @@
                 push(p[$settlerTrace]);
 
             // Hope you guys could understand how the back trace works.
-            // We only have to iter through the tree from the bottom to root.
+            // We only have to iterate through the tree from the bottom to root.
             (function iter (node) {
                 if (node) {
                     iter(node._next);
@@ -656,7 +656,7 @@
     }
 
     /**
-     * Resolve or reject primise with value x. The x can also be a thenable.
+     * Resolve or reject promise with value x. The x can also be a thenable.
      * @private
      * @param {Yaku} p
      * @param {Any | Thenable} x A normal value or a thenable.
