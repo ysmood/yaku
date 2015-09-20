@@ -1,6 +1,7 @@
-- v0.7.5
+- v0.7.6
 
   - minor: add an unique type flag of Yaku
+  - opt: performance
 
 - v0.7.4
 

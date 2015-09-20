@@ -449,7 +449,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.coffee?source#L143)**
+- ### **[callbackify(fn, self)](src/utils.coffee?source#L137)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -462,11 +462,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.coffee?source#L165)**
+- ### **[Deferred](src/utils.coffee?source#L159)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end()](src/utils.coffee?source#L178)**
+- ### **[end()](src/utils.coffee?source#L172)**
 
     The end symbol.
 
@@ -474,7 +474,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         A promise that will end the current pipeline.
 
-- ### **[flow(fns)](src/utils.coffee?source#L240)**
+- ### **[flow(fns)](src/utils.coffee?source#L234)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -545,7 +545,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.coffee?source#L281)**
+- ### **[isPromise(obj)](src/utils.coffee?source#L275)**
 
     Check if an object is a promise-like object.
 
@@ -553,7 +553,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L310)**
+- ### **[promisify(fn, self)](src/utils.coffee?source#L304)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -587,7 +587,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L333)**
+- ### **[sleep(time, val)](src/utils.coffee?source#L327)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -607,7 +607,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[throw(err)](src/utils.coffee?source#L348)**
+- ### **[throw(err)](src/utils.coffee?source#L342)**
 
     Throw an error to break the program.
 
