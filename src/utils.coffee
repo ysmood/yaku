@@ -89,15 +89,9 @@ utils = module.exports =
 		else
 			return throw new TypeError 'wrong argument type: ' + list
 
-		tryIter = ->
-			try
-				iter()
-			catch e
-				Promise.reject e
-
 		new Promise (resolve, reject) ->
 			addTask = ->
-				task = tryIter()
+				task = iter()
 				index = iterIndex++
 
 				if isIterDone or task == utils.end
@@ -117,7 +111,7 @@ utils = module.exports =
 						resutls[index] = ret
 					progress? ret
 					addTask()
-				, (err) ->
+				.catch (err) ->
 					running--
 					reject err
 
