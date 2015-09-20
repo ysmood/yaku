@@ -560,8 +560,7 @@
     function genStackInfo (reason, p) {
         var stackInfo = []
         , stackStr
-        , i
-        , filename;
+        , i;
 
         function trim (str) { return str.replace(/^\s+|\s+$/g, ""); }
 
@@ -590,11 +589,7 @@
             if (cleanPrev && (i = stack.indexOf("\n" + $fromPrevious)) > 0)
                 stack = stack.slice(0, i);
 
-            return typeof __filename === "string" ?
-                (
-                    filename = __filename,
-                    stack.replace(RegExp(".+" + filename + ".+\\n?", "g"), "")
-                ) : stack;
+            return stack.replace(/^.+\/node_modules\/yaku\/.+\n?/mg, "");
         }
 
         return [(
