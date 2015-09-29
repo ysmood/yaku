@@ -105,7 +105,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 To use it you have to require it separately: `var yutils = require("yaku/lib/utils")`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
-<%= doc['src/utils.coffee'] %>
+<%= doc['src/utils.js'] %>
 
 # Source
 

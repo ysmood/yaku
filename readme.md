@@ -385,7 +385,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 To use it you have to require it separately: `var yutils = require("yaku/lib/utils")`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.coffee?source#L63)**
+- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L68)**
 
     An throttled version of `Promise.all`, it runs all the tasks under
     a concurrent limitation.
@@ -423,16 +423,16 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         var utils = require('yaku/lib/utils');
 
         var urls = [
-         'http://a.com',
-         'http://b.com',
-         'http://c.com',
-         'http://d.com'
+            'http://a.com',
+            'http://b.com',
+            'http://c.com',
+            'http://d.com'
         ];
         var tasks = [
-         () => kit.request(url[0]),
-         () => kit.request(url[1]),
-         () => kit.request(url[2]),
-         () => kit.request(url[3])
+            () => kit.request(url[0]),
+            () => kit.request(url[1]),
+            () => kit.request(url[2]),
+            () => kit.request(url[3])
         ];
 
         utils.async(tasks).then(() => kit.log('all done!'));
@@ -440,16 +440,16 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
 
         utils.async(3, () => {
-         var url = urls.pop();
-         if (url)
-             return kit.request(url);
-         else
-             return utils.end;
+            var url = urls.pop();
+            if (url)
+                return kit.request(url);
+            else
+                return utils.end;
         })
         .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.coffee?source#L137)**
+- ### **[callbackify(fn, self)](src/utils.js?source#L161)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -462,11 +462,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.coffee?source#L159)**
+- ### **[Deferred](src/utils.js?source#L188)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end()](src/utils.coffee?source#L172)**
+- ### **[end()](src/utils.js?source#L202)**
 
     The end symbol.
 
@@ -474,7 +474,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         A promise that will end the current pipeline.
 
-- ### **[flow(fns)](src/utils.coffee?source#L234)**
+- ### **[flow(fns)](src/utils.js?source#L266)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -500,20 +500,20 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         var utils = require('yaku/lib/utils');
 
         function createUrl (name) {
-        	return "http://test.com/" + name;
+            return "http://test.com/" + name;
         }
 
         function curl (url) {
-        	return kit.request(url).then((body) => {
-        		kit.log('get');
-        		return body;
-        	});
+            return kit.request(url).then((body) => {
+                kit.log('get');
+                return body;
+            });
         }
 
         function save (str) {
-        	kit.outputFile('a.txt', str).then(() => {
-        		kit.log('saved');
-        	});
+            kit.outputFile('a.txt', str).then(() => {
+                kit.log('saved');
+            });
         }
 
         var download = utils.flow(createUrl, curl, save);
@@ -531,21 +531,21 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         var list = [];
         function iter (url) {
-        	if (!url) return utils.end;
+         if (!url) return utils.end;
 
-        	return kit.request(url)
-        	.then((body) => {
-        		list.push(body);
-        		var m = body.match(/href="(.+?)"/);
-        		if (m) return m[0];
-        	});
+         return kit.request(url)
+         .then((body) => {
+             list.push(body);
+             var m = body.match(/href="(.+?)"/);
+             if (m) return m[0];
+         });
         }
 
         var walker = utils.flow(iter);
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.coffee?source#L275)**
+- ### **[isPromise(obj)](src/utils.js?source#L314)**
 
     Check if an object is a promise-like object.
 
@@ -553,7 +553,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.coffee?source#L304)**
+- ### **[promisify(fn, self)](src/utils.js?source#L344)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -570,24 +570,24 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         ```js
         function foo (val, cb) {
-        	setTimeout(() => {
-        		cb(null, val + 1);
-        	});
+            setTimeout(() => {
+                cb(null, val + 1);
+            });
         }
 
         var bar = utils.promisify(foo);
 
         bar(0).then((val) => {
-        	console.log val // output => 1
+            console.log val // output => 1
         });
 
         // It also supports the callback style.
         bar(0, (err, val) => {
-        	console.log(val); // output => 1
+            console.log(val); // output => 1
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.coffee?source#L327)**
+- ### **[sleep(time, val)](src/utils.js?source#L374)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -607,7 +607,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[throw(err)](src/utils.coffee?source#L342)**
+- ### **[throw(err)](src/utils.js?source#L393)**
 
     Throw an error to break the program.
 
@@ -617,8 +617,8 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         ```js
         Promise.resolve().then(() => {
-        	// This error won't be caught by promise.
-        	utils.throw('break the program!');
+            // This error won't be caught by promise.
+            utils.throw('break the program!');
         });
         ```
 
