@@ -718,21 +718,68 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
         three(v => console.log(v));
         ```
 
-- ### **[retry(times, test)](src/utils.js?source#L275)**
+- ### **[retry(countdown, The, Optional)](src/utils.js?source#L313)**
 
     Retry a async task until it resolves a mount of times.
 
-    - **<u>param</u>**: `times` { _Number_ }
+    - **<u>param</u>**: `countdown` { _Number | Function_ }
 
-    - **<u>param</u>**: `test` { _Func_ }
+        How many times to retry before rejection.
+        When it's a function `(errs) => Boolean | Promise.resolve(Boolean)`,
+        you have create your complex countdown logic,
+        it can even return a promise to create async countdown logic.
 
-        [description]
+    - **<u>param</u>**: `The` { _Function_ }
 
-    - **<u>return</u>**: { _[type]_ }
+        function can return a promise or not.
 
-        [description]
+    - **<u>param</u>**: `Optional` { _this_ }
 
-- ### **[throw(err)](src/utils.js?source#L289)**
+        . The context to call the function.
+
+    - **<u>return</u>**: { _Function_ }
+
+        The wrapped function. The function will reject with all
+        the reasons array that throwed by each try.
+
+    - **<u>example</u>**:
+
+        Retry 3 times before rejection.
+        ```
+        var retry = require('yaku/lib/retry');
+        var { request } = require('nokit');
+        retry(3, request)('http://test.com').then(
+           (body) => console.log(body),
+           (errs) => console.error(errs)
+        );
+        ```
+
+    - **<u>example</u>**:
+
+        Here a more complex retry usage, it shows an random exponential backoff strategy to
+        wait and retry again, which means the 10th attempt may take 10 minutes to happen.
+        ```
+        var retry = require('yaku/lib/retry');
+        var sleep = require('yaku/lib/sleep');
+        var { request } = require('nokit');
+
+        function countdown (retries) {
+           var attempt = 0;
+           return async () => {
+                var r = Math.random() * Math.pow(2, attempt) * 1000;
+                var t = Math.min(r, 1000 * 60 * 10);
+                await sleep(t);
+                attempt++ < retries;
+           };
+        }
+
+        retry(countdown(10), request)('http://test.com').then(
+           (body) => console.log(body),
+           (errs) => console.error(errs)
+        );
+        ```
+
+- ### **[throw(err)](src/utils.js?source#L327)**
 
     Throw an error to break the program.
 

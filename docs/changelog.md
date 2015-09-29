@@ -1,3 +1,7 @@
+- v0.7.8
+
+  - add: `retry` helper.
+
 - v0.7.7
 
   - minor: add an unique type flag of Yaku
