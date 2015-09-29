@@ -380,6 +380,21 @@ var Promise = require('./yaku')
     },
 
     /**
+     * Retry a async task until it resolves a mount of times.
+     * @param  {Number} times
+     * @param  {Func} test  [description]
+     * @return {[type]}       [description]
+     */
+    retry: function (times, fn) {
+        return function tryFn () {
+            var args = arguments;
+            return fn(arguments).catch(function (err) {
+                return times-- ? Promise.reject(new Error('Max Retry')) : tryFn(args);
+            });
+        }
+    },
+
+    /**
      * Throw an error to break the program.
      * @param  {Any} err
      * @example
