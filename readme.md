@@ -718,7 +718,7 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
         three(v => console.log(v));
         ```
 
-- ### **[retry(countdown, The, Optional)](src/utils.js?source#L313)**
+- ### **[retry(countdown, fn, Optional)](src/utils.js?source#L314)**
 
     Retry a async task until it resolves a mount of times.
 
@@ -726,12 +726,12 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
 
         How many times to retry before rejection.
         When it's a function `(errs) => Boolean | Promise.resolve(Boolean)`,
-        you have create your complex countdown logic,
+        you can use it to create complex countdown logic,
         it can even return a promise to create async countdown logic.
 
-    - **<u>param</u>**: `The` { _Function_ }
+    - **<u>param</u>**: `fn` { _Function_ }
 
-        function can return a promise or not.
+        The function can return a promise or not.
 
     - **<u>param</u>**: `Optional` { _this_ }
 
@@ -739,15 +739,16 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
 
     - **<u>return</u>**: { _Function_ }
 
-        The wrapped function. The function will reject with all
-        the reasons array that throwed by each try.
+        The wrapped function. The function will reject an array
+        of reasons that throwed by each try.
 
     - **<u>example</u>**:
 
         Retry 3 times before rejection.
-        ```
+        ```js
         var retry = require('yaku/lib/retry');
         var { request } = require('nokit');
+
         retry(3, request)('http://test.com').then(
            (body) => console.log(body),
            (errs) => console.error(errs)
@@ -756,9 +757,9 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
 
     - **<u>example</u>**:
 
-        Here a more complex retry usage, it shows an random exponential backoff strategy to
+        Here a more complex retry usage, it shows an random exponential backoff algorithm to
         wait and retry again, which means the 10th attempt may take 10 minutes to happen.
-        ```
+        ```js
         var retry = require('yaku/lib/retry');
         var sleep = require('yaku/lib/sleep');
         var { request } = require('nokit');
@@ -779,7 +780,7 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L327)**
+- ### **[throw(err)](src/utils.js?source#L328)**
 
     Throw an error to break the program.
 

@@ -1,4 +1,4 @@
-- v0.7.8
+- v0.7.10
 
   - add: `retry` helper.
 

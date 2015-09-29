@@ -5,7 +5,7 @@ module.exports = (task, option) ->
 
 	task 'default build', ['doc', 'code']
 
-	task 'doc', ['code', 'utils'], 'build doc', ->
+	task 'doc', ['code'], 'build doc', ->
 		size = kit.statSync('lib/yaku.min.js').size / 1024
 		kit.warp 'src/*.js'
 		.load kit.drives.comment2md {
@@ -27,15 +27,13 @@ module.exports = (task, option) ->
 		""" + str
 
 	task 'code', ['lint'], 'build source code', ->
-
-		kit.warp 'src/{yaku,source}.js'
+		kit.warp 'src/*.js'
 		.load (f) ->
-			path = 'lib/' + f.dest.name + f.dest.ext
-			f.dest.name += '.min'
-			kit.outputFile path, addLicense(f.contents)
-		.load kit.drives.auto 'compress'
-		.load (f) -> f.set addLicense f.contents
+			if f.dest.name == 'yaku'
+				f.set addLicense f.contents
 		.run 'lib'
+		.then ->
+			kit.spawn 'uglifyjs', ['-mc', '-o', 'lib/yaku.min.js', 'lib/yaku.js']
 
 	task 'lint', 'lint js files', ->
 		kit.spawn 'eslint', ['src/*.js']
@@ -43,12 +41,6 @@ module.exports = (task, option) ->
 	task 'all', ['lint'], 'bundle all', ->
 		process.env.NODE_ENV = 'production'
 		kit.spawn 'webpack'
-
-	task 'utils', ['code'], 'build utils', ->
-		kit.warp 'src/utils.js'
-		.load kit.drives.auto 'compile'
-		.load (f) -> f.set addLicense f.contents
-		.run 'lib'
 
 	option '--debug', 'run with remote debug server'
 	option '--port <8219>', 'remote debug server port', 8219

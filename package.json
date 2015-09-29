@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.7.8",
+  "version": "0.7.10",
   "description": "A light-weight ES6 Promises/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "scripts": {
@@ -34,9 +34,7 @@
   },
   "homepage": "https://github.com/ysmood/yaku",
   "files": [
-    "lib/yaku.js",
-    "lib/utils.js",
-    "lib/source.js"
+    "lib"
   ],
   "devDependencies": {
     "bluebird": "2.10.1",
