@@ -342,3 +342,24 @@ test 'source children', 'ok', ->
 			r v
 		one.children = []
 
+test 'retry once', 'ok', ->
+	fn = (val) -> val
+
+	utils.retry(3, fn)('ok')
+
+test 'retry 2 times', 'ok', ->
+	count = 0
+	fn = (v) ->
+		if count < 2
+			throw 'err' + count++
+		else
+			v
+
+	utils.retry(5, fn)('ok')
+
+test 'retry 3 times', ['err0', 'err1', 'err2'], ->
+	count = 0
+	fn = () ->
+		throw 'err' + count++
+
+	utils.retry(3, fn)().catch (errs) -> errs

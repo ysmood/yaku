@@ -268,9 +268,47 @@ module.exports = {
 
     /**
      * Retry a async task until it resolves a mount of times.
-     * @param  {Number} times
-     * @param  {Func} test  [description]
-     * @return {[type]}       [description]
+     * @param  {Number | Function} countdown How many times to retry before rejection.
+     * When it's a function `(errs) => Boolean | Promise.resolve(Boolean)`,
+     * you have create your complex countdown logic,
+     * it can even return a promise to create async countdown logic.
+     * @param  {Function} The function can return a promise or not.
+     * @param  {this} Optional. The context to call the function.
+     * @return {Function} The wrapped function. The function will reject with all
+     * the reasons array that throwed by each try.
+     * @example
+     * Retry 3 times before rejection.
+     * ```
+     * var retry = require('yaku/lib/retry');
+     * var { request } = require('nokit');
+     * retry(3, request)('http://test.com').then(
+     *    (body) => console.log(body),
+     *    (errs) => console.error(errs)
+     * );
+     * ```
+     * @example
+     * Here a more complex retry usage, it shows an random exponential backoff strategy to
+     * wait and retry again, which means the 10th attempt may take 10 minutes to happen.
+     * ```
+     * var retry = require('yaku/lib/retry');
+     * var sleep = require('yaku/lib/sleep');
+     * var { request } = require('nokit');
+     *
+     * function countdown (retries) {
+     *    var attempt = 0;
+     *    return async () => {
+     *         var r = Math.random() * Math.pow(2, attempt) * 1000;
+     *         var t = Math.min(r, 1000 * 60 * 10);
+     *         await sleep(t);
+     *         attempt++ < retries;
+     *    };
+     * }
+     *
+     * retry(countdown(10), request)('http://test.com').then(
+     *    (body) => console.log(body),
+     *    (errs) => console.error(errs)
+     * );
+     * ```
      */
     retry: require('./retry'),
 
