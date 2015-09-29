@@ -15,6 +15,8 @@ ideas: [docs/lazyTree.md][].
 
 [![NPM version](https://badge.fury.io/js/yaku.svg)](http://badge.fury.io/js/yaku) [![Build Status](https://travis-ci.org/ysmood/yaku.svg)](https://travis-ci.org/ysmood/yaku) [![Deps Up to Date](https://david-dm.org/ysmood/yaku.svg?style=flat)](https://david-dm.org/ysmood/yaku)
 
+
+
 # Features
 
 - The minified file is only <%= doc.size %>KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
@@ -23,6 +25,8 @@ ideas: [docs/lazyTree.md][].
 - 100% compliant with Promises/A+ specs and ES6
 - Designed to work on IE5+ and other major browsers
 - Well commented source code with every Promises/A+ spec
+
+
 
 # Quick Start
 
@@ -37,6 +41,8 @@ Then:
 var Promise = require('yaku');
 ```
 
+
+
 ## Browser
 
 Use something like [Browserify][] or [Webpack][], or download the `yaku.js` file from [release page][].
@@ -50,9 +56,13 @@ It supports both `AMD`, `CMD` and `CommonJS`. Raw usage without `AMD`, `CMD` or 
 </script>
 ```
 
+
+
 # Change Log
 
 [docs/changelog.md](docs/changelog.md)
+
+
 
 # Compare to Other Promise Libs
 
@@ -71,6 +81,8 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
 - **1ms async task**: `npm run no -- benchmark`, the smaller the better.
 - **sync task**: `npm run no -- benchmark --sync`, the smaller the better.
+
+
 
 # FAQ
 
@@ -96,22 +108,22 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
   > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
 
+
+
 # API
 
 <%= doc['src/yaku.js'] %>
 
+
+
 # Utils
 
-To use it you have to require it separately: `var yutils = require("yaku/lib/utils")`.
-If you want to use it in the browser, you have to use `browserify` or `webpack`.
+It's a bundle of all the following functions. You can require them all with `var yutils = require("yaku/lib/utils")`,
+or require them separately like `require("yaku/lib/flow")`. If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
 <%= doc['src/utils.js'] %>
 
-# Source
 
-To use it you have to require it separately: `var ysource = require("yaku/lib/source")`.
-
-<%= doc['src/source.js'] %>
 
 # Unit Test
 
@@ -119,9 +131,13 @@ This project use [promises-aplus-tests][] to test the compliance of Promises/A+ 
 
 Use `npm run no -- test` to run the unit test.
 
+
+
 # Benchmark
 
 Use `npm run no -- benchmark` to run the benchmark.
+
+
 
 # Contribute
 

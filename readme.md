@@ -15,6 +15,8 @@ ideas: [docs/lazyTree.md][].
 
 [![NPM version](https://badge.fury.io/js/yaku.svg)](http://badge.fury.io/js/yaku) [![Build Status](https://travis-ci.org/ysmood/yaku.svg)](https://travis-ci.org/ysmood/yaku) [![Deps Up to Date](https://david-dm.org/ysmood/yaku.svg?style=flat)](https://david-dm.org/ysmood/yaku)
 
+
+
 # Features
 
 - The minified file is only 3.1KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
@@ -23,6 +25,8 @@ ideas: [docs/lazyTree.md][].
 - 100% compliant with Promises/A+ specs and ES6
 - Designed to work on IE5+ and other major browsers
 - Well commented source code with every Promises/A+ spec
+
+
 
 # Quick Start
 
@@ -37,6 +41,8 @@ Then:
 var Promise = require('yaku');
 ```
 
+
+
 ## Browser
 
 Use something like [Browserify][] or [Webpack][], or download the `yaku.js` file from [release page][].
@@ -50,9 +56,13 @@ It supports both `AMD`, `CMD` and `CommonJS`. Raw usage without `AMD`, `CMD` or 
 </script>
 ```
 
+
+
 # Change Log
 
 [docs/changelog.md](docs/changelog.md)
+
+
 
 # Compare to Other Promise Libs
 
@@ -71,6 +81,8 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
 - **1ms async task**: `npm run no -- benchmark`, the smaller the better.
 - **sync task**: `npm run no -- benchmark --sync`, the smaller the better.
+
+
 
 # FAQ
 
@@ -95,6 +107,8 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 - The name Yaku is weird?
 
   > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
+
+
 
 # API
 
@@ -380,16 +394,18 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 
 
+
+
 # Utils
 
-To use it you have to require it separately: `var yutils = require("yaku/lib/utils")`.
-If you want to use it in the browser, you have to use `browserify` or `webpack`.
+It's a bundle of all the following functions. You can require them all with `var yutils = require("yaku/lib/utils")`,
+or require them separately like `require("yaku/lib/flow")`. If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L54)**
+- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L55)**
 
     An throttled version of `Promise.all`, it runs all the tasks under
     a concurrent limitation.
-    To run tasks sequentially, use `utils.flow`.
+    To run tasks sequentially, use `yaku/lib/flow`.
 
     - **<u>param</u>**: `limit` { _Int_ }
 
@@ -401,7 +417,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         If the list is an array, it should be a list of functions or promises,
         and each function will return a promise.
         If the list is a function, it should be a iterator that returns
-        a promise, when it returns `utils.end`, the iteration ends. Of course
+        a promise, when it returns `yaku/lib/end`, the iteration ends. Of course
         it can never end.
 
     - **<u>param</u>**: `saveResults` { _Boolean_ }
@@ -420,7 +436,8 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         ```js
         var kit = require('nokit');
-        var utils = require('yaku/lib/utils');
+        var async = require('yaku/lib/async');
+        var end = require('yaku/lib/end');
 
         var urls = [
             'http://a.com',
@@ -435,21 +452,21 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
             () => kit.request(url[3])
         ];
 
-        utils.async(tasks).then(() => kit.log('all done!'));
+        async(tasks).then(() => kit.log('all done!'));
 
-        utils.async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
+        async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
 
-        utils.async(3, () => {
+        async(3, () => {
             var url = urls.pop();
             if (url)
                 return kit.request(url);
             else
-                return utils.end;
+                return end;
         })
         .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.js?source#L63)**
+- ### **[callbackify(fn, self)](src/utils.js?source#L64)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -462,11 +479,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.js?source#L68)**
+- ### **[Deferred](src/utils.js?source#L69)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end()](src/utils.js?source#L74)**
+- ### **[end()](src/utils.js?source#L75)**
 
     The end symbol.
 
@@ -474,11 +491,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         A promise that will end the current pipeline.
 
-- ### **[flow(fns)](src/utils.js?source#L136)**
+- ### **[flow(fns)](src/utils.js?source#L138)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
-    See `utils.async`, if you need concurrent support.
+    See `yaku/lib/async`, if you need concurrent support.
 
     - **<u>param</u>**: `fns` { _Function | Array_ }
 
@@ -486,7 +503,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         promise or any value.
         And the array can also contains promises or values other than function.
         If there's only one argument and it's a function, it will be treated as an iterator,
-        when it returns `utils.end`, the iteration ends.
+        when it returns `yaku/lib/end`, the iteration ends.
 
     - **<u>return</u>**: { _Function_ }
 
@@ -497,7 +514,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         It helps to decouple sequential pipeline code logic.
         ```js
         var kit = require('nokit');
-        var utils = require('yaku/lib/utils');
+        var flow = require('yaku/lib/flow');
 
         function createUrl (name) {
             return "http://test.com/" + name;
@@ -516,8 +533,8 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
             });
         }
 
-        var download = utils.flow(createUrl, curl, save);
-        // same as "download = utils.flow([createUrl, curl, save])"
+        var download = flow(createUrl, curl, save);
+        // same as "download = flow([createUrl, curl, save])"
 
         download('home');
         ```
@@ -527,11 +544,12 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         Walk through first link of each page.
         ```js
         var kit = require('nokit');
-        var utils = require('yaku/lib/utils');
+        var flow = require('yaku/lib/flow');
+        var end = require('yaku/lib/end');
 
         var list = [];
         function iter (url) {
-         if (!url) return utils.end;
+         if (!url) return end;
 
          return kit.request(url)
          .then((body) => {
@@ -541,11 +559,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
          });
         }
 
-        var walker = utils.flow(iter);
+        var walker = flow(iter);
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.js?source#L143)**
+- ### **[isPromise(obj)](src/utils.js?source#L145)**
 
     Check if an object is a promise-like object.
 
@@ -553,7 +571,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.js?source#L171)**
+- ### **[promisify(fn, self)](src/utils.js?source#L174)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -569,13 +587,14 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
     - **<u>example</u>**:
 
         ```js
+        var promisify = require('yaku/lib/promisify');
         function foo (val, cb) {
             setTimeout(() => {
                 cb(null, val + 1);
             });
         }
 
-        var bar = utils.promisify(foo);
+        var bar = promisify(foo);
 
         bar(0).then((val) => {
             console.log val // output => 1
@@ -587,7 +606,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L183)**
+- ### **[sleep(time, val)](src/utils.js?source#L187)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -604,10 +623,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
     - **<u>example</u>**:
 
         ```js
-        utils.sleep(1000).then(() => console.log('after one second'));
+        var sleep = require('yaku/lib/sleep');
+        sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.js?source#L263)**
+- ### **[source(executor)](src/utils.js?source#L267)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
@@ -698,7 +718,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         three(v => console.log(v));
         ```
 
-- ### **[retry(times, test)](src/utils.js?source#L271)**
+- ### **[retry(times, test)](src/utils.js?source#L275)**
 
     Retry a async task until it resolves a mount of times.
 
@@ -712,7 +732,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         [description]
 
-- ### **[throw(err)](src/utils.js?source#L284)**
+- ### **[throw(err)](src/utils.js?source#L289)**
 
     Throw an error to break the program.
 
@@ -721,17 +741,14 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
     - **<u>example</u>**:
 
         ```js
+        var ythrow = require('yaku/lib/throw');
         Promise.resolve().then(() => {
             // This error won't be caught by promise.
-            utils.throw('break the program!');
+            ythrow('break the program!');
         });
         ```
 
 
-
-# Source
-
-To use it you have to require it separately: `var ysource = require("yaku/lib/source")`.
 
 
 
@@ -741,9 +758,13 @@ This project use [promises-aplus-tests][] to test the compliance of Promises/A+ 
 
 Use `npm run no -- test` to run the unit test.
 
+
+
 # Benchmark
 
 Use `npm run no -- benchmark` to run the benchmark.
+
+
 
 # Contribute
 

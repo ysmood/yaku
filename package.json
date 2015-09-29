@@ -1,7 +1,7 @@
 {
   "name": "yaku",
   "version": "0.7.7",
-  "description": "An ES6 Promises/A+ implementation that doesn't hurt.",
+  "description": "A light-weight ES6 Promises/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "scripts": {
     "no": "no",
@@ -54,8 +54,7 @@
   "eslintConfig": {
     "env": {
       "browser": true,
-      "node": true,
-      "es6": true
+      "node": true
     },
     "extends": "eslint:recommended",
     "rules": {

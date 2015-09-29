@@ -5,14 +5,14 @@ module.exports = {
     /**
      * An throttled version of `Promise.all`, it runs all the tasks under
      * a concurrent limitation.
-     * To run tasks sequentially, use `utils.flow`.
+     * To run tasks sequentially, use `yaku/lib/flow`.
      * @param  {Int} limit The max task to run at a time. It's optional.
      * Default is `Infinity`.
      * @param  {Array | Function} list
      * If the list is an array, it should be a list of functions or promises,
      * and each function will return a promise.
      * If the list is a function, it should be a iterator that returns
-     * a promise, when it returns `utils.end`, the iteration ends. Of course
+     * a promise, when it returns `yaku/lib/end`, the iteration ends. Of course
      * it can never end.
      * @param {Boolean} saveResults Whether to save each promise's result or
      * not. Default is true.
@@ -22,7 +22,8 @@ module.exports = {
      * @example
      * ```js
      * var kit = require('nokit');
-     * var utils = require('yaku/lib/utils');
+     * var async = require('yaku/lib/async');
+     * var end = require('yaku/lib/end');
      *
      * var urls = [
      *     'http://a.com',
@@ -37,16 +38,16 @@ module.exports = {
      *     () => kit.request(url[3])
      * ];
      *
-     * utils.async(tasks).then(() => kit.log('all done!'));
+     * async(tasks).then(() => kit.log('all done!'));
      *
-     * utils.async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
+     * async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
      *
-     * utils.async(3, () => {
+     * async(3, () => {
      *     var url = urls.pop();
      *     if (url)
      *         return kit.request(url);
      *     else
-     *         return utils.end;
+     *         return end;
      * })
      * .then(() => kit.log('all done!'));
      * ```
@@ -76,18 +77,18 @@ module.exports = {
     /**
      * Creates a function that is the composition of the provided functions.
      * Besides, it can also accept async function that returns promise.
-     * See `utils.async`, if you need concurrent support.
+     * See `yaku/lib/async`, if you need concurrent support.
      * @param  {Function | Array} fns Functions that return
      * promise or any value.
      * And the array can also contains promises or values other than function.
      * If there's only one argument and it's a function, it will be treated as an iterator,
-     * when it returns `utils.end`, the iteration ends.
+     * when it returns `yaku/lib/end`, the iteration ends.
      * @return {Function} `(val) -> Promise` A function that will return a promise.
      * @example
      * It helps to decouple sequential pipeline code logic.
      * ```js
      * var kit = require('nokit');
-     * var utils = require('yaku/lib/utils');
+     * var flow = require('yaku/lib/flow');
      *
      * function createUrl (name) {
      *     return "http://test.com/" + name;
@@ -106,8 +107,8 @@ module.exports = {
      *     });
      * }
      *
-     * var download = utils.flow(createUrl, curl, save);
-     * // same as "download = utils.flow([createUrl, curl, save])"
+     * var download = flow(createUrl, curl, save);
+     * // same as "download = flow([createUrl, curl, save])"
      *
      * download('home');
      * ```
@@ -115,11 +116,12 @@ module.exports = {
      * Walk through first link of each page.
      * ```js
      * var kit = require('nokit');
-     * var utils = require('yaku/lib/utils');
+     * var flow = require('yaku/lib/flow');
+     * var end = require('yaku/lib/end');
      *
      * var list = [];
      * function iter (url) {
-     *  if (!url) return utils.end;
+     *  if (!url) return end;
      *
      *  return kit.request(url)
      *  .then((body) => {
@@ -129,7 +131,7 @@ module.exports = {
      *  });
      * }
      *
-     * var walker = utils.flow(iter);
+     * var walker = flow(iter);
      * walker('test.com');
      * ```
      */
@@ -150,13 +152,14 @@ module.exports = {
      * @return {Function}
      * @example
      * ```js
+     * var promisify = require('yaku/lib/promisify');
      * function foo (val, cb) {
      *     setTimeout(() => {
      *         cb(null, val + 1);
      *     });
      * }
      *
-     * var bar = utils.promisify(foo);
+     * var bar = promisify(foo);
      *
      * bar(0).then((val) => {
      *     console.log val // output => 1
@@ -177,7 +180,8 @@ module.exports = {
      * @return {Promise}
      * @example
      * ```js
-     * utils.sleep(1000).then(() => console.log('after one second'));
+     * var sleep = require('yaku/lib/sleep');
+     * sleep(1000).then(() => console.log('after one second'));
      * ```
      */
     sleep: require('./sleep'),
@@ -275,9 +279,10 @@ module.exports = {
      * @param  {Any} err
      * @example
      * ```js
+     * var ythrow = require('yaku/lib/throw');
      * Promise.resolve().then(() => {
      *     // This error won't be caught by promise.
-     *     utils.throw('break the program!');
+     *     ythrow('break the program!');
      * });
      * ```
      */
