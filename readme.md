@@ -385,7 +385,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 To use it you have to require it separately: `var yutils = require("yaku/lib/utils")`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L68)**
+- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L91)**
 
     An throttled version of `Promise.all`, it runs all the tasks under
     a concurrent limitation.
@@ -449,7 +449,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.js?source#L161)**
+- ### **[callbackify(fn, self)](src/utils.js?source#L184)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -462,11 +462,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.js?source#L188)**
+- ### **[Deferred](src/utils.js?source#L211)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end()](src/utils.js?source#L202)**
+- ### **[end()](src/utils.js?source#L225)**
 
     The end symbol.
 
@@ -474,7 +474,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         A promise that will end the current pipeline.
 
-- ### **[flow(fns)](src/utils.js?source#L266)**
+- ### **[flow(fns)](src/utils.js?source#L289)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -545,7 +545,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.js?source#L314)**
+- ### **[isPromise(obj)](src/utils.js?source#L337)**
 
     Check if an object is a promise-like object.
 
@@ -553,7 +553,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.js?source#L344)**
+- ### **[promisify(fn, self)](src/utils.js?source#L367)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -587,7 +587,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L374)**
+- ### **[sleep(time, val)](src/utils.js?source#L397)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -607,7 +607,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[throw(err)](src/utils.js?source#L393)**
+- ### **[throw(err)](src/utils.js?source#L416)**
 
     Throw an error to break the program.
 
