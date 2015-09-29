@@ -1,8 +1,7 @@
 # This test should work on both Nodejs and Browser.
 
 Yaku = require '../src/yaku'
-utils = require '../src/utils.coffee'
-source = require '../src/source'
+utils = require '../src/utils'
 
 log = do -> (val) ->
 	if not JSON?
@@ -290,7 +289,7 @@ test 'promisify callback', 1, ->
 			r val
 
 test 'source', 'out: 4', ->
-	one = source()
+	one = utils.source()
 
 	x = 1
 	tmr = setInterval ->
@@ -309,7 +308,7 @@ test 'source', 'out: 4', ->
 				r v
 
 test 'source error', 'error', ->
-	one = source()
+	one = utils.source()
 
 	x = 1
 	tmr = setInterval ->
@@ -329,7 +328,7 @@ test 'source error', 'error', ->
 
 test 'source children', 'ok', ->
 	tmr = null
-	one = source (emit) ->
+	one = utils.source (emit) ->
 		tmr = setInterval ->
 			emit 'err'
 		, 0

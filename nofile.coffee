@@ -38,15 +38,14 @@ module.exports = (task, option) ->
 		.run 'lib'
 
 	task 'lint', 'lint js files', ->
-		kit.spawn 'eslint', ['src/yaku.js']
+		kit.spawn 'eslint', ['src/*.js']
 
 	task 'all', ['lint'], 'bundle all', ->
 		process.env.NODE_ENV = 'production'
 		kit.spawn 'webpack'
 
 	task 'utils', ['code'], 'build utils', ->
-		kit.warp 'src/utils.coffee'
-		.load kit.drives.auto 'lint'
+		kit.warp 'src/utils.js'
 		.load kit.drives.auto 'compile'
 		.load (f) -> f.set addLicense f.contents
 		.run 'lib'
@@ -99,31 +98,29 @@ module.exports = (task, option) ->
 
 	option '--browserPort <8227>', 'browser test port', 8227
 	task 'browser', 'Unit test on browser', (opts) ->
-		http = require 'http'
+		{ flow, select, body } = kit.require('proxy')
+
+		app = flow()
+		app.push(
+			body()
+
+			select '/log', ($) ->
+				kit.logs $.reqBody + ''
+				$.next()
+
+			select '/', ($) ->
+				$.body = kit.readFile 'lib/test-basic.js'
+				.then (js) -> """
+					<html>
+						<body></body>
+						<script>#{js}</script>
+					</html>"""
+		)
 
 		kit.spawn 'webpack', ['--progress', '--watch']
 
-		server = http.createServer (req, res) ->
-			switch req.url
-				when '/'
-					kit.readFile 'test/browser.html', (html) ->
-						kit.readFile 'lib/test-basic.js'
-						.then (js) ->
-							res.end """
-								<html>
-									<body></body>
-									<script>#{js}</script>
-								</html>"""
-				when '/log'
-					req.on 'data', (c) ->
-						info = c.toString()
-						console.log info
-					req.on 'end', ->
-						res.end()
-				else
-					res.statusCode = 404
-					res.end()
-
-		server.listen opts.browserPort, ->
+		kit.sleep(2000).then ->
+			app.listen opts.browserPort
+		.then ->
 			kit.log 'Listen ' + opts.browserPort
 			kit.xopen 'http://127.0.0.1:' + opts.browserPort

@@ -1,6 +1,6 @@
 var Yaku = require("./yaku");
 
-var utils = require("./utils.coffee");
+var utils = require("./utils");
 var source = require("./source");
 
 for (var key in utils) {
