@@ -3,6 +3,25 @@
 module.exports = {
 
     /**
+     * Similar with the `Promise.race`, but only rejects when every entry rejects.
+     * @param  {iterable} iterable An iterable object, such as an Array.
+     * @return {Yaku}
+     * @example
+     * ```js
+     * var any = require('yaku/lib/any');
+     * any([
+     *     123,
+     *     Promise.resolve(0),
+     *     Promise.reject(1)
+     * ])
+     * .then((value) => {
+     *     console.log(value); // => 123
+     * });
+     * ```
+     */
+    any: require("./any"),
+
+    /**
      * A function that helps run functions under a concurrent limitation.
      * To run functions sequentially, use `yaku/lib/flow`.
      * @param  {Int} limit The max task to run at a time. It's optional.
