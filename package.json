@@ -39,13 +39,13 @@
     "lib/source.js"
   ],
   "devDependencies": {
-    "bluebird": "2.10.0",
+    "bluebird": "2.10.1",
     "coffee-loader": "0.7.2",
     "coffee-script": "1.10.0",
     "coffeelint": "1.12.1",
     "es6-promise": "3.0.2",
-    "eslint": "1.5.0",
-    "nokit": "0.14.2",
+    "eslint": "1.5.1",
+    "nokit": "0.14.7",
     "promises-aplus-tests": "*",
     "q": "1.4.1",
     "uglify-js": "2.4.24",
