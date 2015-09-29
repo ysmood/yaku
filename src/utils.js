@@ -1,20 +1,6 @@
 // This file contains all the non-ES6-standard helpers based on promise.
 
-isNumber = function(obj) {
-    return typeof obj === 'number';
-};
-
-isArray = function(obj) {
-    return obj instanceof Array;
-};
-
-isFunction = function(obj) {
-    return typeof obj === 'function';
-};
-
-var Promise = require('./yaku')
-, slice = [].slice
-, utils = module.exports = {
+module.exports = {
 
     /**
      * An throttled version of `Promise.all`, it runs all the tasks under
@@ -65,91 +51,7 @@ var Promise = require('./yaku')
      * .then(() => kit.log('all done!'));
      * ```
      */
-    async: function(limit, list, saveResults, progress) {
-        var isIterDone, iter, iterIndex, resutls, running;
-        resutls = [];
-        running = 0;
-        isIterDone = false;
-        iterIndex = 0;
-        if (!isNumber(limit)) {
-            progress = saveResults;
-            saveResults = list;
-            list = limit;
-            limit = Infinity;
-        }
-        if (saveResults == null) {
-            saveResults = true;
-        }
-        if (isArray(list)) {
-            iter = function() {
-                var el;
-                el = list[iterIndex];
-                if (el === void 0) {
-                    return utils.end;
-                } else if (isFunction(el)) {
-                    return el();
-                } else {
-                    return el;
-                }
-            };
-        } else if (isFunction(list)) {
-            iter = list;
-        } else {
-            throw new TypeError('wrong argument type: ' + list);
-        }
-        return new Promise(function(resolve, reject) {
-            var addTask, allDone, i, results;
-            addTask = function() {
-                var index, p, task;
-                task = iter();
-                index = iterIndex++;
-                if (isIterDone || task === utils.end) {
-                    isIterDone = true;
-                    if (running === 0) {
-                        allDone();
-                    }
-                    return false;
-                }
-                if (utils.isPromise(task)) {
-                    p = task;
-                } else {
-                    p = Promise.resolve(task);
-                }
-                running++;
-                p.then(function(ret) {
-                    running--;
-                    if (saveResults) {
-                        resutls[index] = ret;
-                    }
-                    if (typeof progress === "function") {
-                        progress(ret);
-                    }
-                    return addTask();
-                })["catch"](function(err) {
-                    running--;
-                    return reject(err);
-                });
-                return true;
-            };
-            allDone = function() {
-                if (saveResults) {
-                    return resolve(resutls);
-                } else {
-                    return resolve();
-                }
-            };
-            i = limit;
-            results = [];
-            while (i--) {
-                if (!addTask()) {
-                    break;
-                } else {
-                    results.push(void 0);
-                }
-            }
-            return results;
-        });
-    },
+    async: require('./async'),
 
     /**
      * If a function returns promise, convert it to
@@ -158,50 +60,18 @@ var Promise = require('./yaku')
      * @param  {Any} self The `this` to bind to the fn.
      * @return {Function}
      */
-    callbackify: function(fn, self) {
-        return function() {
-            var args, cb, j;
-            args = 2 <= arguments.length ? slice.call(arguments, 0, j = arguments.length - 1) : (j = 0, []), cb = arguments[j++];
-            if (!isFunction(cb)) {
-                args.push(cb);
-                return fn.apply(self, args);
-            }
-            if (arguments.length === 1) {
-                args = [cb];
-                cb = null;
-            }
-            return fn.apply(self, args).then(function(val) {
-                return typeof cb === "function" ? cb(null, val) : void 0;
-            })["catch"](function(err) {
-                if (cb) {
-                    return cb(err);
-                } else {
-                    return Promise.reject(err);
-                }
-            });
-        };
-    },
+    callbackify: require('./callbackify'),
 
     /**
      * Create a `jQuery.Deferred` like object.
      */
-    Deferred: function() {
-        var defer;
-        defer = {};
-        defer.promise = new Promise(function(resolve, reject) {
-            defer.resolve = resolve;
-            return defer.reject = reject;
-        });
-        return defer;
-    },
+    Deferred: require('./Deferred'),
 
     /**
      * The end symbol.
      * @return {Promise} A promise that will end the current pipeline.
      */
-    end: function() {
-        return new Promise(function() {});
-    },
+    end: require('./end'),
 
     /**
      * Creates a function that is the composition of the provided functions.
@@ -263,57 +133,14 @@ var Promise = require('./yaku')
      * walker('test.com');
      * ```
      */
-    flow: function() {
-        var fns;
-        fns = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-        return function(val) {
-            var genIter, iter, run;
-            genIter = function(arr) {
-                var iterIndex;
-                iterIndex = 0;
-                return function(val) {
-                    var fn;
-                    fn = arr[iterIndex++];
-                    if (fn === void 0) {
-                        return utils.end;
-                    } else if (isFunction(fn)) {
-                        return fn(val);
-                    } else {
-                        return fn;
-                    }
-                };
-            };
-            if (isArray(fns[0])) {
-                iter = genIter(fns[0]);
-            } else if (fns.length === 1 && isFunction(fns[0])) {
-                iter = fns[0];
-            } else if (fns.length > 1) {
-                iter = genIter(fns);
-            } else {
-                throw new TypeError('wrong argument type: ' + fn);
-            }
-            run = function(preFn) {
-                return preFn.then(function(val) {
-                    var fn;
-                    fn = iter(val);
-                    if (fn === utils.end) {
-                        return val;
-                    }
-                    return run(utils.isPromise(fn) ? fn : isFunction(fn) ? Promise.resolve(fn(val)) : Promise.resolve(fn));
-                });
-            };
-            return run(Promise.resolve(val));
-        };
-    },
+    flow: require('./flow'),
 
     /**
      * Check if an object is a promise-like object.
      * @param  {Any}  obj
      * @return {Boolean}
      */
-    isPromise: function(obj) {
-        return obj && isFunction(obj.then);
-    },
+    isPromise: require('./isPromise'),
 
     /**
      * Convert a node callback style function to a function that returns
@@ -341,25 +168,7 @@ var Promise = require('./yaku')
      * });
      * ```
      */
-    promisify: function(fn, self) {
-        return function() {
-            var args;
-            args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-            if (isFunction(args[args.length - 1])) {
-                return fn.apply(self, args);
-            }
-            return new Promise(function(resolve, reject) {
-                args.push(function() {
-                    if (arguments[0] != null) {
-                        return reject(arguments[0]);
-                    } else {
-                        return resolve(arguments[1]);
-                    }
-                });
-                return fn.apply(self, args);
-            });
-        };
-    },
+    promisify: require('./promisify'),
 
     /**
      * Create a promise that will wait for a while before resolution.
@@ -371,13 +180,87 @@ var Promise = require('./yaku')
      * utils.sleep(1000).then(() => console.log('after one second'));
      * ```
      */
-    sleep: function(time, val) {
-        return new Promise(function(r) {
-            return setTimeout((function() {
-                return r(val);
-            }), time);
-        });
-    },
+    sleep: require('./sleep'),
+
+    /**
+     * Create a composable event source function.
+     * Promise can't resolve multiple times, this function makes it possible, so
+     * that you can easily map, filter and debounce events in a promise way.
+     * For real world example: [Double Click Demo](https://jsfiddle.net/ysmood/musds0sv/).
+     * @param {Function} executor `(emit) ->` It's optional.
+     * @return {Function} `(onEmit, onError) ->` The function's
+     * members:
+     * ```js
+     * {
+     *     emit: (value) => { \/* ... *\/ },
+     *
+     *     // Get current value from it.
+     *     value: Promise,
+     *
+     *     // All the children spawned from current source.
+     *     children: Array
+     * }
+     * ```
+     * @example
+     * ```js
+     * var source = require("yaku/lib/source");
+     * var linear = source();
+     *
+     * var x = 0;
+     * setInterval(() => {
+     *     linear.emit(x++);
+     * }, 1000);
+     *
+     * // Wait for a moment then emit the value.
+     * var quad = linear(async x => {
+     *     await sleep(2000);
+     *     return x * x;
+     * });
+     *
+     * var another = linear(x => -x);
+     *
+     * quad(
+     *     value => { console.log(value); },
+     *     reason => { console.error(reason); }
+     * );
+     *
+     * // Emit error
+     * linear.emit(Promise.reject("reason"));
+     *
+     * // Dispose a specific source.
+     * linear.children.splice(linear.children.indexOf(quad));
+     *
+     * // Dispose all children.
+     * linear.children = [];
+     * ```
+     * @example
+     * Use it with DOM.
+     * ```js
+     * var filter = fn => v => fn(v) ? v : new Promise(() => {});
+     *
+     * var keyup = source((emit) => {
+     *     document.querySelector('input').onkeyup = emit;
+     * });
+     *
+     * var keyupText = keyup(e => e.target.value);
+     *
+     * // Now we only get the input when the text length is greater than 3.
+     * var keyupTextGT3 = keyupText(filter(text => text.length > 3));
+     *
+     * keyupTextGT3(v => console.log(v));
+     * ```
+     * @example
+     * Merge two sources into one.
+     * ```js
+     * let one = source(emit => setInterval(emit, 100, 'one'));
+     * let two = source(emit => setInterval(emit, 200, 'two'));
+     * let merge = arr => arr.forEach(src => src(emit));
+     *
+     * let three = merge([one, two]);
+     * three(v => console.log(v));
+     * ```
+     */
+    source: require('./source'),
 
     /**
      * Retry a async task until it resolves a mount of times.
@@ -385,14 +268,7 @@ var Promise = require('./yaku')
      * @param  {Func} test  [description]
      * @return {[type]}       [description]
      */
-    retry: function (times, fn) {
-        return function tryFn () {
-            var args = arguments;
-            return fn(arguments).catch(function (err) {
-                return times-- ? Promise.reject(new Error('Max Retry')) : tryFn(args);
-            });
-        }
-    },
+    retry: require('./retry'),
 
     /**
      * Throw an error to break the program.
@@ -405,9 +281,5 @@ var Promise = require('./yaku')
      * });
      * ```
      */
-    "throw": function(err) {
-        setTimeout(function() {
-            throw err;
-        });
-    }
+    "throw": require('./throw')
 };

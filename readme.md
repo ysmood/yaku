@@ -17,7 +17,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.2KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.1KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and ES6
@@ -61,7 +61,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 | Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
 | -------------------- | -------------------- | --------------- | ------- | --------- |
-| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.2KB |
+| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.1KB |
 | [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
 | [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
 | [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
@@ -385,7 +385,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 To use it you have to require it separately: `var yutils = require("yaku/lib/utils")`.
 If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L91)**
+- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L54)**
 
     An throttled version of `Promise.all`, it runs all the tasks under
     a concurrent limitation.
@@ -449,7 +449,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.js?source#L184)**
+- ### **[callbackify(fn, self)](src/utils.js?source#L63)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -462,11 +462,11 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.js?source#L211)**
+- ### **[Deferred](src/utils.js?source#L68)**
 
     Create a `jQuery.Deferred` like object.
 
-- ### **[end()](src/utils.js?source#L225)**
+- ### **[end()](src/utils.js?source#L74)**
 
     The end symbol.
 
@@ -474,7 +474,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
         A promise that will end the current pipeline.
 
-- ### **[flow(fns)](src/utils.js?source#L289)**
+- ### **[flow(fns)](src/utils.js?source#L136)**
 
     Creates a function that is the composition of the provided functions.
     Besides, it can also accept async function that returns promise.
@@ -545,7 +545,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.js?source#L337)**
+- ### **[isPromise(obj)](src/utils.js?source#L143)**
 
     Check if an object is a promise-like object.
 
@@ -553,7 +553,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.js?source#L367)**
+- ### **[promisify(fn, self)](src/utils.js?source#L171)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -587,7 +587,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L397)**
+- ### **[sleep(time, val)](src/utils.js?source#L183)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -607,28 +607,7 @@ If you want to use it in the browser, you have to use `browserify` or `webpack`.
         utils.sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[throw(err)](src/utils.js?source#L416)**
-
-    Throw an error to break the program.
-
-    - **<u>param</u>**: `err` { _Any_ }
-
-    - **<u>example</u>**:
-
-        ```js
-        Promise.resolve().then(() => {
-            // This error won't be caught by promise.
-            utils.throw('break the program!');
-        });
-        ```
-
-
-
-# Source
-
-To use it you have to require it separately: `var ysource = require("yaku/lib/source")`.
-
-- ### **[source(executor)](src/source.js?source#L83)**
+- ### **[source(executor)](src/utils.js?source#L263)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
@@ -718,6 +697,41 @@ To use it you have to require it separately: `var ysource = require("yaku/lib/so
         let three = merge([one, two]);
         three(v => console.log(v));
         ```
+
+- ### **[retry(times, test)](src/utils.js?source#L271)**
+
+    Retry a async task until it resolves a mount of times.
+
+    - **<u>param</u>**: `times` { _Number_ }
+
+    - **<u>param</u>**: `test` { _Func_ }
+
+        [description]
+
+    - **<u>return</u>**: { _[type]_ }
+
+        [description]
+
+- ### **[throw(err)](src/utils.js?source#L284)**
+
+    Throw an error to break the program.
+
+    - **<u>param</u>**: `err` { _Any_ }
+
+    - **<u>example</u>**:
+
+        ```js
+        Promise.resolve().then(() => {
+            // This error won't be caught by promise.
+            utils.throw('break the program!');
+        });
+        ```
+
+
+
+# Source
+
+To use it you have to require it separately: `var ysource = require("yaku/lib/source")`.
 
 
 

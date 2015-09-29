@@ -12,7 +12,7 @@
     , $promiseTrace = "_pt"
     , $settlerTrace = "_st"
 
-    , $fromPrevious = "From previous event:",
+    , $fromPrevious = "From previous event:";
 
     /**
      * This class follows the [Promises/A+](https://promisesaplus.com) and
@@ -67,7 +67,7 @@
      * };
      * ```
      */
-    Yaku = function (executor) {
+    var Yaku = module.exports = function (executor) {
         var self = this,
             err;
 
@@ -325,7 +325,7 @@
         function (fn) { setTimeout(fn); };
 
 
-// ********************** Private **********************
+    // ********************** Private **********************
 
     /**
      * All static variable name will begin with `$`. Such as `$rejected`.
@@ -450,9 +450,7 @@
      * @param {Yaku} p2
      */
     var scheduleHandler = genScheduler(999, function (p1, p2) {
-        var x
-        , p2
-        , handler;
+        var x, handler;
 
         // 2.2.2
         // 2.2.3
@@ -474,17 +472,12 @@
         }
 
         settleWithX(p2, x);
-    })
+    });
 
-    // Why are there two "genScheduler"s?
-    // Well, to support the babel's es7 async-await polyfill, I have to hack it.
-    , scheduleUnhandledRejection = genScheduler(
-        9,
-        genScheduler(9, function (p) {
-            if (!hashOnRejected(p))
-                Yaku.onUnhandledRejection(p._value, p);
-        })
-    );
+    var scheduleUnhandledRejection = genScheduler(9, function (p) {
+        if (!hashOnRejected(p))
+            Yaku.onUnhandledRejection(p._value, p);
+    });
 
     function isYaku (val) { return val && val._Yaku; }
 
@@ -734,14 +727,4 @@
         }
     }
 
-    // CMD & AMD Support
-    try {
-        module.exports = Yaku;
-    } catch (e) {
-        try {
-            define(function () { return Yaku; }); // eslint-disable-line
-        } catch (ee) {
-            root.Yaku = Yaku;
-        }
-    }
 })();

@@ -7,7 +7,7 @@ module.exports = (task, option) ->
 
 	task 'doc', ['code', 'utils'], 'build doc', ->
 		size = kit.statSync('lib/yaku.min.js').size / 1024
-		kit.warp 'src/*.{coffee,js}'
+		kit.warp 'src/*.js'
 		.load kit.drives.comment2md {
 			tpl: 'docs/readme.jst.md'
 			doc: {

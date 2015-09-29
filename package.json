@@ -57,11 +57,32 @@
       "node": true,
       "es6": true
     },
+    "extends": "eslint:recommended",
     "rules": {
-      "curly": 0,
-      "no-use-before-define": 0,
-      "no-underscore-dangle": 0,
-      "no-path-concat": 0
+      "indent": [
+        2,
+        4
+      ],
+      "linebreak-style": [
+        2,
+        "unix"
+      ],
+      "semi": [
+        2,
+        "always"
+      ],
+      "no-trailing-spaces": 2,
+      "space-before-function-paren": [
+        2,
+        "always"
+      ],
+      "eqeqeq": [
+        2,
+        "allow-null"
+      ],
+      "no-console": [
+        0
+      ]
     }
   }
 }
