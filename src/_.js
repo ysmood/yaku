@@ -1,4 +1,4 @@
-var Promise = require('./yaku');
+var Promise = require("./yaku");
 
 module.exports = {
 
@@ -7,11 +7,11 @@ module.exports = {
     },
 
     isFunction: function (obj) {
-        return typeof obj === 'function';
+        return typeof obj === "function";
     },
 
     isNumber: function (obj) {
-        return typeof obj === 'number';
+        return typeof obj === "number";
     },
 
     Promise: Promise,

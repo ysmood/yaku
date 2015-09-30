@@ -1,6 +1,6 @@
-var end = require('./end');
-var _ = require('./_');
-var isPromise = require('./isPromise');
+var end = require("./end");
+var _ = require("./_");
+var isPromise = require("./isPromise");
 
 module.exports = function (limit, list, saveResults, progress) {
     var isIterDone, iter, iterIndex, resutls, running;
@@ -32,7 +32,7 @@ module.exports = function (limit, list, saveResults, progress) {
     } else if (_.isFunction(list)) {
         iter = list;
     } else {
-        throw new TypeError('wrong argument type: ' + list);
+        throw new TypeError("wrong argument type: " + list);
     }
     return new _.Promise(function (resolve, reject) {
         var addTask, allDone, i, results;

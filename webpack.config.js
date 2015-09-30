@@ -2,18 +2,12 @@ var webpack=require('webpack');
 
 module.exports = {
 	entry: {
-		'test-basic': './test/basic.coffee',
+		'test-basic': './test/basic.js',
 		'all': './src/all',
 	},
 
 	output: {
 		filename: '[name].js',
 		path: './lib'
-	},
-
-	module: {
-		loaders: [
-			{ test: /\.coffee$/, loader: 'coffee' }
-		]
 	}
 };

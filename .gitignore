@@ -1,6 +1,5 @@
 lib
 node_modules
 *.sublime-*
-.coffee
 .nokit
 .nobone

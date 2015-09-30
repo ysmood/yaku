@@ -150,7 +150,7 @@ Use `npm run no -- benchmark` to run the benchmark.
 # Contribute
 
 Other than use `gulp`, all my projects use [nokit][] to deal with automation.
-Run `npm run no -- -h` to print all the tasks that defined in the [nofile.coffee][].
+Run `npm run no -- -h` to print all the tasks that defined in the [nofile.js][].
 If you installed `nokit` globally, you can just run `no -h` without `npm run` and `--`.
 
 
@@ -169,4 +169,4 @@ If you installed `nokit` globally, you can just run `no -h` without `npm run` an
 [Webpack]: http://webpack.github.io/
 [CoffeeScript]: http://coffeescript.org/
 [nokit]: https://github.com/ysmood/nokit
-[nofile.coffee]: nofile.coffee
+[nofile.js]: nofile.js

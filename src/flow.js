@@ -1,6 +1,6 @@
-var _ = require('./_');
-var end = require('./end');
-var isPromise = require('./isPromise');
+var _ = require("./_");
+var end = require("./end");
+var isPromise = require("./isPromise");
 
 module.exports = function () {
     var fns;
@@ -29,7 +29,7 @@ module.exports = function () {
         } else if (fns.length > 1) {
             iter = genIter(fns);
         } else {
-            throw new TypeError('wrong argument type: ' + fns);
+            throw new TypeError("wrong argument type: " + fns);
         }
         run = function (preFn) {
             return preFn.then(function (val) {

@@ -1,4 +1,4 @@
-var _ = require('./_');
+var _ = require("./_");
 var $retryError = {};
 
 module.exports = function (retries, fn, self) {

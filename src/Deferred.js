@@ -1,4 +1,4 @@
-var _ = require('./_');
+var _ = require("./_");
 
 module.exports = function () {
     var defer;

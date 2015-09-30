@@ -52,7 +52,7 @@ module.exports = {
      * .then(() => kit.log('all done!'));
      * ```
      */
-    async: require('./async'),
+    async: require("./async"),
 
     /**
      * If a function returns promise, convert it to
@@ -61,18 +61,18 @@ module.exports = {
      * @param  {Any} self The `this` to bind to the fn.
      * @return {Function}
      */
-    callbackify: require('./callbackify'),
+    callbackify: require("./callbackify"),
 
     /**
      * Create a `jQuery.Deferred` like object.
      */
-    Deferred: require('./Deferred'),
+    Deferred: require("./Deferred"),
 
     /**
      * The end symbol.
      * @return {Promise} A promise that will end the current pipeline.
      */
-    end: require('./end'),
+    end: require("./end"),
 
     /**
      * Creates a function that is the composition of the provided functions.
@@ -135,14 +135,14 @@ module.exports = {
      * walker('test.com');
      * ```
      */
-    flow: require('./flow'),
+    flow: require("./flow"),
 
     /**
      * Check if an object is a promise-like object.
      * @param  {Any}  obj
      * @return {Boolean}
      */
-    isPromise: require('./isPromise'),
+    isPromise: require("./isPromise"),
 
     /**
      * Convert a node callback style function to a function that returns
@@ -171,7 +171,7 @@ module.exports = {
      * });
      * ```
      */
-    promisify: require('./promisify'),
+    promisify: require("./promisify"),
 
     /**
      * Create a promise that will wait for a while before resolution.
@@ -184,7 +184,7 @@ module.exports = {
      * sleep(1000).then(() => console.log('after one second'));
      * ```
      */
-    sleep: require('./sleep'),
+    sleep: require("./sleep"),
 
     /**
      * Create a composable event source function.
@@ -265,7 +265,7 @@ module.exports = {
      * three(v => console.log(v));
      * ```
      */
-    source: require('./source'),
+    source: require("./source"),
 
     /**
      * Retry a async task until it resolves a mount of times.
@@ -313,7 +313,7 @@ module.exports = {
      * );
      * ```
      */
-    retry: require('./retry'),
+    retry: require("./retry"),
 
     /**
      * Throw an error to break the program.
@@ -327,5 +327,5 @@ module.exports = {
      * });
      * ```
      */
-    "throw": require('./throw')
+    "throw": require("./throw")
 };
