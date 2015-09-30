@@ -95,9 +95,10 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
   > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
   > should work well with ES6 native promise. If you need fancy and magic, go for [Bluebird][].
 
-- How to use it with Babel?
+- When using with Babel and Regenerator, the unhandled rejection doesn't work.
 
-  > Fairly easy, with node `global.Promise = require("yaku");`, with browser `window.Promise = require("yaku");`.
+  > Because Regenerator use global Promise directly and don't have an api to set the Promise lib.
+  > You have to import Yaku globally to make it use Yaku: `require("yaku/lib/global");`.
 
 - Better long stack trace support?
 
@@ -399,7 +400,14 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 # Utils
 
 It's a bundle of all the following functions. You can require them all with `var yutils = require("yaku/lib/utils")`,
-or require them separately like `require("yaku/lib/flow")`. If you want to use it in the browser, you have to use `browserify` or `webpack`.
+or require them separately like `require("yaku/lib/flow")`. If you want to use it in the browser, you have to use `browserify` or `webpack`. You can even use another Promise lib, such as:
+
+```js
+require("yaku/lib/_").Promise = require("bluebird");
+var source = require("yaku/lib/source");
+
+// now "source" use bluebird instead of yaku.
+```
 
 - ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L55)**
 
@@ -627,12 +635,16 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
         sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.js?source#L267)**
+- ### **[source(executor)](src/utils.js?source#L268)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
     that you can easily map, filter and debounce events in a promise way.
     For real world example: [Double Click Demo](https://jsfiddle.net/ysmood/musds0sv/).
+
+    - **<u>version_added</u>**:
+
+        v0.7.2
 
     - **<u>param</u>**: `executor` { _Function_ }
 
@@ -718,7 +730,7 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
         three(v => console.log(v));
         ```
 
-- ### **[retry(countdown, fn, Optional)](src/utils.js?source#L314)**
+- ### **[retry(countdown, fn, Optional)](src/utils.js?source#L316)**
 
     Retry a async task until it resolves a mount of times.
 
@@ -728,6 +740,10 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
         When it's a function `(errs) => Boolean | Promise.resolve(Boolean)`,
         you can use it to create complex countdown logic,
         it can even return a promise to create async countdown logic.
+
+    - **<u>version_added</u>**:
+
+        v0.7.10
 
     - **<u>param</u>**: `fn` { _Function_ }
 
@@ -780,7 +796,7 @@ or require them separately like `require("yaku/lib/flow")`. If you want to use i
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L328)**
+- ### **[throw(err)](src/utils.js?source#L330)**
 
     Throw an error to break the program.
 

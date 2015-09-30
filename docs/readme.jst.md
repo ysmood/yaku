@@ -97,8 +97,8 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 - When using with Babel and Regenerator, the unhandled rejection doesn't work.
 
-  > Because they use global directly and don't have a api to set the Promise lib.
-  > You have to import Yaku globally too: `require("yaku/lib/global");`.
+  > Because Regenerator use global Promise directly and don't have an api to set the Promise lib.
+  > You have to import Yaku globally to make it use Yaku: `require("yaku/lib/global");`.
 
 - Better long stack trace support?
 

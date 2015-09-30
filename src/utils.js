@@ -191,6 +191,7 @@ module.exports = {
      * Promise can't resolve multiple times, this function makes it possible, so
      * that you can easily map, filter and debounce events in a promise way.
      * For real world example: [Double Click Demo](https://jsfiddle.net/ysmood/musds0sv/).
+     * @version_added v0.7.2
      * @param {Function} executor `(emit) ->` It's optional.
      * @return {Function} `(onEmit, onError) ->` The function's
      * members:
@@ -272,6 +273,7 @@ module.exports = {
      * When it's a function `(errs) => Boolean | Promise.resolve(Boolean)`,
      * you can use it to create complex countdown logic,
      * it can even return a promise to create async countdown logic.
+     * @version_added v0.7.10
      * @param  {Function} fn The function can return a promise or not.
      * @param  {this} Optional. The context to call the function.
      * @return {Function} The wrapped function. The function will reject an array
