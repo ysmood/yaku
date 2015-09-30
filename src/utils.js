@@ -268,14 +268,15 @@ module.exports = {
     source: require("./source"),
 
     /**
-     * Retry a async task until it resolves a mount of times.
+     * Retry a function until it resolves before a mount of times, or reject with all
+     * the error states.
+     * @version_added v0.7.10
      * @param  {Number | Function} countdown How many times to retry before rejection.
      * When it's a function `(errs) => Boolean | Promise.resolve(Boolean)`,
      * you can use it to create complex countdown logic,
      * it can even return a promise to create async countdown logic.
-     * @version_added v0.7.10
      * @param  {Function} fn The function can return a promise or not.
-     * @param  {this} Optional. The context to call the function.
+     * @param  {Any} this Optional. The context to call the function.
      * @return {Function} The wrapped function. The function will reject an array
      * of reasons that throwed by each try.
      * @example

@@ -46,7 +46,7 @@ var Promise = require('yaku');
 ## Browser
 
 Use something like [Browserify][] or [Webpack][], or download the `yaku.js` file from [release page][].
-It supports both `AMD`, `CMD` and `CommonJS`. Raw usage without `AMD`, `CMD` or `CommonJS`:
+Raw usage without:
 
 ```html
 <script type="text/javascript" src ="yaku.js"></script>

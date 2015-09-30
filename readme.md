@@ -46,7 +46,7 @@ var Promise = require('yaku');
 ## Browser
 
 Use something like [Browserify][] or [Webpack][], or download the `yaku.js` file from [release page][].
-It supports both `AMD`, `CMD` and `CommonJS`. Raw usage without `AMD`, `CMD` or `CommonJS`:
+Raw usage without:
 
 ```html
 <script type="text/javascript" src ="yaku.js"></script>
@@ -730,9 +730,14 @@ var source = require("yaku/lib/source");
         three(v => console.log(v));
         ```
 
-- ### **[retry(countdown, fn, Optional)](src/utils.js?source#L316)**
+- ### **[retry(countdown, fn, this)](src/utils.js?source#L317)**
 
-    Retry a async task until it resolves a mount of times.
+    Retry a function until it resolves before a mount of times, or reject with all
+    the error states.
+
+    - **<u>version_added</u>**:
+
+        v0.7.10
 
     - **<u>param</u>**: `countdown` { _Number | Function_ }
 
@@ -741,17 +746,13 @@ var source = require("yaku/lib/source");
         you can use it to create complex countdown logic,
         it can even return a promise to create async countdown logic.
 
-    - **<u>version_added</u>**:
-
-        v0.7.10
-
     - **<u>param</u>**: `fn` { _Function_ }
 
         The function can return a promise or not.
 
-    - **<u>param</u>**: `Optional` { _this_ }
+    - **<u>param</u>**: `this` { _Any_ }
 
-        . The context to call the function.
+        Optional. The context to call the function.
 
     - **<u>return</u>**: { _Function_ }
 
@@ -796,7 +797,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L330)**
+- ### **[throw(err)](src/utils.js?source#L331)**
 
     Throw an error to break the program.
 
