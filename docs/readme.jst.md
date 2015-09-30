@@ -97,7 +97,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 - When using with Babel and Regenerator, the unhandled rejection doesn't work.
 
-  > Because they use global directly and don't have a api to set the promise lib.
+  > Because they use global directly and don't have a api to set the Promise lib.
   > You have to import Yaku globally too: `require("yaku/lib/global");`.
 
 - Better long stack trace support?
@@ -120,7 +120,14 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 # Utils
 
 It's a bundle of all the following functions. You can require them all with `var yutils = require("yaku/lib/utils")`,
-or require them separately like `require("yaku/lib/flow")`. If you want to use it in the browser, you have to use `browserify` or `webpack`.
+or require them separately like `require("yaku/lib/flow")`. If you want to use it in the browser, you have to use `browserify` or `webpack`. You can even use another Promise lib, such as:
+
+```js
+require("yaku/lib/_").Promise = require("bluebird");
+var source = require("yaku/lib/source");
+
+// now "source" use bluebird instead of yaku.
+```
 
 <%= doc['src/utils.js'] %>
 

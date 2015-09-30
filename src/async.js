@@ -1,4 +1,3 @@
-var Promise = require('./yaku');
 var end = require('./end');
 var _ = require('./_');
 var isPromise = require('./isPromise');
@@ -35,7 +34,7 @@ module.exports = function (limit, list, saveResults, progress) {
     } else {
         throw new TypeError('wrong argument type: ' + list);
     }
-    return new Promise(function (resolve, reject) {
+    return new _.Promise(function (resolve, reject) {
         var addTask, allDone, i, results;
         addTask = function () {
             var index, p, task;
@@ -51,7 +50,7 @@ module.exports = function (limit, list, saveResults, progress) {
             if (isPromise(task)) {
                 p = task;
             } else {
-                p = Promise.resolve(task);
+                p = _.Promise.resolve(task);
             }
             running++;
             p.then(function (ret) {

@@ -1,4 +1,3 @@
-var Promise = require('./yaku');
 var _ = require('./_');
 var end = require('./end');
 var isPromise = require('./isPromise');
@@ -39,9 +38,9 @@ module.exports = function () {
                 if (fn === end) {
                     return val;
                 }
-                return run(isPromise(fn) ? fn : _.isFunction(fn) ? Promise.resolve(fn(val)) : Promise.resolve(fn));
+                return run(isPromise(fn) ? fn : _.isFunction(fn) ? _.Promise.resolve(fn(val)) : _.Promise.resolve(fn));
             });
         };
-        return run(Promise.resolve(val));
+        return run(_.Promise.resolve(val));
     };
 };

@@ -1,6 +1,6 @@
 // This file is intended for browser only.
 
-var Yaku = require("./yaku");
+var Yaku = require("./global");
 
 var utils = require("./utils");
 

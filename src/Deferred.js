@@ -1,9 +1,9 @@
-var Promise = require('./yaku');
+var _ = require('./_');
 
 module.exports = function () {
     var defer;
     defer = {};
-    defer.promise = new Promise(function (resolve, reject) {
+    defer.promise = new _.Promise(function (resolve, reject) {
         defer.resolve = resolve;
         return defer.reject = reject;
     });

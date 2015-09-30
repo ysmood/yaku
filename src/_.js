@@ -1,3 +1,4 @@
+var Promise = require('./yaku');
 
 module.exports = {
 
@@ -12,6 +13,9 @@ module.exports = {
     isNumber: function (obj) {
         return typeof obj === 'number';
     },
+
+    Promise: Promise,
+
     slice: [].slice
 
 };

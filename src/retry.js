@@ -1,4 +1,3 @@
-var Promise = require('./yaku');
 var _ = require('./_');
 var $retryError = {};
 
@@ -8,11 +7,11 @@ module.exports = function (retries, fn, self) {
         retries : function () { return retries--; };
 
     function tryFn (isContinue) {
-        return isContinue ? fn.apply(self, args) : Promise.reject($retryError);
+        return isContinue ? fn.apply(self, args) : _.Promise.reject($retryError);
     }
 
     function onError (err) {
-        if (err === $retryError) return Promise.reject(errs);
+        if (err === $retryError) return _.Promise.reject(errs);
 
         errs.push(err);
         return attempt();
@@ -20,7 +19,7 @@ module.exports = function (retries, fn, self) {
 
     function attempt () {
         if (args === void 0) args = arguments;
-        return Promise.resolve(countdown(errs)).then(tryFn).catch(onError);
+        return _.Promise.resolve(countdown(errs)).then(tryFn).catch(onError);
     }
 
     return attempt;

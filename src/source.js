@@ -1,4 +1,4 @@
-var Promise = require("./yaku");
+var _ = require("./_");
 
 module.exports = function source (executor) {
     function src (onEmit, onError) {
@@ -6,7 +6,7 @@ module.exports = function source (executor) {
         nextSrc.onEmit = onEmit;
         nextSrc.onError = onError;
         nextSrc.nextSrcErr = function (reason) {
-            nextSrc.emit(Promise.reject(reason));
+            nextSrc.emit(_.Promise.reject(reason));
         };
 
         src.children.push(nextSrc);
@@ -15,7 +15,7 @@ module.exports = function source (executor) {
     }
 
     src.emit = function (val) {
-        src.value = val = Promise.resolve(val);
+        src.value = val = _.Promise.resolve(val);
         var i = 0, len = src.children.length, child;
         while (i < len) {
             child = src.children[i++];
@@ -30,7 +30,7 @@ module.exports = function source (executor) {
     };
 
     src.children = [];
-    src.value = Promise.resolve();
+    src.value = _.Promise.resolve();
 
     executor && executor(src.emit);
 

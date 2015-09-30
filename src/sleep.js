@@ -1,7 +1,7 @@
-var Promise = require('./yaku');
+var _ = require('./_');
 
 module.exports = function (time, val) {
-    return new Promise(function (r) {
+    return new _.Promise(function (r) {
         return setTimeout((function () {
             return r(val);
         }), time);

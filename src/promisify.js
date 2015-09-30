@@ -1,4 +1,3 @@
-var Promise = require('./yaku');
 var _ = require('./_');
 
 module.exports = function (fn, self) {
@@ -8,7 +7,7 @@ module.exports = function (fn, self) {
         if (_.isFunction(args[args.length - 1])) {
             return fn.apply(self, args);
         }
-        return new Promise(function (resolve, reject) {
+        return new _.Promise(function (resolve, reject) {
             args.push(function () {
                 if (arguments[0] != null) {
                     return reject(arguments[0]);
