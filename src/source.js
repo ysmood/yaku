@@ -1,38 +1,49 @@
 var _ = require("./_");
 
-module.exports = function source (executor) {
-    function src (onEmit, onError) {
-        var nextSrc = source();
-        nextSrc.onEmit = onEmit;
-        nextSrc.onError = onError;
-        nextSrc.nextSrcErr = function (reason) {
-            nextSrc.emit(_.Promise.reject(reason));
-        };
+function Observer (executor) {
+    executor && executor(this.emit);
+}
 
-        src.children.push(nextSrc);
+Observer.prototype = {
+    parent: null,
+    children: [],
 
-        return nextSrc;
-    }
+    value: _.Promise.resolve(),
 
-    src.emit = function (val) {
-        src.value = val = _.Promise.resolve(val);
-        var i = 0, len = src.children.length, child;
+    subscribe: function (onEmit, onError) {
+        var child = new Observer();
+        child._onEmit = onEmit;
+        child._onError = onError;
+
+        child.parent = this;
+        this.children.push(child);
+
+        return child;
+    },
+
+    unsubscribe: function () {
+        var parent = this.parent;
+        parent.splice(parent.children.indexOf(this), 1);
+    },
+
+    emit: function (val) {
+        this.value = val = _.Promise.resolve(val);
+        var i = 0, len = this.children.length, child;
         while (i < len) {
-            child = src.children[i++];
+            child = this.children[i++];
             val.then(
-                child.onEmit,
-                child.onError
+                child._onEmit,
+                child._onError
             ).then(
                 child.emit,
-                child.nextSrcErr
+                child._nextSrcErr
             );
         }
-    };
+    },
 
-    src.children = [];
-    src.value = _.Promise.resolve();
-
-    executor && executor(src.emit);
-
-    return src;
+    _nextSrcErr: function (reason) {
+        this.emit(_.Promise.reject(reason));
+    }
 };
+
+module.exports = Observer;
