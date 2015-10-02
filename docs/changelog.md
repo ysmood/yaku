@@ -1,6 +1,7 @@
-- v0.7.10
+- v0.7.11
 
   - add: `retry` helper.
+  - add: some function names for reflection.
 
 - v0.7.7
 
