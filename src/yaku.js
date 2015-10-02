@@ -67,7 +67,7 @@
      * };
      * ```
      */
-    var Yaku = module.exports = function (executor) {
+    var Yaku = module.exports = function Promise (executor) {
         var self = this,
             err;
 
@@ -102,7 +102,7 @@
          * });
          * ```
          */
-        then: function (onFulfilled, onRejected) {
+        then: function then (onFulfilled, onRejected) {
             return addHandler(this, newEmptyYaku(), onFulfilled, onRejected);
         },
 
@@ -152,7 +152,7 @@
      * var p = Promise.resolve(10);
      * ```
      */
-    Yaku.resolve = function (val) {
+    Yaku.resolve = function resolve (val) {
         return isYaku(val) ? val : settleWithX(newEmptyYaku(), val);
     };
 
@@ -166,7 +166,7 @@
      * var p = Promise.reject(10);
      * ```
      */
-    Yaku.reject = function (reason) {
+    Yaku.reject = function reject (reason) {
         return settlePromise(newEmptyYaku(), $rejected, reason);
     };
 
@@ -190,7 +190,7 @@
      * });
      * ```
      */
-    Yaku.race = function (iterable) {
+    Yaku.race = function race (iterable) {
         assertIterable(iterable);
 
         var len = iterable.length;
@@ -229,7 +229,7 @@
      * });
      * ```
      */
-    Yaku.all = function (iterable) {
+    Yaku.all = function all (iterable) {
         assertIterable(iterable);
 
         var convertor = Yaku.resolve
