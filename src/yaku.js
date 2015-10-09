@@ -223,6 +223,18 @@
      *     console.log(values); // => [123, 0]
      * });
      * ```
+     * @example
+     * Use with iterable.
+     * ```js
+     * var Promise = require('yaku');
+     * Promise.all((function * () {
+     *     yield 10;
+     *     yield new Promise(function (r) { setTimeout(r, 1000, "OK") });
+     * })())
+     * .then((values) => {
+     *     console.log(values); // => [123, 0]
+     * });
+     * ```
      */
     Yaku.all = function all (iterable) {
         var iter = genIterator(iterable);
@@ -244,10 +256,25 @@
             }, onRejected);
         };
 
-        while (!(item = iter.next()).done) run(countDown++, item.value);
+        while (!(item = iter.next()).done) {
+            run(countDown++, item.value);
+        }
 
         return p1;
     };
+
+    /**
+     * The ES6 Symbol object that Yaku should use, by default it will use the
+     * global one.
+     * @type {Object}
+     * @example
+     * ```js
+     * var core = require("core-js/library");
+     * var Promise = require("yaku");
+     * Promise.Symbol = core.Symbol;
+     * ```
+     */
+    Yaku.Symbol = root.Symbol || {};
 
     /**
      * Catch all possibly unhandled rejections. If you want to use specific
@@ -404,6 +431,24 @@
         };
     }
 
+    function ArrIter (arr) {
+        this.arr = arr;
+        this.len = arr.length;
+    }
+
+    // Hack: we don't create new object to pass the newly iterated object.
+    var $ArrIterContainer = {};
+
+    ArrIter.prototype = {
+        i: 0,
+        next: function () {
+            var self = this;
+            $ArrIterContainer.value = self.arr[self.i++];
+            $ArrIterContainer.done = self.i > self.len;
+            return $ArrIterContainer;
+        }
+    };
+
     /**
      * Generate a iterator
      * @param  {Any} obj
@@ -411,17 +456,13 @@
      */
     function genIterator (obj) {
         if (obj) {
-            if (obj instanceof Array) {
-                var i = 0, len = obj.length;
-                return {
-                    next: function () {
-                        return i < len ? { value: obj[i++] } : { done: true };
-                    }
-                };
+            var gen = obj[Yaku.Symbol.iterator];
+            if (isFunction(gen)) {
+                return gen.call(obj);
             }
 
-            if (isFunction(obj.next)) {
-                return obj;
+            if (obj instanceof Array) {
+                return new ArrIter(obj);
             }
         }
         throw genTypeError("invalid_argument");

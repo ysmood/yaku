@@ -66,6 +66,7 @@
         "always"
       ],
       "quotes": [2, "double"],
+      "no-cond-assign": 0,
       "no-trailing-spaces": 2,
       "space-before-function-paren": [
         2,
