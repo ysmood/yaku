@@ -191,16 +191,11 @@
      * ```
      */
     Yaku.race = function race (iterable) {
-        assertIterable(iterable);
+        var iter = genIterator(iterable);
 
-        var len = iterable.length;
-
-        if (len === 0) return Yaku.resolve([]);
-
-        var p = newEmptyYaku()
-            , i = 0;
-        while (i < len) {
-            settleWithX(p, iterable[i++]);
+        var p = newEmptyYaku(), item;
+        while (!(item = iter.next()).done) {
+            settleWithX(p, item.value);
             if (p._state !== $pending) break;
         }
         return p;
@@ -230,30 +225,26 @@
      * ```
      */
     Yaku.all = function all (iterable) {
-        assertIterable(iterable);
+        var iter = genIterator(iterable);
 
         var convertor = Yaku.resolve
-            , countDown
-            , len = countDown = iterable.length;
-
-        if (len === 0) return convertor([]);
-
-        var p1 = newEmptyYaku()
+        , p1 = newEmptyYaku()
         , res = []
-        , i = 0
+        , item
+        , countDown = 0
 
         , onRejected = function (reason) {
             settlePromise(p1, $rejected, reason);
         }
 
-        , iter = function (j) {
-            convertor(iterable[j]).then(function (value) {
-                res[j] = value;
+        , run = function (i, el) {
+            convertor(el).then(function (value) {
+                res[i] = value;
                 if (!--countDown) settlePromise(p1, $resolved, res);
             }, onRejected);
         };
 
-        while (i < len) iter(i++);
+        while (!(item = iter.next()).done) run(countDown++, item.value);
 
         return p1;
     };
@@ -414,13 +405,26 @@
     }
 
     /**
-     * Check if a variable is an iterable object.
-     * @private
-     * @param  {Any}  obj
-     * @return {Boolean}
+     * Generate a iterator
+     * @param  {Any} obj
+     * @return {Function}
      */
-    function assertIterable (obj) {
-        if (!obj instanceof Array) throw genTypeError("invalid_argument");
+    function genIterator (obj) {
+        if (obj) {
+            if (obj instanceof Array) {
+                var i = 0, len = obj.length;
+                return {
+                    next: function () {
+                        return i < len ? { value: obj[i++] } : { done: true };
+                    }
+                };
+            }
+
+            if (isFunction(obj.next)) {
+                return obj;
+            }
+        }
+        throw genTypeError("invalid_argument");
     }
 
     /**
