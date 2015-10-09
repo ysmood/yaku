@@ -1,13 +1,11 @@
-var webpack=require('webpack');
-
 module.exports = {
-	entry: {
-		'test-basic': './test/basic.js',
-		'all': './src/all',
-	},
+    entry: {
+        "test-basic": "./test/basic.js",
+        "browser": "./src/browser"
+    },
 
-	output: {
-		filename: '[name].js',
-		path: './lib'
-	}
+    output: {
+        filename: "[name].js",
+        path: "./lib"
+    }
 };
