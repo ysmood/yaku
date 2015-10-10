@@ -1,6 +1,6 @@
 module.exports = {
     entry: {
-        "test-basic": "./test/basic.js",
+        "test-browser": "./test/test-browser.js",
         "browser": "./src/browser"
     },
 

@@ -92,8 +92,10 @@ module.exports = function (task, option) {
             kit.logs($.reqBody + "");
             return $.next();
         }), select("/", function ($) {
-            return $.body = kit.readFile("lib/test-basic.js").then(function (js) {
-                return "<html>\n	<body></body>\n	<script>" + js + "</script>\n</html>";
+            return $.body = kit.readFile("lib/test-browser.js").then(function (js) {
+                return "<html><body><div id='junit-reporter'></div></body><script>" +
+                    js +
+                    "</script>\n</html>";
             });
         }));
         kit.spawn("webpack", ["--progress", "--watch"]);
