@@ -277,33 +277,6 @@
     Yaku.Symbol = root.Symbol || {};
 
     /**
-     * Catch all possibly unhandled rejections. If you want to use specific
-     * format to display the error stack, overwrite it.
-     * If it is set, auto `console.error` unhandled rejection will be disabled.
-     * @param {Any} reason The rejection reason.
-     * @param {Yaku} p The promise that was rejected.
-     * @example
-     * ```js
-     * var Promise = require('yaku');
-     * Promise.onUnhandledRejection = (reason) => {
-     *     console.error(reason);
-     * };
-     *
-     * // The console will log an unhandled rejection error message.
-     * Promise.reject('my reason');
-     *
-     * // The below won't log the unhandled rejection error message.
-     * Promise.reject('v').catch(() => {});
-     * ```
-     */
-    Yaku.onUnhandledRejection = function (reason, p) {
-        if (root.console) {
-            var info = genStackInfo(reason, p);
-            console.error("Unhandled Rejection:", info[0], info[1] || "");
-        }
-    };
-
-    /**
      * It is used to enable the long stack trace.
      * Once it is enabled, it can't be reverted.
      * While it is very helpful in development and testing environments,
@@ -342,6 +315,7 @@
         root.process.nextTick :
         function (fn) { setTimeout(fn); };
 
+    Yaku.stack = genStackInfo;
 
     // ********************** Private **********************
 
@@ -526,8 +500,22 @@
     });
 
     var scheduleUnhandledRejection = genScheduler(9, function (p) {
-        if (!hashOnRejected(p))
-            Yaku.onUnhandledRejection(p._value, p);
+        if (!hashOnRejected(p)) {
+            var process = root.process
+            , onunhandledrejection = root.onunhandledrejection
+            , console = root.console
+            , reason = p._value
+            , eventName = "unhandledRejection";
+
+            if (process && process.listeners(eventName).length) {
+                process.emit(eventName, reason, p);
+            } else if (onunhandledrejection) {
+                onunhandledrejection({ promise: p, reason: reason });
+            } else if (console) {
+                var info = genStackInfo(reason, p);
+                console.error(eventName + ":", info[0], info[1] || "");
+            }
+        }
     });
 
     function isYaku (val) { return val && val._Yaku; }

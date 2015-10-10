@@ -109,11 +109,16 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
   > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
 
-- Why not the use the `window` or `process` to emit the `unhandledRejection`?
 
-  > Yaku will not touch any global API, instead I will leave enought APIs to let user achieve it easily.
-  > For example, you can use `utils.globalizeUnhandledRejection()` to do it.
+# Unhandled Rejection
 
+Yaku will report any unhandled rejection via `console.error` by default, in case you forget to write `catch`.
+You can catch with them manually:
+
+- Browser: `window.onunhandledrejection = ({ promise, reason }) => { /* Your Code */ };`
+- Node: `process.on("unhandledRejection", (reason, promise) => { /* Your Code */ });`
+
+For more spec read [Unhandled Rejection Tracking Browser Events](https://github.com/domenic/unhandled-rejections-browser-spec).
 
 
 # API

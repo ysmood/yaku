@@ -19,7 +19,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.3KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.4KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and ES6
@@ -71,7 +71,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 | Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
 | -------------------- | -------------------- | --------------- | ------- | --------- |
-| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.3KB |
+| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.4KB |
 | [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
 | [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
 | [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
@@ -109,11 +109,16 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
   > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
 
-- Why not the use the `window` or `process` to emit the `unhandledRejection`?
 
-  > Yaku will not touch any global API, instead I will leave enought APIs to let user achieve it easily.
-  > For example, you can use `utils.globalizeUnhandledRejection()` to do it.
+# Unhandled Rejection
 
+Yaku will report any unhandled rejection via `console.error` by default, in case you forget to write `catch`.
+You can catch with them manually:
+
+- Browser: `window.onunhandledrejection = ({ promise, reason }) => { /* Your Code */ };`
+- Node: `process.on("unhandledRejection", (reason, promise) => { /* Your Code */ });`
+
+For more spec read [Unhandled Rejection Tracking Browser Events](https://github.com/domenic/unhandled-rejections-browser-spec).
 
 
 # API
@@ -358,36 +363,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.Symbol = core.Symbol;
         ```
 
-- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L299)**
-
-    Catch all possibly unhandled rejections. If you want to use specific
-    format to display the error stack, overwrite it.
-    If it is set, auto `console.error` unhandled rejection will be disabled.
-
-    - **<u>param</u>**: `reason` { _Any_ }
-
-        The rejection reason.
-
-    - **<u>param</u>**: `p` { _Yaku_ }
-
-        The promise that was rejected.
-
-    - **<u>example</u>**:
-
-        ```js
-        var Promise = require('yaku');
-        Promise.onUnhandledRejection = (reason) => {
-            console.error(reason);
-        };
-
-        // The console will log an unhandled rejection error message.
-        Promise.reject('my reason');
-
-        // The below won't log the unhandled rejection error message.
-        Promise.reject('v').catch(() => {});
-        ```
-
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L318)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L291)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -402,7 +378,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L341)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L314)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
@@ -427,7 +403,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.nextTick = fn => fn();
         ```
 
-- ### **[genIterator(obj)](src/yaku.js?source#L463)**
+- ### **[genIterator(obj)](src/yaku.js?source#L437)**
 
     Generate a iterator
 
