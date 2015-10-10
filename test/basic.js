@@ -104,10 +104,6 @@ module.exports = function (it) { return [
         ]);
     }),
 
-    it("empty race", [], function () {
-        return Yaku.race([]);
-    }),
-
     it("race", 0, function () {
         return Yaku.race([
             new Yaku(function (r) {

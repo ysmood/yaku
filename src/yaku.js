@@ -260,6 +260,8 @@
             run(countDown++, item.value);
         }
 
+        if (!countDown) settlePromise(p1, $resolved, []);
+
         return p1;
     };
 
@@ -441,6 +443,10 @@
 
             if (obj instanceof Array) {
                 return new ArrIter(obj);
+            }
+
+            if (isFunction(obj.next)) {
+                return obj;
             }
         }
         throw genTypeError("invalid_argument");
