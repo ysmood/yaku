@@ -348,7 +348,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.Symbol](src/yaku.js?source#L277)**
+- ### **[Yaku.Symbol](src/yaku.js?source#L279)**
 
     The ES6 Symbol object that Yaku should use, by default it will use the
     global one.
@@ -363,7 +363,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.Symbol = core.Symbol;
         ```
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L291)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L293)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -378,7 +378,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L314)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L316)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
@@ -427,7 +427,31 @@ var source = require("yaku/lib/source");
 // now "source" use bluebird instead of yaku.
 ```
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L54)**
+- ### **[any(iterable)](src/utils.js?source#L22)**
+
+    Similar with the `Promise.race`, but only rejects when every entry rejects.
+
+    - **<u>param</u>**: `iterable` { _iterable_ }
+
+        An iterable object, such as an Array.
+
+    - **<u>return</u>**: { _Yaku_ }
+
+    - **<u>example</u>**:
+
+        ```js
+        var any = require('yaku/lib/any');
+        any([
+            123,
+            Promise.resolve(0),
+            Promise.reject(1)
+        ])
+        .then((value) => {
+            console.log(value); // => 123
+        });
+        ```
+
+- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L69)**
 
     A function that helps run functions under a concurrent limitation.
     To run functions sequentially, use `yaku/lib/flow`.
@@ -437,13 +461,10 @@ var source = require("yaku/lib/source");
         The max task to run at a time. It's optional.
         Default is `Infinity`.
 
-    - **<u>param</u>**: `list` { _Array | Function_ }
+    - **<u>param</u>**: `list` { _Iterable_ }
 
-        If the list is an array, it should be a list of functions or promises,
-        and each function will return a promise.
-        If the list is a function, it should be a iterator that returns
-        a promise, when it returns `yaku/lib/end`, the iteration ends. Of course
-        it can never end.
+        Any [iterable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
+        don't pass in a normal Array with promises.
 
     - **<u>param</u>**: `saveResults` { _Boolean_ }
 
@@ -462,7 +483,6 @@ var source = require("yaku/lib/source");
         ```js
         var kit = require('nokit');
         var async = require('yaku/lib/async');
-        var end = require('yaku/lib/end');
 
         var urls = [
             'http://a.com',
@@ -470,28 +490,29 @@ var source = require("yaku/lib/source");
             'http://c.com',
             'http://d.com'
         ];
-        var tasks = [
-            () => kit.request(url[0]),
-            () => kit.request(url[1]),
-            () => kit.request(url[2]),
-            () => kit.request(url[3])
-        ];
+        var tasks = function * () {
+            var i = 0;
+            yield kit.request(url[i++]);
+            yield kit.request(url[i++]);
+            yield kit.request(url[i++]);
+            yield kit.request(url[i++]);
+        }();
 
         async(tasks).then(() => kit.log('all done!'));
 
         async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
 
-        async(3, () => {
+        async(3, { next: () => {
             var url = urls.pop();
-            if (url)
-                return kit.request(url);
-            else
-                return end;
-        })
+            return {
+                 done: !url,
+                 value: url && kit.request(url)
+            };
+        } })
         .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.js?source#L63)**
+- ### **[callbackify(fn, self)](src/utils.js?source#L78)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -504,32 +525,20 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.js?source#L69)**
+- ### **[Deferred](src/utils.js?source#L84)**
 
     **deprecate** Create a `jQuery.Deferred` like object.
     It will cause some buggy problems, please don't use it.
 
-- ### **[end()](src/utils.js?source#L75)**
-
-    The end symbol.
-
-    - **<u>return</u>**: { _Promise_ }
-
-        A promise that will end the current pipeline.
-
-- ### **[flow(fns)](src/utils.js?source#L138)**
+- ### **[flow(list)](src/utils.js?source#L142)**
 
     Creates a function that is the composition of the provided functions.
-    Besides, it can also accept async function that returns promise.
     See `yaku/lib/async`, if you need concurrent support.
 
-    - **<u>param</u>**: `fns` { _Function | Array_ }
+    - **<u>param</u>**: `list` { _Iterable_ }
 
-        Functions that return
-        promise or any value.
-        And the array can also contains promises or values other than function.
-        If there's only one argument and it's a function, it will be treated as an iterator,
-        when it returns `yaku/lib/end`, the iteration ends.
+        Any [iterable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
+        don't pass in a normal Array with promises.
 
     - **<u>return</u>**: { _Function_ }
 
@@ -571,29 +580,24 @@ var source = require("yaku/lib/source");
         ```js
         var kit = require('nokit');
         var flow = require('yaku/lib/flow');
-        var end = require('yaku/lib/end');
 
         var list = [];
         function iter (url) {
-         if (!url) return end;
-
-         return kit.request(url)
-         .then((body) => {
-             list.push(body);
-             var m = body.match(/href="(.+?)"/);
-             if (m) return m[0];
-         });
+            return {
+                done: !url,
+                value: url && kit.request(url).then((body) => {
+                    list.push(body);
+                    var m = body.match(/href="(.+?)"/);
+                    if (m) return m[0];
+                });
+            };
         }
 
         var walker = flow(iter);
         walker('test.com');
         ```
 
-- ### **[globalizeUnhandledRejection](src/utils.js?source#L143)**
-
-    A function to make Yaku emit global rejection events.
-
-- ### **[isPromise(obj)](src/utils.js?source#L151)**
+- ### **[isPromise(obj)](src/utils.js?source#L150)**
 
     **deprecate** Check if an object is a promise-like object.
     Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
@@ -602,7 +606,15 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.js?source#L180)**
+- ### **[never()](src/utils.js?source#L156)**
+
+    Create a symbole that never ends.
+
+    - **<u>return</u>**: { _Promise_ }
+
+        A promise that will end the current pipeline.
+
+- ### **[promisify(fn, self)](src/utils.js?source#L185)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -637,7 +649,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L193)**
+- ### **[sleep(time, val)](src/utils.js?source#L198)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -658,7 +670,7 @@ var source = require("yaku/lib/source");
         sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.js?source#L274)**
+- ### **[source(executor)](src/utils.js?source#L279)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
@@ -753,7 +765,7 @@ var source = require("yaku/lib/source");
         three(v => console.log(v));
         ```
 
-- ### **[retry(countdown, fn, this)](src/utils.js?source#L323)**
+- ### **[retry(countdown, fn, this)](src/utils.js?source#L328)**
 
     Retry a function until it resolves before a mount of times, or reject with all
     the error states.
@@ -820,7 +832,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L337)**
+- ### **[throw(err)](src/utils.js?source#L342)**
 
     Throw an error to break the program.
 

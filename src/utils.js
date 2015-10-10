@@ -26,7 +26,7 @@ module.exports = {
      * To run functions sequentially, use `yaku/lib/flow`.
      * @param  {Int} limit The max task to run at a time. It's optional.
      * Default is `Infinity`.
-     * @param  {Iterable} list Any [iteratable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
+     * @param  {Iterable} list Any [iterable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
      * don't pass in a normal Array with promises.
      * @param {Boolean} saveResults Whether to save each promise's result or
      * not. Default is true.
@@ -86,7 +86,7 @@ module.exports = {
     /**
      * Creates a function that is the composition of the provided functions.
      * See `yaku/lib/async`, if you need concurrent support.
-     * @param  {Iterable} list Any [iteratable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
+     * @param  {Iterable} list Any [iterable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
      * don't pass in a normal Array with promises.
      * @return {Function} `(val) -> Promise` A function that will return a promise.
      * @example
