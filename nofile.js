@@ -52,15 +52,19 @@ module.exports = function (task, option) {
         });
     });
     option("--grep <pattern>", "run test that match the pattern", ".");
+    option("--noAplus", "don't run the promises-aplus-tests");
     task("test", "run Promises/A+ tests", function (opts) {
-        if (opts.grep === ".") {
-            require("./test/basic");
-        }
-        return setTimeout(function () {
-            return require("./test/compliance.js")({
-                grep: opts.grep
-            });
-        }, 1000);
+        var junitOpts = ["-s", "test/testSuit.js", "-g", opts.grep];
+
+        return Promise.all([
+            kit.spawn("junit", junitOpts.concat(["test/basic.js"])),
+            kit.spawn("junit", junitOpts.concat(["-l", 1, "test/unhandledRejection.js"]))
+        ]).then(function () {
+            if (!opts.noAplus)
+                return require("./test/compliance.js")({
+                    grep: opts.grep
+                });
+        });
     });
     option("--sync", "sync benchmark");
     task("benchmark", "compare performance between different libraries", function (opts) {

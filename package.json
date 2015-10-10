@@ -40,6 +40,7 @@
     "bluebird": "2.10.1",
     "es6-promise": "3.0.2",
     "eslint": "1.5.1",
+    "junit": "0.6.1",
     "nokit": "0.14.7",
     "promises-aplus-tests": "*",
     "q": "1.4.1",
@@ -65,7 +66,10 @@
         2,
         "always"
       ],
-      "quotes": [2, "double"],
+      "quotes": [
+        2,
+        "double"
+      ],
       "no-cond-assign": 0,
       "no-trailing-spaces": 2,
       "space-before-function-paren": [
