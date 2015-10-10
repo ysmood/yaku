@@ -231,7 +231,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
         ```js
         var Promise = require('yaku');
-        var p = Promise.reject(10);
+        var p = Promise.reject(new Error("ERR"));
 
         p['catch']((v) => {
             console.log(v);
@@ -272,7 +272,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
         ```js
         var Promise = require('yaku');
-        var p = Promise.reject(10);
+        var p = Promise.reject(new Error("ERR"));
         ```
 
 - ### **[Yaku.race(iterable)](src/yaku.js?source#L193)**
@@ -444,7 +444,7 @@ var source = require("yaku/lib/source");
         any([
             123,
             Promise.resolve(0),
-            Promise.reject(1)
+            Promise.reject(new Error("ERR"))
         ])
         .then((value) => {
             console.log(value); // => 123
@@ -726,7 +726,7 @@ var source = require("yaku/lib/source");
         );
 
         // Emit error
-        linear.emit(Promise.reject("reason"));
+        linear.emit(Promise.reject(new Error("reason")));
 
         // Dispose a specific source.
         linear.children.splice(linear.children.indexOf(quad));

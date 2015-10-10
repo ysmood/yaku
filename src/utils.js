@@ -12,7 +12,7 @@ module.exports = {
      * any([
      *     123,
      *     Promise.resolve(0),
-     *     Promise.reject(1)
+     *     Promise.reject(new Error("ERR"))
      * ])
      * .then((value) => {
      *     console.log(value); // => 123
@@ -241,7 +241,7 @@ module.exports = {
      * );
      *
      * // Emit error
-     * linear.emit(Promise.reject("reason"));
+     * linear.emit(Promise.reject(new Error("reason")));
      *
      * // Dispose a specific source.
      * linear.children.splice(linear.children.indexOf(quad));

@@ -115,7 +115,7 @@
          * @example
          * ```js
          * var Promise = require('yaku');
-         * var p = Promise.reject(10);
+         * var p = Promise.reject(new Error("ERR"));
          *
          * p['catch']((v) => {
          *     console.log(v);
@@ -163,7 +163,7 @@
      * @example
      * ```js
      * var Promise = require('yaku');
-     * var p = Promise.reject(10);
+     * var p = Promise.reject(new Error("ERR"));
      * ```
      */
     Yaku.reject = function reject (reason) {
