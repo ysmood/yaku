@@ -3,9 +3,8 @@
 module.exports = {
 
     /**
-     * An throttled version of `Promise.all`, it runs all the tasks under
-     * a concurrent limitation.
-     * To run tasks sequentially, use `yaku/lib/flow`.
+     * A function that helps run functions under a concurrent limitation.
+     * To run functions sequentially, use `yaku/lib/flow`.
      * @param  {Int} limit The max task to run at a time. It's optional.
      * Default is `Infinity`.
      * @param  {Array | Function} list
