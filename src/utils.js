@@ -138,6 +138,11 @@ module.exports = {
     flow: require("./flow"),
 
     /**
+     * A function to make Yaku emit global rejection events.
+     */
+    globalizeUnhandledRejection: require("./globalizeUnhandledRejection"),
+
+    /**
      * **deprecate** Check if an object is a promise-like object.
      * Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
      * @param  {Any}  obj

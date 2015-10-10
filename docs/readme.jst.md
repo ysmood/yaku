@@ -109,6 +109,11 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
   > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
 
+- Why not the use the `window` or `process` to emit the `unhandledRejection`?
+
+  > Yaku will not touch any global API, instead I will leave enought APIs to let user achieve it easily.
+  > For example, you can use `utils.globalizeUnhandledRejection()` to do it.
+
 
 
 # API
