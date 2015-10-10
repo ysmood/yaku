@@ -64,7 +64,8 @@ module.exports = {
     callbackify: require("./callbackify"),
 
     /**
-     * Create a `jQuery.Deferred` like object.
+     * **deprecate** Create a `jQuery.Deferred` like object.
+     * It will cause some buggy problems, please don't use it.
      */
     Deferred: require("./Deferred"),
 
@@ -138,7 +139,8 @@ module.exports = {
     flow: require("./flow"),
 
     /**
-     * Check if an object is a promise-like object.
+     * **deprecate** Check if an object is a promise-like object.
+     * Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
      * @param  {Any}  obj
      * @return {Boolean}
      */
