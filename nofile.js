@@ -1,6 +1,7 @@
 var kit;
 
 kit = require("nokit");
+var Promise = kit.Promise;
 
 kit.require("drives");
 

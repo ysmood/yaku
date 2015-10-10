@@ -6,6 +6,7 @@ module.exports = {
         for (var k in target) {
             src.prototype[k] = target[k];
         }
+        return src;
     },
 
     isArray: function (obj) {

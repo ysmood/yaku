@@ -120,15 +120,15 @@ module.exports = function (it) { return [
 
     it("any one resolved", 0, function () {
         return utils.any([
-            Promise.reject(1),
-            Promise.resolve(0)
+            Yaku.reject(1),
+            Yaku.resolve(0)
         ]);
     }),
 
     it("any all rejected", [0, 1], function () {
         return utils.any([
-            Promise.reject(0),
-            Promise.reject(1)
+            Yaku.reject(0),
+            Yaku.reject(1)
         ]).catch(function (v) {
             return v;
         });

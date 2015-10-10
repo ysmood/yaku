@@ -403,7 +403,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.nextTick = fn => fn();
         ```
 
-- ### **[genIterator(obj)](src/yaku.js?source#L437)**
+- ### **[genIterator(obj)](src/yaku.js?source#L438)**
 
     Generate a iterator
 

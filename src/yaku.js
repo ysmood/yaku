@@ -337,6 +337,7 @@
         for (var k in target) {
             src.prototype[k] = target[k];
         }
+        return src;
     }
 
     function isObject (obj) {
