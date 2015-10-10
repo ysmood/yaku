@@ -1,13 +1,11 @@
-var end = require("./end");
 var _ = require("./_");
+var genIterator = require("./genIterator");
 var isPromise = require("./isPromise");
 
 module.exports = function (limit, list, saveResults, progress) {
-    var isIterDone, iter, iterIndex, resutls, running;
+    var resutls, running;
     resutls = [];
     running = 0;
-    isIterDone = false;
-    iterIndex = 0;
     if (!_.isNumber(limit)) {
         progress = saveResults;
         saveResults = list;
@@ -17,42 +15,31 @@ module.exports = function (limit, list, saveResults, progress) {
     if (saveResults == null) {
         saveResults = true;
     }
-    if (_.isArray(list)) {
-        iter = function () {
-            var el;
-            el = list[iterIndex];
-            if (el === void 0) {
-                return end;
-            } else if (_.isFunction(el)) {
-                return el();
-            } else {
-                return el;
-            }
-        };
-    } else if (_.isFunction(list)) {
-        iter = list;
-    } else {
-        throw new TypeError("wrong argument type: " + list);
-    }
+
+    var iter = genIterator(list);
+
     return new _.Promise(function (resolve, reject) {
-        var addTask, allDone, i, results;
-        addTask = function () {
-            var index, p, task;
-            task = iter();
-            index = iterIndex++;
-            if (isIterDone || task === end) {
-                isIterDone = true;
+        var results, resultIndex = 0;
+
+        function addTask (index) {
+            var p, task;
+
+            task = iter.next();
+            if (task.done) {
                 if (running === 0) {
                     allDone();
                 }
                 return false;
             }
-            if (isPromise(task)) {
-                p = task;
+
+            if (isPromise(task.value)) {
+                p = task.value;
             } else {
-                p = _.Promise.resolve(task);
+                p = _.Promise.resolve(task.value);
             }
+
             running++;
+
             p.then(function (ret) {
                 running--;
                 if (saveResults) {
@@ -61,29 +48,33 @@ module.exports = function (limit, list, saveResults, progress) {
                 if (typeof progress === "function") {
                     progress(ret);
                 }
-                return addTask();
+                return addTask(resultIndex++);
             })["catch"](function (err) {
                 running--;
                 return reject(err);
             });
+
             return true;
-        };
-        allDone = function () {
+        }
+
+        function allDone () {
             if (saveResults) {
                 return resolve(resutls);
             } else {
                 return resolve();
             }
-        };
-        i = limit;
+        }
+
+        var i = limit;
         results = [];
         while (i--) {
-            if (!addTask()) {
+            if (!addTask(resultIndex++)) {
                 break;
             } else {
                 results.push(void 0);
             }
         }
+
         return results;
     });
 };

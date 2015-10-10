@@ -4,6 +4,8 @@ Yaku = require("../src/yaku");
 
 utils = require("../src/utils");
 
+var root = typeof global === "object" ? global : window;
+
 log = (function () {
     return function (val) {
         var JSON, elem, xhr;
@@ -58,7 +60,9 @@ test = function (name, shouldBe, fn) {
             return log("v [test] " + name);
         } else {
             log("x [test] " + name + "\n	>>>>>>>> Should Equal\n	" + (JSON.stringify(res.b)) + "\n	<<<<<<<< But Equal\n	" + (JSON.stringify(res.a)) + "\n	>>>>>>>>");
-            return typeof process !== "undefined" && process !== null ? process.exit(1) : void 0;
+            try {
+                root.process.exit(1);
+            } catch (err) { null; }
         }
     };
     try {
@@ -101,14 +105,14 @@ test("resolve promise like value", $val, function () {
     });
 });
 
-test("constructor abort", $val, function () {
+test("constructor abort", 111, function () {
     var p;
     p = new Yaku(function (resolve, reject) {
         var tmr;
         tmr = setTimeout(resolve, 100, "done");
-        return this.abort = function (reason) {
+        return this.abort = function () {
             clearTimeout(tmr);
-            return reject(reason);
+            return reject(111);
         };
     });
     p.abort($val);
@@ -157,78 +161,80 @@ test("chain", "ok", function () {
     });
 });
 
-Yaku.resolve().then(function () {
-    return test("unhandled rejection", $val, function () {
-        return new Yaku(function (r) {
-            var old;
-            old = Yaku.onUnhandledRejection;
-            Yaku.onUnhandledRejection = function (reason) {
-                Yaku.onUnhandledRejection = old;
-                return r(reason);
-            };
-            return Yaku.resolve().then(function () {
-                return Yaku.reject($val);
+var process = root.process;
+if (process) {
+    Yaku.resolve().then(function () {
+        return test("unhandled rejection", $val, function () {
+            return new Yaku(function (r) {
+                function handler (reason) {
+                    return r(reason);
+                }
+                process.once("unhandledRejection", handler);
+                return Yaku.resolve().then(function () {
+                    return Yaku.reject($val);
+                });
             });
         });
-    });
-}).then(function () {
-    return test("no unhandled rejection", $val, function () {
-        return new Yaku(function (resolve, reject) {
-            var old;
-            old = Yaku.onUnhandledRejection;
-            Yaku.onUnhandledRejection = function () {
-                Yaku.onUnhandledRejection = old;
-                return reject();
-            };
-            return Yaku.reject()["catch"](function () {
+    }).then(function () {
+        return test("no unhandled rejection", $val, function () {
+            return new Yaku(function (resolve, reject) {
+                function handler () {
+                    process.removeListener("unhandledRejection", handler);
+                    return reject();
+                }
+                process.once("unhandledRejection", handler);
+
+                return Yaku.reject()["catch"](function () {
+                    return setTimeout(function () {
+                        return resolve($val);
+                    }, 100);
+                });
+            });
+        });
+    }).then(function () {
+        return test("unhandled rejection inside a catch", $val, function () {
+            return new Yaku(function (r) {
+                function handler (reason) {
+                    return r(reason);
+                }
+                process.once("unhandledRejection", handler);
+
+                return Yaku.reject()["catch"](function () {
+                    return Yaku.reject($val);
+                });
+            });
+        });
+    }).then(function () {
+        return test("unhandled rejection only once", 1, function () {
+            var count = 0;
+            function handler () {
+                return count++;
+            }
+
+            process.on("unhandledRejection", handler);
+
+            Yaku.reject().then(function () {
+                return $val;
+            });
+
+            return new Yaku(function (r) {
                 return setTimeout(function () {
-                    return resolve($val);
-                }, 100);
+                    process.removeListener("unhandledRejection", handler);
+                    return r(count);
+                }, 50);
+            });
+        });
+    }).then(function () {
+        return test("long stack trace", 2, function () {
+            Yaku.enableLongStackTrace();
+            return Yaku.resolve().then(function () {
+                throw "abc";
+            })["catch"](function (err) {
+                return err.stack.match(/From previous event:/g).length;
             });
         });
     });
-}).then(function () {
-    return test("unhandled rejection inside a catch", $val, function () {
-        return new Yaku(function (r) {
-            var old;
-            old = Yaku.onUnhandledRejection;
-            Yaku.onUnhandledRejection = function (reason) {
-                Yaku.onUnhandledRejection = old;
-                return r(reason);
-            };
-            return Yaku.reject()["catch"](function () {
-                return Yaku.reject($val);
-            });
-        });
-    });
-}).then(function () {
-    return test("unhandled rejection only once", 1, function () {
-        var count, old;
-        old = Yaku.onUnhandledRejection;
-        count = 0;
-        Yaku.onUnhandledRejection = function () {
-            return count++;
-        };
-        Yaku.reject().then(function () {
-            return $val;
-        });
-        return new Yaku(function (r) {
-            return setTimeout(function () {
-                Yaku.onUnhandledRejection = old;
-                return r(count);
-            }, 50);
-        });
-    });
-}).then(function () {
-    return test("long stack trace", 2, function () {
-        Yaku.enableLongStackTrace();
-        return Yaku.resolve().then(function () {
-            throw "abc";
-        })["catch"](function (err) {
-            return err.stack.match(/From previous event:/g).length;
-        });
-    });
-});
+}
 
 randomPromise = function (i) {
     return new Yaku(function (r) {
@@ -275,57 +281,53 @@ test("race", 0, function () {
 test("async array", [0, null, void 0, 1, 2, 3], function () {
     var list;
     list = [
-        function () {
-            return 0;
-        }, function () {
-            return null;
-        }, function () {
-            return void 0;
-        }, function () {
-            return utils.sleep(20, 1);
-        }, function () {
-            return utils.sleep(10, 2);
-        }, function () {
-            return utils.sleep(10, 3);
-        }
+        0,
+        null,
+        void 0,
+        utils.sleep(20, 1),
+        utils.sleep(10, 2),
+        utils.sleep(10, 3)
     ];
     return utils.async(2, list);
 });
 
 test("async error", $val, function () {
-    var list;
-    list = [
-        function () {
-            return utils.sleep(10, 1);
-        }, function () {
-            throw $val;
-        }, function () {
-            return utils.sleep(10, 3);
+    var iter = {
+        i: 0,
+        next: function () {
+            var fn = [
+                function () {
+                    return utils.sleep(10, 1);
+                }, function () {
+                    throw $val;
+                }, function () {
+                    return utils.sleep(10, 3);
+                }
+            ][iter.i++];
+
+            return { done: !fn, value: fn && fn() };
         }
-    ];
-    return utils.async(2, list)["catch"](function (err) {
+    };
+    return utils.async(2, iter)["catch"](function (err) {
         return err;
     });
 });
 
 test("async iter progress", 10, function () {
-    var count, iter;
-    iter = function () {
-        var i;
-        i = 0;
-        return function () {
-            if (i++ === 10) {
-                return utils.end;
-            }
-            return new Yaku(function (r) {
+    var iter = { i: 0, next: function () {
+        var done = iter.i++ >= 10;
+        return {
+            done: done,
+            value: !done && new Yaku(function (r) {
                 return setTimeout((function () {
                     return r(1);
                 }), 10);
-            });
+            })
         };
-    };
-    count = 0;
-    return utils.async(3, iter(), false, function (ret) {
+    } };
+
+    var count = 0;
+    return utils.async(3, iter, false, function (ret) {
         return count += ret;
     }).then(function () {
         return count;
@@ -353,15 +355,15 @@ test("flow error", $val, function () {
 test("flow iter", [0, 1, 2, 3], function () {
     var list;
     list = [];
-    return (utils.flow(function (v) {
-        if (v === 3) {
-            return utils.end;
-        }
-        return Yaku.resolve().then(function () {
-            list.push(v);
-            return ++v;
-        });
-    }))(0).then(function (v) {
+    return utils.flow({ next: function (v) {
+        return {
+            done: v === 3,
+            value: v !== 3 && Yaku.resolve().then(function () {
+                list.push(v);
+                return ++v;
+            })
+        };
+    } })(0).then(function (v) {
         list.push(v);
         return list;
     });

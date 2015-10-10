@@ -1,6 +1,7 @@
 - v0.8.0
 
   - **API CHANGE** `Yaku.onUnhandledRejection` is removed, instead use a more famous spec
+  - **API CHANGE** removed `utils.end`
 
 - v0.7.12
 

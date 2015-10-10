@@ -7,12 +7,8 @@ module.exports = {
      * To run functions sequentially, use `yaku/lib/flow`.
      * @param  {Int} limit The max task to run at a time. It's optional.
      * Default is `Infinity`.
-     * @param  {Array | Function} list
-     * If the list is an array, it should be a list of functions or promises,
-     * and each function will return a promise.
-     * If the list is a function, it should be a iterator that returns
-     * a promise, when it returns `yaku/lib/end`, the iteration ends. Of course
-     * it can never end.
+     * @param  {Iterable} list Any [iteratable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
+     * don't pass in a normal Array with promises.
      * @param {Boolean} saveResults Whether to save each promise's result or
      * not. Default is true.
      * @param {Function} progress If a task ends, the resolved value will be
@@ -22,7 +18,6 @@ module.exports = {
      * ```js
      * var kit = require('nokit');
      * var async = require('yaku/lib/async');
-     * var end = require('yaku/lib/end');
      *
      * var urls = [
      *     'http://a.com',
@@ -30,24 +25,25 @@ module.exports = {
      *     'http://c.com',
      *     'http://d.com'
      * ];
-     * var tasks = [
-     *     () => kit.request(url[0]),
-     *     () => kit.request(url[1]),
-     *     () => kit.request(url[2]),
-     *     () => kit.request(url[3])
-     * ];
+     * var tasks = function * () {
+     *     var i = 0;
+     *     yield kit.request(url[i++]);
+     *     yield kit.request(url[i++]);
+     *     yield kit.request(url[i++]);
+     *     yield kit.request(url[i++]);
+     * }();
      *
      * async(tasks).then(() => kit.log('all done!'));
      *
      * async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
      *
-     * async(3, () => {
+     * async(3, { next: () => {
      *     var url = urls.pop();
-     *     if (url)
-     *         return kit.request(url);
-     *     else
-     *         return end;
-     * })
+     *     return {
+     *          done: !url,
+     *          value: url && kit.request(url)
+     *     };
+     * } })
      * .then(() => kit.log('all done!'));
      * ```
      */
@@ -69,20 +65,10 @@ module.exports = {
     Deferred: require("./Deferred"),
 
     /**
-     * The end symbol.
-     * @return {Promise} A promise that will end the current pipeline.
-     */
-    end: require("./end"),
-
-    /**
      * Creates a function that is the composition of the provided functions.
-     * Besides, it can also accept async function that returns promise.
      * See `yaku/lib/async`, if you need concurrent support.
-     * @param  {Function | Array} fns Functions that return
-     * promise or any value.
-     * And the array can also contains promises or values other than function.
-     * If there's only one argument and it's a function, it will be treated as an iterator,
-     * when it returns `yaku/lib/end`, the iteration ends.
+     * @param  {Iterable} list Any [iteratable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
+     * don't pass in a normal Array with promises.
      * @return {Function} `(val) -> Promise` A function that will return a promise.
      * @example
      * It helps to decouple sequential pipeline code logic.
@@ -117,18 +103,17 @@ module.exports = {
      * ```js
      * var kit = require('nokit');
      * var flow = require('yaku/lib/flow');
-     * var end = require('yaku/lib/end');
      *
      * var list = [];
      * function iter (url) {
-     *  if (!url) return end;
-     *
-     *  return kit.request(url)
-     *  .then((body) => {
-     *      list.push(body);
-     *      var m = body.match(/href="(.+?)"/);
-     *      if (m) return m[0];
-     *  });
+     *     return {
+     *         done: !url,
+     *         value: url && kit.request(url).then((body) => {
+     *             list.push(body);
+     *             var m = body.match(/href="(.+?)"/);
+     *             if (m) return m[0];
+     *         });
+     *     };
      * }
      *
      * var walker = flow(iter);
@@ -138,17 +123,18 @@ module.exports = {
     flow: require("./flow"),
 
     /**
-     * A function to make Yaku emit global rejection events.
-     */
-    globalizeUnhandledRejection: require("./globalizeUnhandledRejection"),
-
-    /**
      * **deprecate** Check if an object is a promise-like object.
      * Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
      * @param  {Any}  obj
      * @return {Boolean}
      */
     isPromise: require("./isPromise"),
+
+    /**
+     * Create a symbole that never ends.
+     * @return {Promise} A promise that will end the current pipeline.
+     */
+    never: require("./never"),
 
     /**
      * Convert a node callback style function to a function that returns

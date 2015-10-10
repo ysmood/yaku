@@ -2,6 +2,12 @@ var Promise = require("./yaku");
 
 module.exports = {
 
+    extendPrototype: function (src, target) {
+        for (var k in target) {
+            src.prototype[k] = target[k];
+        }
+    },
+
     isArray: function (obj) {
         return obj instanceof Array;
     },

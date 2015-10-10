@@ -411,15 +411,13 @@
         };
     }
 
-    function ArrIter (arr) {
-        this.arr = arr;
-        this.len = arr.length;
-    }
-
     // Hack: we don't create new object to pass the newly iterated object.
     var $ArrIterContainer = {};
 
-    extendPrototype(ArrIter, {
+    var ArrIter = extendPrototype(function (arr) {
+        this.arr = arr;
+        this.len = arr.length;
+    }, {
         i: 0,
         next: function () {
             var self = this;
