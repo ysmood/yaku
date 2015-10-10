@@ -485,7 +485,7 @@
     }
 
     function genTraceInfo (noTitle) {
-        return (new Error()).stack.replace(
+        return ((new Error()).stack || "").replace(
             "Error",
             noTitle ? "" : $fromPrevious
         );
