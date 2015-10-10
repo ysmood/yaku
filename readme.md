@@ -19,7 +19,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.1KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.3KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and ES6
@@ -71,7 +71,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 | Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
 | -------------------- | -------------------- | --------------- | ------- | --------- |
-| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.1KB |
+| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.3KB |
 | [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
 | [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
 | [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
@@ -108,6 +108,11 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 - The name Yaku is weird?
 
   > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
+
+- Why not the use the `window` or `process` to emit the `unhandledRejection`?
+
+  > Yaku will not touch any global API, instead I will leave enought APIs to let user achieve it easily.
+  > For example, you can use `utils.globalizeUnhandledRejection()` to do it.
 
 
 
@@ -294,7 +299,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.all(iterable)](src/yaku.js?source#L232)**
+- ### **[Yaku.all(iterable)](src/yaku.js?source#L239)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -324,7 +329,36 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         });
         ```
 
-- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L281)**
+    - **<u>example</u>**:
+
+        Use with iterable.
+        ```js
+        var Promise = require('yaku');
+        Promise.all((function * () {
+            yield 10;
+            yield new Promise(function (r) { setTimeout(r, 1000, "OK") });
+        })())
+        .then((values) => {
+            console.log(values); // => [123, 0]
+        });
+        ```
+
+- ### **[Yaku.Symbol](src/yaku.js?source#L277)**
+
+    The ES6 Symbol object that Yaku should use, by default it will use the
+    global one.
+
+    - **<u>type</u>**: { _Object_ }
+
+    - **<u>example</u>**:
+
+        ```js
+        var core = require("core-js/library");
+        var Promise = require("yaku");
+        Promise.Symbol = core.Symbol;
+        ```
+
+- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L299)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -353,7 +387,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.reject('v').catch(() => {});
         ```
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L300)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L318)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -368,7 +402,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L323)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L341)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
@@ -393,6 +427,14 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
         Promise.nextTick = fn => fn();
         ```
 
+- ### **[genIterator(obj)](src/yaku.js?source#L463)**
+
+    Generate a iterator
+
+    - **<u>param</u>**: `obj` { _Any_ }
+
+    - **<u>return</u>**: { _Function_ }
+
 
 
 
@@ -409,11 +451,10 @@ var source = require("yaku/lib/source");
 // now "source" use bluebird instead of yaku.
 ```
 
-- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L55)**
+- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L54)**
 
-    An throttled version of `Promise.all`, it runs all the tasks under
-    a concurrent limitation.
-    To run tasks sequentially, use `yaku/lib/flow`.
+    A function that helps run functions under a concurrent limitation.
+    To run functions sequentially, use `yaku/lib/flow`.
 
     - **<u>param</u>**: `limit` { _Int_ }
 
@@ -474,7 +515,7 @@ var source = require("yaku/lib/source");
         .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.js?source#L64)**
+- ### **[callbackify(fn, self)](src/utils.js?source#L63)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -489,7 +530,8 @@ var source = require("yaku/lib/source");
 
 - ### **[Deferred](src/utils.js?source#L69)**
 
-    Create a `jQuery.Deferred` like object.
+    **deprecate** Create a `jQuery.Deferred` like object.
+    It will cause some buggy problems, please don't use it.
 
 - ### **[end()](src/utils.js?source#L75)**
 
@@ -571,15 +613,20 @@ var source = require("yaku/lib/source");
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.js?source#L145)**
+- ### **[globalizeUnhandledRejection](src/utils.js?source#L143)**
 
-    Check if an object is a promise-like object.
+    A function to make Yaku emit global rejection events.
+
+- ### **[isPromise(obj)](src/utils.js?source#L151)**
+
+    **deprecate** Check if an object is a promise-like object.
+    Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
 
     - **<u>param</u>**: `obj` { _Any_ }
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[promisify(fn, self)](src/utils.js?source#L174)**
+- ### **[promisify(fn, self)](src/utils.js?source#L180)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -614,7 +661,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L187)**
+- ### **[sleep(time, val)](src/utils.js?source#L193)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -635,7 +682,7 @@ var source = require("yaku/lib/source");
         sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.js?source#L268)**
+- ### **[source(executor)](src/utils.js?source#L274)**
 
     Create a composable event source function.
     Promise can't resolve multiple times, this function makes it possible, so
@@ -730,7 +777,7 @@ var source = require("yaku/lib/source");
         three(v => console.log(v));
         ```
 
-- ### **[retry(countdown, fn, this)](src/utils.js?source#L317)**
+- ### **[retry(countdown, fn, this)](src/utils.js?source#L323)**
 
     Retry a function until it resolves before a mount of times, or reject with all
     the error states.
@@ -797,7 +844,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L331)**
+- ### **[throw(err)](src/utils.js?source#L337)**
 
     Throw an error to break the program.
 

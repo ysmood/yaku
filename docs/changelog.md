@@ -1,3 +1,10 @@
+- v0.7.12
+
+  - add: now Yaku supports ES6 iterable
+  - fix: #22 don't overwrite the prototype
+  - fix: #21 ignore old IE `Error.prototype.stack`
+  - add: #20 support global rejection event
+
 - v0.7.11
 
   - add: `retry` helper.
