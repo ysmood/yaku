@@ -84,7 +84,7 @@
         }
     };
 
-    Yaku.prototype = {
+    extendPrototype(Yaku, {
         /**
          * Appends fulfillment and rejection handlers to the promise,
          * and returns a new promise resolving to the return value of the called handler.
@@ -137,7 +137,7 @@
 
         // A unique type flag, it helps different versions of Yaku know each other.
         _Yaku: 1
-    };
+    });
 
     /**
      * The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
@@ -357,6 +357,12 @@
     , $tryErr = { e: null }
     , $noop = {};
 
+    function extendPrototype (src, target) {
+        for (var k in target) {
+            src.prototype[k] = target[k];
+        }
+    }
+
     function isObject (obj) {
         return typeof obj === "object";
     }
@@ -439,7 +445,7 @@
     // Hack: we don't create new object to pass the newly iterated object.
     var $ArrIterContainer = {};
 
-    ArrIter.prototype = {
+    extendPrototype(ArrIter, {
         i: 0,
         next: function () {
             var self = this;
@@ -447,7 +453,7 @@
             $ArrIterContainer.done = self.i > self.len;
             return $ArrIterContainer;
         }
-    };
+    });
 
     /**
      * Generate a iterator
