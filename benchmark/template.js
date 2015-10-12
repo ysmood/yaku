@@ -12,22 +12,24 @@ cs = kit.require("brush");
  */
 
 module.exports = function (name, Promise) {
-    var asyncTask, checkEnd, countDown, i, initStart, initTime, logResult, resolver, startResolution, ver;
-    ver = (function () {
+    var ver = (function () {
         try {
             return require("../node_modules/" + name + "/package.json").version;
         } catch (error) {
             return require("../package.json").version;
         }
     })();
-    countDown = Math.pow(10, 5);
-    checkEnd = function () {
+
+    var countDown = Math.pow(10, 5);
+
+    function checkEnd () {
         if (--countDown) {
             return;
         }
         return logResult();
-    };
-    logResult = function () {
+    }
+
+    function logResult () {
         var k, mem, memFormat, resolutionTime, v;
         resolutionTime = Date.now() - startResolution;
         mem = process.memoryUsage();
@@ -36,21 +38,35 @@ module.exports = function (name, Promise) {
             v = mem[k];
             memFormat.push(k + " - " + (Math.floor(v / 1024 / 1024)) + "mb");
         }
-        return console.log((cs.cyan(name)) + " v" + ver + "\n             total: " + (cs.green(initTime + resolutionTime)) + "ms\n                init: " + initTime + "ms\n    resolution: " + resolutionTime + "ms\n            memory: " + (memFormat.join(" | ")));
-    };
-    resolver = process.argv[2] === "sync" ? function (resolve) {
-        return resolve();
-    } : function (resolve) {
+
+        return console.log((cs.cyan(name))
+            + " v"
+            + ver
+            + "\n             total: "
+            + (cs.green(initTime + resolutionTime))
+            + "ms\n                init: "
+            + initTime
+            + "ms\n    resolution: "
+            + resolutionTime
+            + "ms\n            memory: "
+            + (memFormat.join(" | ")));
+    }
+
+    function resolver (resolve) {
         return setTimeout(resolve, 1);
-    };
-    asyncTask = function () {
+    }
+
+    function asyncTask () {
         return new Promise(resolver).then(checkEnd);
-    };
-    i = countDown;
-    initStart = Date.now();
+    }
+
+    var i = countDown;
+    var initTime;
+    var initStart = Date.now();
     while (i--) {
         asyncTask();
     }
-    startResolution = Date.now();
+
+    var startResolution = Date.now();
     return initTime = startResolution - initStart;
 };

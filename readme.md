@@ -304,7 +304,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.all(iterable)](src/yaku.js?source#L239)**
+- ### **[Yaku.all(iterable)](src/yaku.js?source#L250)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -348,7 +348,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.Symbol](src/yaku.js?source#L279)**
+- ### **[Yaku.Symbol](src/yaku.js?source#L299)**
 
     The ES6 Symbol object that Yaku should use, by default it will use the
     global one.
@@ -363,7 +363,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.Symbol = core.Symbol;
         ```
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L293)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L313)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -378,7 +378,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L316)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L336)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
@@ -403,7 +403,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.nextTick = fn => fn();
         ```
 
-- ### **[genIterator(obj)](src/yaku.js?source#L438)**
+- ### **[genIterator(obj)](src/yaku.js?source#L442)**
 
     Generate a iterator
 
