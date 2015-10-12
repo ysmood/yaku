@@ -191,13 +191,24 @@
      * ```
      */
     Yaku.race = function race (iterable) {
-        var iter = genIterator(iterable);
+        var iter, len, i = 0;
 
         var p = newEmptyYaku(), item;
-        while (!(item = iter.next()).done) {
-            settleWithX(p, item.value);
-            if (p._state !== $pending) break;
+
+        if (iterable instanceof Array) {
+            len = iterable.length;
+            while (i < len) {
+                settleWithX(p, iterable[i++]);
+                if (p._state !== $pending) break;
+            }
+        } else {
+            iter = genIterator(iterable);
+            while (!(item = iter.next()).done) {
+                settleWithX(p, item.value);
+                if (p._state !== $pending) break;
+            }
         }
+
         return p;
     };
 
@@ -237,13 +248,13 @@
      * ```
      */
     Yaku.all = function all (iterable) {
-        var iter = genIterator(iterable);
-
         var convertor = Yaku.resolve
         , p1 = newEmptyYaku()
         , res = []
         , item
         , countDown = 0
+        , iter
+        , len
 
         , onRejected = function (reason) {
             settlePromise(p1, $rejected, reason);
@@ -256,9 +267,18 @@
             }, onRejected);
         };
 
-        while (!(item = iter.next()).done) {
-            run(countDown++, item.value);
+        if (iterable instanceof Array) {
+            len = iterable.length;
+            while (countDown < len) {
+                run(countDown, iterable[countDown++]);
+            }
+        } else {
+            iter = genIterator(iterable);
+            while (!(item = iter.next()).done) {
+                run(countDown++, item.value);
+            }
         }
+
 
         if (!countDown) settlePromise(p1, $resolved, []);
 
@@ -414,22 +434,6 @@
         };
     }
 
-    // Hack: we don't create new object to pass the newly iterated object.
-    var $ArrIterContainer = {};
-
-    var ArrIter = extendPrototype(function (arr) {
-        this.arr = arr;
-        this.len = arr.length;
-    }, {
-        i: 0,
-        next: function () {
-            var self = this;
-            $ArrIterContainer.value = self.arr[self.i++];
-            $ArrIterContainer.done = self.i > self.len;
-            return $ArrIterContainer;
-        }
-    });
-
     /**
      * Generate a iterator
      * @param  {Any} obj
@@ -440,10 +444,6 @@
             var gen = obj[Yaku.Symbol.iterator];
             if (isFunction(gen)) {
                 return gen.call(obj);
-            }
-
-            if (obj instanceof Array) {
-                return new ArrIter(obj);
             }
 
             if (isFunction(obj.next)) {
