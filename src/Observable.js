@@ -1,23 +1,47 @@
 var _ = require("./_");
 
-function Observable (executor) {
-    var self = this;
-    self.emit = genEmit(self);
-    executor && executor(self.emit);
-}
+var Observable = module.exports = function Observable (executor) {
+    var self = this
+    , emit = genEmit(self);
+
+    self.children = [];
+
+    executor && executor(emit);
+};
+
+_.extendPrototype(Observable, {
+    parent: null,
+
+    subscribe: function (onEmit, onError) {
+        var self = this, child = new Observable();
+        child._onEmit = onEmit;
+        child._onError = onError;
+        child._nextErr = genNextErr(child.emit);
+
+        child.parent = self;
+        self.children.push(child);
+
+        return child;
+    },
+
+    unsubscribe: function () {
+        var parent = this.parent;
+        parent && parent.children.splice(parent.children.indexOf(this), 1);
+    }
+
+});
 
 function genEmit (self) {
-    return function emit (val) {
+    return self.emit = function (val) {
         var i = 0, len = self.children.length, child;
-        var nextErr = genNextErr(emit);
         while (i < len) {
             child = self.children[i++];
-            Promise.resolve(val).then(
+            _.Promise.resolve(val).then(
                 child._onEmit,
                 child._onError
             ).then(
                 child.emit,
-                nextErr
+                child._nextErr
             );
         }
     };
@@ -28,27 +52,3 @@ function genNextErr (emit) {
         emit(_.Promise.reject(reason));
     };
 }
-
-Observable.prototype = {
-    parent: null,
-    children: [],
-
-    subscribe: function (onEmit, onError) {
-        var child = new Observable();
-        child._onEmit = onEmit;
-        child._onError = onError;
-
-        child.parent = this;
-        this.children.push(child);
-
-        return child;
-    },
-
-    unsubscribe: function () {
-        var parent = this.parent;
-        parent.splice(parent.children.indexOf(this), 1);
-    }
-
-};
-
-module.exports = Observable;

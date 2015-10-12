@@ -249,23 +249,27 @@ module.exports = function (it) { return [
         });
     }),
 
-    it("source", "out: 4", function () {
+    it("Observable", "out: 4", function () {
         var one, three, tmr, two, x;
-        one = utils.source();
+        one = new utils.Observable();
         x = 1;
+
         tmr = setInterval(function () {
             return one.emit(x++);
         }, 0);
-        two = one(function (v) {
+
+        two = one.subscribe(function (v) {
             return v * v;
         });
-        three = two(function (v) {
+
+        three = two.subscribe(function (v) {
             return "out: " + v;
         });
+
         return new Yaku(function (r) {
             var count;
             count = 0;
-            return three(function (v) {
+            return three.subscribe(function (v) {
                 if (count++ === 1) {
                     clearInterval(tmr);
                     return r(v);
@@ -274,9 +278,9 @@ module.exports = function (it) { return [
         });
     }),
 
-    it("source error", "error", function () {
+    it("Observable error", "error", function () {
         var one, three, tmr, two, x;
-        one = utils.source();
+        one = new utils.Observable();
         x = 1;
         tmr = setInterval(function () {
             one.emit(x++);
@@ -284,24 +288,27 @@ module.exports = function (it) { return [
                 return one.emit(Yaku.reject("error"));
             }
         }, 0);
-        two = one(function (v) {
+
+        two = one.subscribe(function (v) {
             return v * v;
         });
-        three = two(function (v) {
+
+        three = two.subscribe(function (v) {
             return "out: " + v;
         });
+
         return new Yaku(function (r) {
-            return three((function () {}), function (err) {
+            return three.subscribe((function () {}), function (err) {
                 clearInterval(tmr);
                 return r(err);
             });
         });
     }),
 
-    it("source children", "ok", function () {
+    it("Observable children", "ok", function () {
         var one, tmr;
         tmr = null;
-        one = utils.source(function (emit) {
+        one = new utils.Observable(function (emit) {
             return tmr = setInterval(function () {
                 return emit("err");
             }, 0);
@@ -311,10 +318,52 @@ module.exports = function (it) { return [
                 clearInterval(tmr);
                 return r("ok");
             }, 10);
-            one(function (v) {
+            one.subscribe(function (v) {
                 return r(v);
             });
             return one.children = [];
+        });
+    }),
+
+    it("Observable unsubscribe null parent", null, function () {
+        var o = new utils.Observable();
+        o.unsubscribe();
+        return o.parent;
+    }),
+
+    it("Observable unsubscribe", "ok", function () {
+        return new Yaku(function (r) {
+            var one = new utils.Observable(function (emit) {
+                setTimeout(emit, 1);
+            });
+
+            var two = one.subscribe(function () {
+                r("err");
+            });
+
+            setTimeout(function () {
+                return r("ok");
+            }, 10);
+
+            two.unsubscribe();
+        });
+    }),
+
+    it("Observable merge", ["one", "two"], function () {
+        return new Yaku(function (r) {
+            var one = new utils.Observable(function (emit) { setTimeout(emit, 1, "one"); });
+            var two = new utils.Observable(function (emit) { setTimeout(emit, 2, "two"); });
+            var merge = function (arr) {
+                return new utils.Observable(function (emit) {
+                    arr.forEach(function (o) { o.subscribe(emit); });
+                });
+            };
+
+            var three = merge([one, two]);
+            var out = [];
+            three.subscribe(function (v) { out.push(v); });
+
+            setTimeout(function () { r(out); }, 10);
         });
     }),
 
