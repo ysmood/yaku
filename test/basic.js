@@ -382,10 +382,8 @@ module.exports = function (it) { return [
             setTimeout(emit, 10, 0);
         });
 
-        var a = src.subscribe(function (v) { return v + 1; });
-        var b = src.subscribe(function (v) {
-            return utils.sleep(10, v + 2);
-        });
+        var a = src.subscribe(function (v) { return utils.sleep(10, v + 1); });
+        var b = src.subscribe(function (v) { return v + 2; });
 
         var out = utils.Observable.all([a, b]);
 

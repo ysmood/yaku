@@ -98,25 +98,22 @@ module.exports = function (task, option) {
     });
 
     task("browser", "Unit test on browser", function (opts) {
-        var app, body, flow, ref, select;
-        ref = kit.require("proxy"), flow = ref.flow, select = ref.select, body = ref.body;
-        app = flow();
-        app.push(body(), select("/log", function ($) {
-            kit.logs($.reqBody + "");
-            return $.next();
-        }), select("/", function ($) {
+        kit.spawn("webpack", ["--progress", "--watch"]);
+
+        var proxy = kit.require("proxy");
+        var app = proxy.flow();
+
+        app.push(proxy.select("/", function ($) {
             return $.body = kit.readFile("dist/test-browser.js").then(function (js) {
                 return "<html><body><div id='junit-reporter'></div></body><script>" +
                     js +
                     "</script>\n</html>";
             });
         }));
-        kit.spawn("webpack", ["--progress", "--watch"]);
-        return kit.sleep(2000).then(function () {
-            return app.listen(opts.browserPort);
-        }).then(function () {
+
+        return app.listen(opts.browserPort)
+        .then(function () {
             kit.log("Listen " + opts.browserPort);
-            return kit.xopen("http://127.0.0.1:" + opts.browserPort);
         });
     });
 };

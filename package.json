@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.9.2",
+  "version": "0.9.6",
   "description": "A light-weight ES6 Promises/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "scripts": {
@@ -37,14 +37,14 @@
     "lib"
   ],
   "devDependencies": {
-    "bluebird": "2.10.1",
+    "bluebird": "2.10.2",
     "es6-promise": "3.0.2",
-    "eslint": "1.5.1",
+    "eslint": "1.6.0",
     "junit": "0.6.1",
     "nokit": "0.14.7",
     "promises-aplus-tests": "*",
     "q": "1.4.1",
-    "uglify-js": "2.4.24",
+    "uglify-js": "2.5.0",
     "webpack": "1.12.2"
   },
   "eslintConfig": {
