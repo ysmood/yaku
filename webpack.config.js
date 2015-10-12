@@ -6,6 +6,9 @@ module.exports = {
 
     output: {
         filename: "[name].js",
-        path: "./lib"
-    }
+        path: "./dist",
+        pathinfo: true
+    },
+
+    debug: true
 };

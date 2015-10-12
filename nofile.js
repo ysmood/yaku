@@ -6,41 +6,54 @@ var Promise = kit.Promise;
 kit.require("drives");
 
 module.exports = function (task, option) {
-    var addLicense;
+    option("--debug", "run with remote debug server");
+    option("--port <8219>", "remote debug server port", 8219);
+    option("--grep <pattern>", "run test that match the pattern", ".");
+    option("--noAplus", "don't run the promises-aplus-tests");
+    option("--sync", "sync benchmark");
+    option("--browserPort <8227>", "browser test port", 8227);
+
     task("default build", ["doc", "code"]);
+
     task("doc", ["code"], "build doc", function () {
         var size;
-        size = kit.statSync("lib/yaku.min.js").size / 1024;
-        return kit.warp("src/*.js").load(kit.drives.comment2md({
+        size = kit.statSync("dist/yaku.min.js").size / 1024;
+        return kit.warp("src/*.js")
+        .load(kit.drives.comment2md({
             tpl: "docs/readme.jst.md",
             doc: {
                 size: size.toFixed(1)
             }
         })).run();
     });
-    addLicense = function (str) {
+
+    function addLicense (str) {
         var version;
         version = kit.require("./package", __dirname).version;
         return ("/*\n Yaku v" + version + "\n (c) 2015 Yad Smood. http://ysmood.org\n License MIT\n*/\n") + str;
-    };
+    }
+
     task("code", ["lint"], "build source code", function () {
         return kit.warp("src/*.js").load(function (f) {
             if (f.dest.name === "yaku") {
                 return f.set(addLicense(f.contents));
             }
         }).run("lib").then(function () {
-            return kit.spawn("uglifyjs", ["-mc", "-o", "lib/yaku.min.js", "lib/yaku.js"]);
+            kit.mkdirsSync("dist");
+            return kit.spawn("uglifyjs", ["-mc", "-o", "dist/yaku.min.js", "lib/yaku.js"]);
         });
     });
+
     task("lint", "lint js files", function () {
+        kit.removeSync("{lib,dist}");
         return kit.spawn("eslint", ["src/*.js"]);
     });
+
     task("all", ["lint"], "bundle all", function () {
         process.env.NODE_ENV = "production";
         return kit.spawn("webpack");
     });
-    option("--debug", "run with remote debug server");
-    option("--port <8219>", "remote debug server port", 8219);
+
     task("lab l", "run and monitor \"test/lab.js\"", function (opts) {
         var args;
         args = ["test/lab.js"];
@@ -52,8 +65,7 @@ module.exports = function (task, option) {
             args: args
         });
     });
-    option("--grep <pattern>", "run test that match the pattern", ".");
-    option("--noAplus", "don't run the promises-aplus-tests");
+
     task("test", "run Promises/A+ tests", function (opts) {
         var junitOpts = ["-s", "test/testSuit.js", "-g", opts.grep];
 
@@ -67,7 +79,6 @@ module.exports = function (task, option) {
                 });
         });
     });
-    option("--sync", "sync benchmark");
     task("benchmark", "compare performance between different libraries", function (opts) {
         var os, paths, sync;
         process.env.NODE_ENV = "production";
@@ -81,11 +92,12 @@ module.exports = function (task, option) {
             };
         }));
     });
+
     task("clean", "Clean temp files", function () {
         return kit.remove("{.nokit,lib,.nobone}");
     });
-    option("--browserPort <8227>", "browser test port", 8227);
-    return task("browser", "Unit test on browser", function (opts) {
+
+    task("browser", "Unit test on browser", function (opts) {
         var app, body, flow, ref, select;
         ref = kit.require("proxy"), flow = ref.flow, select = ref.select, body = ref.body;
         app = flow();
@@ -93,7 +105,7 @@ module.exports = function (task, option) {
             kit.logs($.reqBody + "");
             return $.next();
         }), select("/", function ($) {
-            return $.body = kit.readFile("lib/test-browser.js").then(function (js) {
+            return $.body = kit.readFile("dist/test-browser.js").then(function (js) {
                 return "<html><body><div id='junit-reporter'></div></body><script>" +
                     js +
                     "</script>\n</html>";
