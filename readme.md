@@ -670,11 +670,11 @@ var source = require("yaku/lib/source");
         sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[source(executor)](src/utils.js?source#L279)**
+- ### **[Observable(executor)](src/utils.js?source#L285)**
 
-    Create a composable event source function.
+    Create a composable observable object.
     Promise can't resolve multiple times, this function makes it possible, so
-    that you can easily map, filter and debounce events in a promise way.
+    that you can easily map, filter and even back pressure events in a promise way.
     For real world example: [Double Click Demo](https://jsfiddle.net/ysmood/musds0sv/).
 
     - **<u>version_added</u>**:
@@ -685,18 +685,24 @@ var source = require("yaku/lib/source");
 
         `(emit) ->` It's optional.
 
-    - **<u>return</u>**: { _Function_ }
+    - **<u>return</u>**: { _Object_ }
 
-        `(onEmit, onError) ->` The function's
-        members:
+        The observable object's members:
         ```js
         {
-            emit: (value) => { /* ... */ },
+            // It will create a new Observable, like promise.
+            subscribe: (onEmit, onError) => Observable,
 
-            // Get current value from it.
-            value: Promise,
+            // Unsubscribe this.
+            unsubscribe: () => {},
 
-            // All the children spawned from current source.
+            // Emit a value
+            emit: (value) => {},
+
+            // The parent observable of this.
+            parent: Observable || null,
+
+            // All the children subscribed this observable.
             children: Array
         }
         ```
@@ -704,23 +710,21 @@ var source = require("yaku/lib/source");
     - **<u>example</u>**:
 
         ```js
-        var source = require("yaku/lib/source");
-        var linear = source();
+        var Observable = require("yaku/lib/Observable");
+        var linear = new Observable();
 
         var x = 0;
-        setInterval(() => {
-            linear.emit(x++);
-        }, 1000);
+        setInterval(linear.emit, 1000, x++);
 
         // Wait for a moment then emit the value.
-        var quad = linear(async x => {
+        var quad = linear.subscribe(async x => {
             await sleep(2000);
             return x * x;
         });
 
-        var another = linear(x => -x);
+        var another = linear.subscribe(x => -x);
 
-        quad(
+        quad.subscribe(
             value => { console.log(value); },
             reason => { console.error(reason); }
         );
@@ -728,10 +732,10 @@ var source = require("yaku/lib/source");
         // Emit error
         linear.emit(Promise.reject(new Error("reason")));
 
-        // Dispose a specific source.
-        linear.children.splice(linear.children.indexOf(quad));
+        // Unsubscribe a observable.
+        quad.unsubscribe();
 
-        // Dispose all children.
+        // Unsubscribe all children.
         linear.children = [];
         ```
 
@@ -741,31 +745,33 @@ var source = require("yaku/lib/source");
         ```js
         var filter = fn => v => fn(v) ? v : new Promise(() => {});
 
-        var keyup = source((emit) => {
+        var keyup = new Observable((emit) => {
             document.querySelector('input').onkeyup = emit;
         });
 
-        var keyupText = keyup(e => e.target.value);
+        var keyupText = keyup.subscribe(e => e.target.value);
 
         // Now we only get the input when the text length is greater than 3.
-        var keyupTextGT3 = keyupText(filter(text => text.length > 3));
+        var keyupTextGT3 = keyupText.subscribe(filter(text => text.length > 3));
 
-        keyupTextGT3(v => console.log(v));
+        keyupTextGT3.subscribe(v => console.log(v));
         ```
 
     - **<u>example</u>**:
 
         Merge two sources into one.
         ```js
-        let one = source(emit => setInterval(emit, 100, 'one'));
-        let two = source(emit => setInterval(emit, 200, 'two'));
-        let merge = arr => arr.forEach(src => src(emit));
+        let one = new Observable(emit => setInterval(emit, 100, 'one'));
+        let two = new Observable(emit => setInterval(emit, 200, 'two'));
+        let merge = list => new Observable(
+             (emit) => list.forEach(o => o.subscribe(emit))
+        );
 
         let three = merge([one, two]);
-        three(v => console.log(v));
+        three.subscribe(v => console.log(v));
         ```
 
-- ### **[retry(countdown, fn, this)](src/utils.js?source#L328)**
+- ### **[retry(countdown, fn, this)](src/utils.js?source#L334)**
 
     Retry a function until it resolves before a mount of times, or reject with all
     the error states.
@@ -832,7 +838,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L342)**
+- ### **[throw(err)](src/utils.js?source#L348)**
 
     Throw an error to break the program.
 
