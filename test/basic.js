@@ -89,7 +89,7 @@ module.exports = function (it) { return [
             return new Yaku(function (r) {
                 return setTimeout(function () {
                     return r(i);
-                }, Math.random() * 100);
+                }, Math.random() * 10);
             });
         }
 
@@ -97,7 +97,7 @@ module.exports = function (it) { return [
             randomPromise(1), randomPromise("test"), Yaku.resolve("x"), new Yaku(function (r) {
                 return setTimeout(function () {
                     return r(10);
-                }, 10);
+                }, 1);
             }), new Yaku(function (r) {
                 return r(0);
             })
@@ -108,12 +108,13 @@ module.exports = function (it) { return [
         return Yaku.race([
             new Yaku(function (r) {
                 return setTimeout(function () {
-                    return r(0);
-                }, 20);
-            }), new Yaku(function (r) {
-                return setTimeout(function () {
                     return r(1);
-                }, 30);
+                }, 10);
+            }),
+            new Yaku(function (r) {
+                return setTimeout(function () {
+                    return r(0);
+                });
             })
         ]);
     }),
@@ -177,7 +178,7 @@ module.exports = function (it) { return [
                 value: !done && new Yaku(function (r) {
                     return setTimeout((function () {
                         return r(1);
-                    }), 10);
+                    }), 1);
                 })
             };
         } };
@@ -351,19 +352,28 @@ module.exports = function (it) { return [
 
     it("Observable merge", ["one", "two"], function () {
         return new Yaku(function (r) {
-            var one = new utils.Observable(function (emit) { setTimeout(emit, 1, "one"); });
-            var two = new utils.Observable(function (emit) { setTimeout(emit, 2, "two"); });
-            var merge = function (arr) {
+            var flag = false;
+
+            var one = new utils.Observable(function (emit) { setTimeout(emit, 0, "one"); });
+            var two = new utils.Observable(function (emit) {
+                setTimeout(function () {
+                    flag = true;
+                    emit("two");
+                }, 0);
+            });
+            var merge = function (list) {
                 return new utils.Observable(function (emit) {
-                    arr.forEach(function (o) { o.subscribe(emit); });
+                    list.forEach(function (o) { o.subscribe(emit); });
                 });
             };
 
             var three = merge([one, two]);
             var out = [];
-            three.subscribe(function (v) { out.push(v); });
+            three.subscribe(function (v) {
+                out.push(v);
 
-            setTimeout(function () { r(out); }, 10);
+                if (flag) r(out);
+            });
         });
     }),
 
