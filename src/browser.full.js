@@ -1,6 +1,6 @@
 // This file is intended for browser only.
 
-var Yaku = require("./global");
+var Yaku = require("./yaku");
 
 var utils = require("./utils");
 
@@ -8,4 +8,4 @@ for (var key in utils) {
     Yaku[key] = utils[key];
 }
 
-window.Yaku = Yaku;
+module.exports = window.Yaku = Yaku;
