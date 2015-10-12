@@ -1,19 +1,25 @@
 /*eslint-disable */
 
-var Promise, c, fn, utils;
 
-Promise = require('../src/yaku');
+Yaku = require('../src/yaku');
 
 utils = require('../src/utils');
 
-a = new utils.Observable(function (emit) {
-    setInterval(emit, 1000, 'OK');
-})
+var src = new utils.Observable(function (emit) {
+    setTimeout(emit, 100, 0);
+});
 
-b = a.subscribe(function (v) {
-    return v + ' - ';
-})
+var a = src.subscribe(function (v) { return v + 1; });
+var b = src.subscribe(function (v) {
+    console.log("***", v)
+    return Yaku.reject(v);
+});
 
-b.subscribe(function (v) {
-    console.log(v);
-})
+var out = utils.Observable.all([a, b]);
+
+return new Yaku(function (r, rr) {
+    out.subscribe(null, function (v) {
+        console.log("&&&")
+        rr(v)
+    });
+});

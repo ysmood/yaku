@@ -377,6 +377,40 @@ module.exports = function (it) { return [
         });
     }),
 
+    it("Observable all", [1, 2], function () {
+        var src = new utils.Observable(function (emit) {
+            setTimeout(emit, 10, 0);
+        });
+
+        var a = src.subscribe(function (v) { return v + 1; });
+        var b = src.subscribe(function (v) {
+            return utils.sleep(10, v + 2);
+        });
+
+        var out = utils.Observable.all([a, b]);
+
+        return new Yaku(function (r) {
+            out.subscribe(r);
+        });
+    }),
+
+    it("Observable all error", 0, function () {
+        var src = new utils.Observable(function (emit) {
+            setTimeout(emit, 10, 0);
+        });
+
+        var a = src.subscribe(function (v) { return v + 1; });
+        var b = src.subscribe(function (v) {
+            return Yaku.reject(v);
+        });
+
+        var out = utils.Observable.all([a, b]);
+
+        return new Yaku(function (r, rr) {
+            out.subscribe(rr, r);
+        });
+    }),
+
     it("retry once", "ok", function () {
         var fn;
         fn = function (val) {

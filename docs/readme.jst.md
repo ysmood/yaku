@@ -142,6 +142,11 @@ var source = require("yaku/lib/source");
 <%= doc['src/utils.js'] %>
 
 
+# Observable
+
+<%= doc['src/Observable.js'] %>
+
+
 
 # Unit Test
 
