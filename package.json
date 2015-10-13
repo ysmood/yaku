@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.9.6",
+  "version": "0.10.0",
   "description": "A light-weight ES6 Promises/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "scripts": {

@@ -36,8 +36,8 @@ var genIterator = require("./genIterator");
  * // Unsubscribe a observable.
  * quad.unsubscribe();
  *
- * // Unsubscribe all children.
- * linear.children = [];
+ * // Unsubscribe all subscribers.
+ * linear.subscribers = [];
  * ```
  * @example
  * Use it with DOM.
@@ -72,7 +72,7 @@ var Observable = module.exports = function Observable (executor) {
     var self = this
     , emit = genEmit(self);
 
-    self.children = [];
+    self.subscribers = [];
 
     executor && executor(emit);
 };
@@ -86,16 +86,16 @@ _.extendPrototype(Observable, {
     emit: null,
 
     /**
-     * The parent observable of this.
+     * The publisher observable of this.
      * @type {Observable}
      */
-    parent: null,
+    publisher: null,
 
     /**
-     * All the children subscribed this observable.
+     * All the subscribers subscribed this observable.
      * @type {Array}
      */
-    children: null,
+    subscribers: null,
 
     /**
      * It will create a new Observable, like promise.
@@ -104,38 +104,38 @@ _.extendPrototype(Observable, {
      * @return {Observable}
      */
     subscribe: function (onEmit, onError) {
-        var self = this, child = new Observable();
-        child._onEmit = onEmit;
-        child._onError = onError;
-        child._nextErr = genNextErr(child.emit);
+        var self = this, subscriber = new Observable();
+        subscriber._onEmit = onEmit;
+        subscriber._onError = onError;
+        subscriber._nextErr = genNextErr(subscriber.emit);
 
-        child.parent = self;
-        self.children.push(child);
+        subscriber.publisher = self;
+        self.subscribers.push(subscriber);
 
-        return child;
+        return subscriber;
     },
 
     /**
      * Unsubscribe this.
      */
     unsubscribe: function () {
-        var parent = this.parent;
-        parent && parent.children.splice(parent.children.indexOf(this), 1);
+        var publisher = this.publisher;
+        publisher && publisher.subscribers.splice(publisher.subscribers.indexOf(this), 1);
     }
 
 });
 
 function genEmit (self) {
     return self.emit = function (val) {
-        var i = 0, len = self.children.length, child;
+        var i = 0, len = self.subscribers.length, subscriber;
         while (i < len) {
-            child = self.children[i++];
+            subscriber = self.subscribers[i++];
             _.Promise.resolve(val).then(
-                child._onEmit,
-                child._onError
+                subscriber._onEmit,
+                subscriber._onError
             ).then(
-                child.emit,
-                child._nextErr
+                subscriber.emit,
+                subscriber._nextErr
             );
         }
     };
@@ -149,6 +149,7 @@ function genNextErr (emit) {
 
 /**
  * Merge multiple observables into one.
+ * @version_added 0.9.6
  * @param  {Iterable} iterable
  * @return {Observable}
  * @example
@@ -206,4 +207,30 @@ Observable.all = function all (iterable) {
         }
         count = len;
     });
+};
+
+
+var nodes;
+function getNodes (node, isAll) {
+    if (!isAll && node.subscribers.length === 0)
+        return nodes.push(node);
+
+    node.subscribers.forEach(function (node) {
+        if (isAll) nodes.push(node);
+        getNodes(node, isAll);
+    });
+}
+
+/**
+ * Subscribe a tree via a root observable.
+ * @version_added 0.9.7
+ * @param  {Observable} root
+ * @param  {Boolean} isAll Whether to subscribe the whole tree or just the leaves.
+ * By default only leaves are subscribed.
+ * @return {Observable}
+ */
+Observable.tree = function (root, isAll) {
+    nodes = [];
+    getNodes(root, isAll);
+    return Observable.all(nodes);
 };

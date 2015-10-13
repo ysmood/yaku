@@ -809,8 +809,8 @@ var source = require("yaku/lib/source");
         // Unsubscribe a observable.
         quad.unsubscribe();
 
-        // Unsubscribe all children.
-        linear.children = [];
+        // Unsubscribe all subscribers.
+        linear.subscribers = [];
         ```
 
     - **<u>example</u>**:
@@ -851,15 +851,15 @@ var source = require("yaku/lib/source");
 
     - **<u>param</u>**: `value` { _Any_ }
 
-- ### **[parent](src/Observable.js?source#L92)**
+- ### **[publisher](src/Observable.js?source#L92)**
 
-    The parent observable of this.
+    The publisher observable of this.
 
     - **<u>type</u>**: { _Observable_ }
 
-- ### **[children](src/Observable.js?source#L98)**
+- ### **[subscribers](src/Observable.js?source#L98)**
 
-    All the children subscribed this observable.
+    All the subscribers subscribed this observable.
 
     - **<u>type</u>**: { _Array_ }
 
@@ -877,9 +877,13 @@ var source = require("yaku/lib/source");
 
     Unsubscribe this.
 
-- ### **[Observable.all(iterable)](src/Observable.js?source#L175)**
+- ### **[Observable.all(iterable)](src/Observable.js?source#L176)**
 
     Merge multiple observables into one.
+
+    - **<u>version_added</u>**:
+
+        0.9.6
 
     - **<u>param</u>**: `iterable` { _Iterable_ }
 
@@ -906,6 +910,23 @@ var source = require("yaku/lib/source");
             console.log(arr);
         })
         ```
+
+- ### **[Observable.tree(root, isAll)](src/Observable.js?source#L232)**
+
+    Subscribe a tree via a root observable.
+
+    - **<u>version_added</u>**:
+
+        0.9.7
+
+    - **<u>param</u>**: `root` { _Observable_ }
+
+    - **<u>param</u>**: `isAll` { _Boolean_ }
+
+        Whether to subscribe the whole tree or just the leaves.
+        By default only leaves are subscribed.
+
+    - **<u>return</u>**: { _Observable_ }
 
 
 

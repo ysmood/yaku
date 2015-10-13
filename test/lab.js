@@ -1,24 +1,41 @@
 /*eslint-disable */
 
 
-Yaku = require('../src/yaku');
+// var observer = require('promise-observer');
+// var Promise = require('bluebird');
 
-utils = require('../src/utils');
+// var start, values = [];
+// var push = values.push.bind(values);
 
-var Observable = utils.Observable;
-var sleep = utils.sleep;
+// var src = observer.create(function(emit) { start = emit; })
 
-var src = new Observable(function (emit) {
-    setInterval(emit, 1000, 0);
-});
+// var a = src(function(val) { return Promise.delay(1).thenReturn(val + 1); })
 
-var a = src.subscribe(function (v) { return v + 1; });
-var b = src.subscribe(function (v) {
-    return sleep(10, v + 2);
-});
+// setTimeout(function () {
+//     var b = src(function(val) { return a.next().thenReturn(val + 2); });
+//     b(push);
+// }, 2000)
 
-var out = Observable.all([a, b]);
 
-out.subscribe(function (arr) {
-    console.log(arr);
-})
+// a(push);
+
+// setInterval(function () {
+//     return start(0).then(function() {
+//         console.log(values)
+//         values = [];
+//     });
+// }, 1000);
+
+
+var Observable = require('../src/Observable');
+function delay (t, v) { return new Promise(function (r) { setInterval(r, t, v); }) }
+
+var src = new Observable(function (emit) { setInterval(emit, 1000, 0); });
+
+var a = src.subscribe(function (v) { return delay(20, v + 1); });
+var b = src.subscribe(function (v) { return delay(10, v + 2); });
+var c = b.subscribe(function (v) { return delay(10, v + 1); });
+
+var out = Observable.leaves(src);
+
+out.subscribe(function (v) { console.log(v); }); // => log [1, 2] every 1 second

@@ -250,7 +250,7 @@ module.exports = function (it) { return [
         });
     }),
 
-    it("Observable", "out: 4", function () {
+    it("Observable", "out: 9", function () {
         var one, three, tmr, two, x;
         one = new utils.Observable();
         x = 1;
@@ -271,7 +271,7 @@ module.exports = function (it) { return [
             var count;
             count = 0;
             return three.subscribe(function (v) {
-                if (count++ === 1) {
+                if (count++ === 2) {
                     clearInterval(tmr);
                     return r(v);
                 }
@@ -306,7 +306,7 @@ module.exports = function (it) { return [
         });
     }),
 
-    it("Observable children", "ok", function () {
+    it("Observable subscribers", "ok", function () {
         var one, tmr;
         tmr = null;
         one = new utils.Observable(function (emit) {
@@ -322,14 +322,14 @@ module.exports = function (it) { return [
             one.subscribe(function (v) {
                 return r(v);
             });
-            return one.children = [];
+            return one.subscribers = [];
         });
     }),
 
-    it("Observable unsubscribe null parent", null, function () {
+    it("Observable unsubscribe null publisher", null, function () {
         var o = new utils.Observable();
         o.unsubscribe();
-        return o.parent;
+        return o.publisher;
     }),
 
     it("Observable unsubscribe", "ok", function () {
@@ -406,6 +406,23 @@ module.exports = function (it) { return [
 
         return new Yaku(function (r, rr) {
             out.subscribe(rr, r);
+        });
+    }),
+
+    it("Observable tree", [1, 2], function () {
+        var src = new utils.Observable(function (emit) {
+            setTimeout(emit, 10, 0);
+        });
+
+        src.subscribe(function (v) { return utils.sleep(10, v + 1); });
+        src
+            .subscribe(function (v) { return v + 1; })
+            .subscribe(function (v) { return v + 1; });
+
+        var out = utils.Observable.tree(src);
+
+        return new Yaku(function (r) {
+            out.subscribe(r);
         });
     }),
 
