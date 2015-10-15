@@ -361,13 +361,8 @@ module.exports = function (it) { return [
                     emit("two");
                 }, 0);
             });
-            var merge = function (list) {
-                return new utils.Observable(function (emit) {
-                    list.forEach(function (o) { o.subscribe(emit); });
-                });
-            };
 
-            var three = merge([one, two]);
+            var three = utils.Observable.merge([one, two]);
             var out = [];
             three.subscribe(function (v) {
                 out.push(v);
@@ -377,52 +372,18 @@ module.exports = function (it) { return [
         });
     }),
 
-    it("Observable all", [1, 2], function () {
+    it("Observable merge error", 0, function () {
         var src = new utils.Observable(function (emit) {
             setTimeout(emit, 10, 0);
         });
 
-        var a = src.subscribe(function (v) { return utils.sleep(10, v + 1); });
-        var b = src.subscribe(function (v) { return v + 2; });
+        var a = src.subscribe(function (v) { return Yaku.reject(v); });
+        var b = src.subscribe(function (v) { return Yaku.reject(v + 1); });
 
-        var out = utils.Observable.all([a, b]);
-
-        return new Yaku(function (r) {
-            out.subscribe(r);
-        });
-    }),
-
-    it("Observable all error", 0, function () {
-        var src = new utils.Observable(function (emit) {
-            setTimeout(emit, 10, 0);
-        });
-
-        var a = src.subscribe(function (v) { return v + 1; });
-        var b = src.subscribe(function (v) {
-            return Yaku.reject(v);
-        });
-
-        var out = utils.Observable.all([a, b]);
+        var out = utils.Observable.merge([a, b]);
 
         return new Yaku(function (r, rr) {
             out.subscribe(rr, r);
-        });
-    }),
-
-    it("Observable tree", [1, 2], function () {
-        var src = new utils.Observable(function (emit) {
-            setTimeout(emit, 10, 0);
-        });
-
-        src.subscribe(function (v) { return utils.sleep(10, v + 1); });
-        src
-            .subscribe(function (v) { return v + 1; })
-            .subscribe(function (v) { return v + 1; });
-
-        var out = utils.Observable.tree(src);
-
-        return new Yaku(function (r) {
-            out.subscribe(r);
         });
     }),
 

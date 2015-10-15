@@ -5,7 +5,7 @@ var genIterator = require("./genIterator");
  * Create a composable observable object.
  * Promise can't resolve multiple times, this function makes it possible, so
  * that you can easily map, filter and even back pressure events in a promise way.
- * For real world example: [Double Click Demo](https://jsfiddle.net/ysmood/musds0sv/).
+ * For real world example: [Double Click Demo](https://jsbin.com/niwuti/edit?html,js,output).
  * @version_added v0.7.2
  * @param {Function} executor `(emit) ->` It's optional.
  * @return {Observable}
@@ -55,18 +55,6 @@ var genIterator = require("./genIterator");
  *
  * keyupTextGT3.subscribe(v => console.log(v));
  * ```
- * @example
- * Merge two sources into one.
- * ```js
- * let one = new Observable(emit => setInterval(emit, 100, 'one'));
- * let two = new Observable(emit => setInterval(emit, 200, 'two'));
- * let merge = list => new Observable(
- *      (emit) => list.forEach(o => o.subscribe(emit))
- * );
- *
- * let three = merge([one, two]);
- * three.subscribe(v => console.log(v));
- * ```
  */
 var Observable = module.exports = function Observable (executor) {
     var self = this
@@ -84,6 +72,12 @@ _.extendPrototype(Observable, {
      * @param  {Any} value
      */
     emit: null,
+
+    /**
+     * The promise that will resolve current value.
+     * @type {Promise}
+     */
+    value: _.Promise.resolve(),
 
     /**
      * The publisher observable of this.
@@ -130,7 +124,8 @@ function genEmit (self) {
         var i = 0, len = self.subscribers.length, subscriber;
         while (i < len) {
             subscriber = self.subscribers[i++];
-            _.Promise.resolve(val).then(
+            self.value = _.Promise.resolve(val);
+            self.value.then(
                 subscriber._onEmit,
                 subscriber._onError
             ).then(
@@ -157,80 +152,29 @@ function genNextErr (emit) {
  * var Observable = require("yaku/lib/Observable");
  * var sleep = require("yaku/lib/sleep");
  *
- * var src = new Observable(function (emit) {
- *     setInterval(emit, 1000, 0);
- * });
+ * var src = new Observable(emit => setInterval(emit, 1000, 0));
  *
- * var a = src.subscribe(function (v) { return v + 1; });
- * var b = src.subscribe(function (v) {
- *     return sleep(10, v + 2);
- * });
+ * var a = src.subscribe(v => v + 1; });
+ * var b = src.subscribe((v) => sleep(10, v + 2));
  *
- * var out = Observable.all([a, b]);
+ * var out = Observable.merge([a, b]);
  *
- * out.subscribe(function (arr) {
- *     console.log(arr);
+ * out.subscribe((v) => {
+ *     console.log(v);
  * })
  * ```
  */
-Observable.all = function all (iterable) {
+Observable.merge = function merge (iterable) {
     var iter = genIterator(iterable);
     return new Observable(function (emit) {
-        var result = [], marked = [], count, len = 0, item;
-
-        function onEmit (i) {
-            return function (v) {
-                result[i] = v;
-
-                if (marked[i]) return;
-
-                marked[i] = true;
-
-                if (!--count) {
-                    emit(result);
-                    count = len;
-                    result = [];
-                    marked = [];
-                }
-            };
-        }
+        var item;
 
         function onError (e) {
             emit(_.Promise.reject(e));
-            count = len;
-            result = [];
-            marked = [];
         }
 
         while (!(item = iter.next()).done) {
-            item.value.subscribe(onEmit(len++), onError);
+            item.value.subscribe(emit, onError);
         }
-        count = len;
     });
-};
-
-
-var nodes;
-function getNodes (node, isAll) {
-    if (!isAll && node.subscribers.length === 0)
-        return nodes.push(node);
-
-    node.subscribers.forEach(function (node) {
-        if (isAll) nodes.push(node);
-        getNodes(node, isAll);
-    });
-}
-
-/**
- * Subscribe a tree via a root observable.
- * @version_added 0.9.7
- * @param  {Observable} root
- * @param  {Boolean} isAll Whether to subscribe the whole tree or just the leaves.
- * By default only leaves are subscribed.
- * @return {Observable}
- */
-Observable.tree = function (root, isAll) {
-    nodes = [];
-    getNodes(root, isAll);
-    return Observable.all(nodes);
 };

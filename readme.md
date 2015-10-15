@@ -764,12 +764,12 @@ var source = require("yaku/lib/source");
 
 # Observable
 
-- ### **[Observable(executor)](src/Observable.js?source#L71)**
+- ### **[Observable(executor)](src/Observable.js?source#L59)**
 
     Create a composable observable object.
     Promise can't resolve multiple times, this function makes it possible, so
     that you can easily map, filter and even back pressure events in a promise way.
-    For real world example: [Double Click Demo](https://jsfiddle.net/ysmood/musds0sv/).
+    For real world example: [Double Click Demo](https://jsbin.com/niwuti/edit?html,js,output).
 
     - **<u>version_added</u>**:
 
@@ -831,39 +831,31 @@ var source = require("yaku/lib/source");
         keyupTextGT3.subscribe(v => console.log(v));
         ```
 
-    - **<u>example</u>**:
-
-        Merge two sources into one.
-        ```js
-        let one = new Observable(emit => setInterval(emit, 100, 'one'));
-        let two = new Observable(emit => setInterval(emit, 200, 'two'));
-        let merge = list => new Observable(
-             (emit) => list.forEach(o => o.subscribe(emit))
-        );
-
-        let three = merge([one, two]);
-        three.subscribe(v => console.log(v));
-        ```
-
-- ### **[emit(value)](src/Observable.js?source#L86)**
+- ### **[emit(value)](src/Observable.js?source#L74)**
 
     Emit a value.
 
     - **<u>param</u>**: `value` { _Any_ }
 
-- ### **[publisher](src/Observable.js?source#L92)**
+- ### **[value](src/Observable.js?source#L80)**
+
+    The promise that will resolve current value.
+
+    - **<u>type</u>**: { _Promise_ }
+
+- ### **[publisher](src/Observable.js?source#L86)**
 
     The publisher observable of this.
 
     - **<u>type</u>**: { _Observable_ }
 
-- ### **[subscribers](src/Observable.js?source#L98)**
+- ### **[subscribers](src/Observable.js?source#L92)**
 
     All the subscribers subscribed this observable.
 
     - **<u>type</u>**: { _Array_ }
 
-- ### **[subscribe(onEmit, onError)](src/Observable.js?source#L106)**
+- ### **[subscribe(onEmit, onError)](src/Observable.js?source#L100)**
 
     It will create a new Observable, like promise.
 
@@ -873,11 +865,11 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Observable_ }
 
-- ### **[unsubscribe](src/Observable.js?source#L121)**
+- ### **[unsubscribe](src/Observable.js?source#L115)**
 
     Unsubscribe this.
 
-- ### **[Observable.all(iterable)](src/Observable.js?source#L176)**
+- ### **[Observable.merge(iterable)](src/Observable.js?source#L167)**
 
     Merge multiple observables into one.
 
@@ -895,38 +887,17 @@ var source = require("yaku/lib/source");
         var Observable = require("yaku/lib/Observable");
         var sleep = require("yaku/lib/sleep");
 
-        var src = new Observable(function (emit) {
-            setInterval(emit, 1000, 0);
-        });
+        var src = new Observable(emit => setInterval(emit, 1000, 0));
 
-        var a = src.subscribe(function (v) { return v + 1; });
-        var b = src.subscribe(function (v) {
-            return sleep(10, v + 2);
-        });
+        var a = src.subscribe(v => v + 1; });
+        var b = src.subscribe((v) => sleep(10, v + 2));
 
-        var out = Observable.all([a, b]);
+        var out = Observable.merge([a, b]);
 
-        out.subscribe(function (arr) {
-            console.log(arr);
+        out.subscribe((v) => {
+            console.log(v);
         })
         ```
-
-- ### **[Observable.tree(root, isAll)](src/Observable.js?source#L232)**
-
-    Subscribe a tree via a root observable.
-
-    - **<u>version_added</u>**:
-
-        0.9.7
-
-    - **<u>param</u>**: `root` { _Observable_ }
-
-    - **<u>param</u>**: `isAll` { _Boolean_ }
-
-        Whether to subscribe the whole tree or just the leaves.
-        By default only leaves are subscribed.
-
-    - **<u>return</u>**: { _Observable_ }
 
 
 

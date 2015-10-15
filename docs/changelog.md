@@ -1,4 +1,4 @@
-- v0.10.0
+- v0.11.0
 
   - **API CHANGE** now `utils.source` is removed, instead `utils.Observable` is added.
 
