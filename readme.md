@@ -403,7 +403,19 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.nextTick = fn => fn();
         ```
 
-- ### **[genIterator(obj)](src/yaku.js?source#L442)**
+- ### **[Yaku.stack(reason, )](src/yaku.js?source#L346)**
+
+    A function to generate stack trace info.
+
+    - **<u>param</u>**: `reason` { _Any_ }
+
+    - **<u>param</u>**: { _Yaku_ }
+
+    - **<u>return</u>**: { _Object_ }
+
+        A formated stack info object.
+
+- ### **[genIterator(obj)](src/yaku.js?source#L448)**
 
     Generate a iterator
 

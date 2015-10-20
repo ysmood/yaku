@@ -337,6 +337,12 @@
         root.process.nextTick :
         function (fn) { setTimeout(fn); };
 
+    /**
+     * A function to generate stack trace info.
+     * @param {Any} reason
+     * @param {Yaku}
+     * @return {Object} A formated stack info object.
+     */
     Yaku.stack = genStackInfo;
 
     // ********************** Private **********************
