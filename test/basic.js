@@ -236,6 +236,26 @@ module.exports = function (it) { return [
         return fn(0);
     }),
 
+    it("promisify promise 2", 3, function () {
+        var fn;
+        fn = utils.promisify(function (a, b, cb) {
+            return setTimeout(function () {
+                return cb(null, a + b);
+            });
+        });
+        return fn(1, 2);
+    }),
+
+    it("promisify promise err", "err", function () {
+        var fn;
+        fn = utils.promisify(function (a, cb) {
+            return setTimeout(function () {
+                return cb(a);
+            });
+        });
+        return fn("err").catch(function (v) { return v });
+    }),
+
     it("promisify callback", 1, function () {
         var fn;
         fn = utils.promisify(function (val, cb) {
