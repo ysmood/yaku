@@ -249,42 +249,42 @@
      * ```
      */
     Yaku.all = function all (iterable) {
-        var convertor = Yaku.resolve
-        , p1 = newEmptyYaku()
+        var p1 = newEmptyYaku()
         , res = []
         , item
         , countDown = 0
         , iter
-        , len
+        , len;
 
-        , onRejected = function (reason) {
+        function onRejected (reason) {
             settlePromise(p1, $rejected, reason);
         }
-
-        , run = function (i, el) {
-            convertor(el).then(function (value) {
-                res[i] = value;
-                if (!--countDown) settlePromise(p1, $resolved, res);
-            }, onRejected);
-        };
 
         if (iterable instanceof Array) {
             len = iterable.length;
             while (countDown < len) {
-                run(countDown, iterable[countDown++]);
+                runAll(countDown, iterable[countDown++], p1, res, onRejected);
             }
         } else {
             iter = genIterator(iterable);
             while (!(item = iter.next()).done) {
-                run(countDown++, item.value);
+                runAll(countDown++, item.value, p1, res, onRejected);
             }
         }
 
+        onRejected._c = countDown;
 
         if (!countDown) settlePromise(p1, $resolved, []);
 
         return p1;
     };
+
+    function runAll (i, el, p1, res, onRejected) {
+        Yaku.resolve(el).then(function (value) {
+            res[i] = value;
+            if (!--onRejected._c) settlePromise(p1, $resolved, res);
+        }, onRejected);
+    }
 
     /**
      * The ES6 Symbol object that Yaku should use, by default it will use the
