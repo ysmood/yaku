@@ -320,10 +320,10 @@
      * ```
      */
     Yaku.onUnhandledRejection = function (reason, p) {
-        var console = root.console;
-        if (console) {
+        var con = root.console;
+        if (con) {
             var info = genStackInfo(reason, p);
-            console.error($unhandledRejection, info[0], info[1] || "");
+            con.error($unhandledRejection, info[0], info[1] || "");
         }
     };
 

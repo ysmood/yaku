@@ -1,6 +1,7 @@
-- v0.11.0
+- v0.11
 
   - **API CHANGE** now `utils.source` is removed, instead `utils.Observable` is added.
+  - opt: performance
 
 - v0.8.0
 

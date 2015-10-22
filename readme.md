@@ -19,7 +19,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.4KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.5KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and ES6
@@ -71,7 +71,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 | Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
 | -------------------- | -------------------- | --------------- | ------- | --------- |
-| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.4KB |
+| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.5KB |
 | [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
 | [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
 | [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
