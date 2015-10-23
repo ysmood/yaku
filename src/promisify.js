@@ -16,12 +16,12 @@ module.exports = function (fn, self) {
         }
 
         switch (len) {
-        case 0: fn(cb); break;
-        case 1: isFn(a) ? fn(a) : fn(a, cb); break;
-        case 2: isFn(b) ? fn(a, b) : fn(a, b, cb); break;
-        case 3: isFn(c) ? fn(a, b, c) : fn(a, b, c, cb); break;
-        case 4: isFn(d) ? fn(a, b, c, d) : fn(a, b, c, d, cb); break;
-        case 5: isFn(e) ? fn(a, b, c, d, e) : fn(a, b, c, d, e, cb); break;
+        case 0: fn.call(self, cb); break;
+        case 1: isFn(a) ? fn.call(self, a) : fn.call(self, a, cb); break;
+        case 2: isFn(b) ? fn.call(self, a, b) : fn.call(self, a, b, cb); break;
+        case 3: isFn(c) ? fn.call(self, a, b, c) : fn.call(self, a, b, c, cb); break;
+        case 4: isFn(d) ? fn.call(self, a, b, c, d) : fn.call(self, a, b, c, d, cb); break;
+        case 5: isFn(e) ? fn.call(self, a, b, c, d, e) : fn.call(self, a, b, c, d, e, cb); break;
         default:
             args = new Array(len);
 

@@ -226,6 +226,18 @@ module.exports = function (it) { return [
         });
     }),
 
+    it("promisify promise with this", "OK0", function () {
+        var obj = {
+            val: "OK",
+            foo: function (val, cb) {
+                return setTimeout(function (val) {
+                    return cb(null, val);
+                }, 0, this.val + val);
+            }
+        };
+        return utils.promisify(obj.foo, obj)(0);
+    }),
+
     it("promisify promise", 1, function () {
         var fn;
         fn = utils.promisify(function (val, cb) {

@@ -2,6 +2,7 @@
 
   - **API CHANGE** now `utils.source` is removed, instead `utils.Observable` is added.
   - opt: performance
+  - fix: a bind bug of promisify
 
 - v0.8.0
 
