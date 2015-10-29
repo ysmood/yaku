@@ -637,7 +637,7 @@ var source = require("yaku/lib/source");
 
 - ### **[never()](src/utils.js?source#L156)**
 
-    Create a symbole that never ends.
+    Create a promise that never ends.
 
     - **<u>return</u>**: { _Promise_ }
 

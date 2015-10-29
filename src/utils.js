@@ -150,7 +150,7 @@ module.exports = {
     isPromise: require("./isPromise"),
 
     /**
-     * Create a symbole that never ends.
+     * Create a promise that never ends.
      * @return {Promise} A promise that will end the current pipeline.
      */
     never: require("./never"),

@@ -67,12 +67,12 @@ module.exports = function (task, option) {
     });
 
     task("test", "run Promises/A+ tests", function (opts) {
-        var junitOpts = ["-s", "test/testSuit.js", "-g", opts.grep];
+        var junitOpts = ["-g", opts.grep];
 
-        return Promise.all([
-            kit.spawn("junit", junitOpts.concat(["test/basic.js"])),
-            kit.spawn("junit", junitOpts.concat(["-l", 1, "test/unhandledRejection.js"]))
-        ]).then(function () {
+        return kit.spawn("junit", junitOpts.concat([
+            "test/basic.js",
+            "test/unhandledRejection.js"])
+        ).then(function () {
             if (!opts.noAplus)
                 return require("./test/compliance.js")({
                     grep: opts.grep
@@ -99,21 +99,5 @@ module.exports = function (task, option) {
 
     task("browser", "Unit test on browser", function (opts) {
         kit.spawn("webpack", ["--progress", "--watch"]);
-
-        var proxy = kit.require("proxy");
-        var app = proxy.flow();
-
-        app.push(proxy.select("/", function ($) {
-            return $.body = kit.readFile("dist/test-browser.js").then(function (js) {
-                return "<html><body><div id='junit-reporter'></div></body><script>" +
-                    js +
-                    "</script>\n</html>";
-            });
-        }));
-
-        return app.listen(opts.browserPort)
-        .then(function () {
-            kit.log("Listen " + opts.browserPort);
-        });
     });
 };

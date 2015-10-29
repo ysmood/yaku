@@ -1,12 +1,13 @@
 
 var Yaku = require("../src/yaku");
 var utils = require("../src/utils");
+var testSuit = require("./testSuit");
 
 var $val = {
     val: "ok"
 };
 
-module.exports = function (it) { return [
+module.exports = testSuit("basic", function (it) { return [
 
     it("resolve", $val, function () {
         return new Yaku(function (resolve) {
@@ -451,4 +452,4 @@ module.exports = function (it) { return [
         });
     })
 
-]; };
+]; });

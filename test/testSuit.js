@@ -3,13 +3,17 @@
 var root = typeof global === "object" ? global : window;
 root.Promise = null;
 
-var Promise = require("../src/yaku");
+var Yaku = require("../src/yaku");
 
-module.exports = function (it, path) {
-    return function (title, expected, fn) {
-        return it(path + ": " + title, function () {
-            return Promise.resolve(fn()).then(function (actual) {
-                return it.eq(actual, expected);
+module.exports = function (title, fn) {
+    return function (it) {
+        return it.describe(title, function (it) {
+            return fn(function (msg, expected, test) {
+                return it(msg, function () {
+                    return Yaku.resolve(test()).then(function (actual) {
+                        return it.eq(expected, actual);
+                    });
+                });
             });
         });
     };

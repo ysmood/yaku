@@ -1,159 +1,184 @@
 var Promise = require("../src/yaku");
+var testSuit = require("./testSuit");
+
 
 var root = typeof global === "object" ? global : window;
 
-module.exports = function (it) {
+module.exports = testSuit("unhandledRejection", function (it) {
 
     var process = root.process;
     var $val = { val: "OK" };
 
     // Node or Browser
-    if (process) { return [
+    if (process) {
+        return Promise.resolve()
+        .then(function () {
 
-        it("unhandled rejection", { reason: $val, promise: true }, function () {
-            return new Promise(function (r) {
-                function handler (reason, promise) {
-                    return r({ reason: reason, promise: typeof promise === "object" });
-                }
-                process.once("unhandledRejection", handler);
-                return Promise.resolve().then(function () {
-                    return Promise.reject($val);
+            return it("unhandled rejection", { reason: $val, promise: true }, function () {
+                return new Promise(function (r) {
+                    function handler (reason, promise) {
+                        return r({ reason: reason, promise: typeof promise === "object" });
+                    }
+                    process.once("unhandledRejection", handler);
+                    return Promise.resolve().then(function () {
+                        return Promise.reject($val);
+                    });
                 });
             });
-        }),
 
-        it("no unhandled rejection", $val, function () {
-            return new Promise(function (resolve, reject) {
+        }).then(function () {
+
+            return it("no unhandled rejection", $val, function () {
+                return new Promise(function (resolve, reject) {
+                    function handler () {
+                        process.removeListener("unhandledRejection", handler);
+                        return reject();
+                    }
+                    process.once("unhandledRejection", handler);
+
+                    return Promise.reject()["catch"](function () {
+                        return setTimeout(function () {
+                            return resolve($val);
+                        }, 100);
+                    });
+                });
+            });
+
+        }).then(function () {
+
+            return it("unhandled rejection inside a catch", $val, function () {
+                return new Promise(function (r) {
+                    function handler (reason) {
+                        return r(reason);
+                    }
+                    process.once("unhandledRejection", handler);
+
+                    return Promise.reject()["catch"](function () {
+                        return Promise.reject($val);
+                    });
+                });
+            });
+
+        }).then(function () {
+
+            return it("unhandled rejection only once", 1, function () {
+                var count = 0;
                 function handler () {
-                    process.removeListener("unhandledRejection", handler);
-                    return reject();
+                    return count++;
                 }
-                process.once("unhandledRejection", handler);
 
-                return Promise.reject()["catch"](function () {
+                process.on("unhandledRejection", handler);
+
+                Promise.reject().then(function () {
+                    return $val;
+                });
+
+                return new Promise(function (r) {
                     return setTimeout(function () {
-                        return resolve($val);
-                    }, 100);
+                        process.removeListener("unhandledRejection", handler);
+                        return r(count);
+                    }, 50);
                 });
             });
-        }),
 
-        it("unhandled rejection inside a catch", $val, function () {
-            return new Promise(function (r) {
-                function handler (reason) {
-                    return r(reason);
-                }
-                process.once("unhandledRejection", handler);
+        }).then(function () {
 
-                return Promise.reject()["catch"](function () {
-                    return Promise.reject($val);
-                });
-            });
-        }),
-
-        it("unhandled rejection only once", 1, function () {
-            var count = 0;
-            function handler () {
-                return count++;
-            }
-
-            process.on("unhandledRejection", handler);
-
-            Promise.reject().then(function () {
-                return $val;
-            });
-
-            return new Promise(function (r) {
-                return setTimeout(function () {
-                    process.removeListener("unhandledRejection", handler);
-                    return r(count);
-                }, 50);
-            });
-        }),
-
-        it("long stack trace", 2, function () {
-            Promise.enableLongStackTrace();
-            return Promise.resolve().then(function () {
-                throw new Error("abc");
-            })["catch"](function (err) {
-                return err.stack.match(/From previous event:/g).length;
-            });
-        })
-
-    ]; } else { return [
-
-        it("unhandled rejection", { reason: $val, promise: true }, function () {
-            return new Promise(function (r) {
-                function handler (e) {
-                    root.onunhandledrejection = null;
-                    return r({ reason: e.reason, promise: typeof e.promise === "object" });
-                }
-                root.onunhandledrejection = handler;
+            return it("long stack trace", 2, function () {
+                Promise.enableLongStackTrace();
                 return Promise.resolve().then(function () {
-                    return Promise.reject($val);
+                    throw new Error("abc");
+                })["catch"](function (err) {
+                    return err.stack.match(/From previous event:/g).length;
                 });
             });
-        }),
 
-        it("no unhandled rejection", $val, function () {
-            return new Promise(function (resolve, reject) {
+        });
+
+    } else {
+        return Promise.resolve()
+        .then(function () {
+
+            return it("unhandled rejection", { reason: $val, promise: true }, function () {
+                return new Promise(function (r) {
+                    function handler (e) {
+                        root.onunhandledrejection = null;
+                        return r({ reason: e.reason, promise: typeof e.promise === "object" });
+                    }
+                    root.onunhandledrejection = handler;
+                    return Promise.resolve().then(function () {
+                        return Promise.reject($val);
+                    });
+                });
+            });
+
+        }).then(function () {
+
+            return it("no unhandled rejection", $val, function () {
+                return new Promise(function (resolve, reject) {
+                    function handler () {
+                        root.onunhandledrejection = null;
+                        return reject();
+                    }
+                    root.onunhandledrejection = handler;
+
+                    return Promise.reject()["catch"](function () {
+                        return setTimeout(function () {
+                            return resolve($val);
+                        }, 100);
+                    });
+                });
+            });
+
+        }).then(function () {
+
+            return it("unhandled rejection inside a catch", $val, function () {
+                return new Promise(function (r) {
+                    function handler (e) {
+                        root.onunhandledrejection = null;
+                        return r(e.reason);
+                    }
+                    root.onunhandledrejection = handler;
+
+                    return Promise.reject()["catch"](function () {
+                        return Promise.reject($val);
+                    });
+                });
+            });
+
+        }).then(function () {
+
+            return it("unhandled rejection only once", 1, function () {
+                var count = 0;
                 function handler () {
-                    root.onunhandledrejection = null;
-                    return reject();
+                    return count++;
                 }
+
                 root.onunhandledrejection = handler;
 
-                return Promise.reject()["catch"](function () {
+                Promise.reject().then(function () {
+                    return $val;
+                });
+
+                return new Promise(function (r) {
                     return setTimeout(function () {
-                        return resolve($val);
-                    }, 100);
+                        root.onunhandledrejection = null;
+                        return r(count);
+                    }, 50);
                 });
             });
-        }),
 
-        it("unhandled rejection inside a catch", $val, function () {
-            return new Promise(function (r) {
-                function handler (e) {
-                    root.onunhandledrejection = null;
-                    return r(e.reason);
-                }
-                root.onunhandledrejection = handler;
+        }).then(function () {
 
-                return Promise.reject()["catch"](function () {
-                    return Promise.reject($val);
+            return it("long stack trace", 2, function () {
+                Promise.enableLongStackTrace();
+                return Promise.resolve().then(function () {
+                    throw new Error("abc");
+                })["catch"](function (err) {
+                    return err.stack.match(/From previous event:/g).length;
                 });
             });
-        }),
 
-        it("unhandled rejection only once", 1, function () {
-            var count = 0;
-            function handler () {
-                return count++;
-            }
+        });
+    }
 
-            root.onunhandledrejection = handler;
-
-            Promise.reject().then(function () {
-                return $val;
-            });
-
-            return new Promise(function (r) {
-                return setTimeout(function () {
-                    root.onunhandledrejection = null;
-                    return r(count);
-                }, 50);
-            });
-        }),
-
-        it("long stack trace", 2, function () {
-            Promise.enableLongStackTrace();
-            return Promise.resolve().then(function () {
-                throw new Error("abc");
-            })["catch"](function (err) {
-                return err.stack.match(/From previous event:/g).length;
-            });
-        })
-
-    ]; }
-
-};
+});
