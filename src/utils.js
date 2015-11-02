@@ -240,7 +240,7 @@ module.exports = {
      *         var r = Math.random() * Math.pow(2, attempt) * 1000;
      *         var t = Math.min(r, 1000 * 60 * 10);
      *         await sleep(t);
-     *         attempt++ < retries;
+     *         return attempt++ < retries;
      *    };
      * }
      *
