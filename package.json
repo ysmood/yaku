@@ -43,6 +43,7 @@
     "junit": "0.8.2",
     "nokit": "0.14.10",
     "promises-aplus-tests": "*",
+    "promises-es6-tests": "*",
     "q": "1.4.1",
     "uglify-js": "2.5.0",
     "webpack": "1.12.2"

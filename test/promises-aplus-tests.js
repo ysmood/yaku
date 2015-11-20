@@ -1,12 +1,10 @@
-var Promise, promisesAplusTests;
+var promisesAplusTests = require("promises-aplus-tests");
+var kit = require("nokit");
 
-promisesAplusTests = require("promises-aplus-tests");
-
-Promise = require("../src/yaku");
+var Promise = require("../src/yaku");
 
 module.exports = function (opts) {
-    var adapter;
-    adapter = {
+    var adapter = {
         deferred: function () {
             var defer;
             defer = {};
@@ -17,9 +15,6 @@ module.exports = function (opts) {
             return defer;
         }
     };
-    return promisesAplusTests(adapter, opts, function (err) {
-        if (err) {
-            return process.exit(1);
-        }
-    });
+
+    return kit.promisify(promisesAplusTests)(adapter, opts);
 };

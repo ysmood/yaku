@@ -1,8 +1,4 @@
-var kit;
-
-kit = require("nokit");
-var Promise = kit.Promise;
-
+var kit = require("nokit");
 kit.require("drives");
 
 module.exports = function (task, option) {
@@ -30,7 +26,9 @@ module.exports = function (task, option) {
     function addLicense (str) {
         var version;
         version = kit.require("./package", __dirname).version;
-        return ("/*\n Yaku v" + version + "\n (c) 2015 Yad Smood. http://ysmood.org\n License MIT\n*/\n") + str;
+        return ("/*\n Yaku v" + version +
+            "\n (c) 2015 Yad Smood. http://ysmood.org\n License MIT\n*/\n")
+            + str;
     }
 
     task("code", ["lint"], "build source code", function () {
@@ -66,24 +64,31 @@ module.exports = function (task, option) {
         });
     });
 
-    task("test", "run Promises/A+ tests", function (opts) {
+    task("test", "run Promises/A+ tests", ["test-yaku", "test-aplus"], true);
+
+    task("test-yaku", "test yaku specs tests", function (opts) {
         var junitOpts = ["-g", opts.grep];
 
         return kit.spawn("junit", junitOpts.concat([
             "test/basic.js",
             "test/unhandledRejection.js"])
-        ).then(function () {
-            if (!opts.noAplus)
-                return require("./test/compliance.js")({
-                    grep: opts.grep
-                });
-        });
+        );
     });
+
+    task("test-aplus", "test aplus tests", require("./test/promises-aplus-tests.js"));
+
+    task("test-es6", "test es6 tests", require("./test/promises-es6-tests.js"));
+
     task("benchmark", "compare performance between different libraries", function (opts) {
         var os, paths, sync;
         process.env.NODE_ENV = "production";
         os = require("os");
-        console.log("Node " + process.version + "\nOS     " + (os.platform()) + "\nArch " + (os.arch()) + "\nCPU    " + (os.cpus()[0].model) + "\n" + (kit._.repeat("-", 80)));
+
+        console.log("Node " + process.version + "\nOS     " + // eslint-disable-line
+            (os.platform()) + "\nArch " + (os.arch()) +
+            "\nCPU    " + (os.cpus()[0].model) +
+            "\n" + (kit._.repeat("-", 80)));
+
         paths = kit.globSync("benchmark/*.js");
         sync = opts.sync ? "sync" : "";
         return kit.async(paths.map(function (path) {
@@ -97,7 +102,7 @@ module.exports = function (task, option) {
         return kit.remove("{.nokit,lib,.nobone}");
     });
 
-    task("browser", "Unit test on browser", function (opts) {
+    task("browser", "Unit test on browser", function () {
         kit.spawn("webpack", ["--progress", "--watch"]);
     });
 };
