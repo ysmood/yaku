@@ -41,6 +41,7 @@
     "es6-promise": "3.0.2",
     "eslint": "1.7.3",
     "junit": "0.8.2",
+    "mocha": "2.3.4",
     "nokit": "0.14.10",
     "promises-aplus-tests": "*",
     "promises-es6-tests": "*",
