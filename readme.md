@@ -184,7 +184,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         };
         ```
 
-- ### **[then(onFulfilled, onRejected)](src/yaku.js?source#L106)**
+- ### **[then(onFulfilled, onRejected)](src/yaku.js?source#L108)**
 
     Appends fulfillment and rejection handlers to the promise,
     and returns a new promise resolving to the return value of the called handler.
@@ -213,7 +213,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[catch(onRejected)](src/yaku.js?source#L126)**
+- ### **[catch(onRejected)](src/yaku.js?source#L128)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -238,7 +238,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.resolve(value)](src/yaku.js?source#L156)**
+- ### **[Yaku.resolve(value)](src/yaku.js?source#L158)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -258,7 +258,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         var p = Promise.resolve(10);
         ```
 
-- ### **[Yaku.reject(reason)](src/yaku.js?source#L170)**
+- ### **[Yaku.reject(reason)](src/yaku.js?source#L172)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -275,7 +275,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         var p = Promise.reject(new Error("ERR"));
         ```
 
-- ### **[Yaku.race(iterable)](src/yaku.js?source#L194)**
+- ### **[Yaku.race(iterable)](src/yaku.js?source#L196)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -304,7 +304,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.all(iterable)](src/yaku.js?source#L251)**
+- ### **[Yaku.all(iterable)](src/yaku.js?source#L253)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -348,7 +348,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.Symbol](src/yaku.js?source#L300)**
+- ### **[Yaku.Symbol](src/yaku.js?source#L302)**
 
     The ES6 Symbol object that Yaku should use, by default it will use the
     global one.
@@ -363,7 +363,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.Symbol = core.Symbol;
         ```
 
-- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L322)**
+- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L324)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -392,7 +392,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.reject('v').catch(() => {});
         ```
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L342)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L344)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -407,7 +407,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L365)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L367)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
@@ -432,7 +432,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.nextTick = fn => fn();
         ```
 
-- ### **[genIterator(obj)](src/yaku.js?source#L469)**
+- ### **[genIterator(obj)](src/yaku.js?source#L471)**
 
     Generate a iterator
 
