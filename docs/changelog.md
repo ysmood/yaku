@@ -3,6 +3,7 @@
   - **API CHANGE** now `utils.source` is removed, instead `utils.Observable` is added.
   - opt: performance
   - fix: a bind bug of promisify
+  - add: typescript support
 
 - v0.8.0
 
