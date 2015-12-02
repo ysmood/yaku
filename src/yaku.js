@@ -85,6 +85,8 @@
         }
     };
 
+    Yaku.default = Yaku;
+
     extendPrototype(Yaku, {
         /**
          * Appends fulfillment and rejection handlers to the promise,

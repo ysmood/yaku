@@ -32,7 +32,7 @@ module.exports = function (task, option) {
     }
 
     task("code", ["lint"], "build source code", function () {
-        return kit.warp("src/*.js").load(function (f) {
+        return kit.warp(["src/*.js", "src/*.d.ts"]).load(function (f) {
             if (f.dest.name === "yaku") {
                 return f.set(addLicense(f.contents));
             }
