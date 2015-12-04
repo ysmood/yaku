@@ -85,6 +85,12 @@ module.exports = testSuit("basic", function (it) { return [
         return Yaku.all([]);
     }),
 
+    it("array like", [1, 2, 3], function () {
+        return Yaku.all({
+            "0": 1, "1": 2, "2": 3, length: 3
+        });
+    }),
+
     it("all", [1, "test", "x", 10, 0], function () {
         function randomPromise (i) {
             return new Yaku(function (r) {

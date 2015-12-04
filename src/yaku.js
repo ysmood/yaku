@@ -198,7 +198,7 @@
 
         var p = newEmptyYaku(), item;
 
-        if (iterable instanceof Array) {
+        if (isArray(iterable)) {
             len = iterable.length;
             while (i < len) {
                 settleWithX(p, iterable[i++]);
@@ -262,7 +262,7 @@
             settlePromise(p1, $rejected, reason);
         }
 
-        if (iterable instanceof Array) {
+        if (isArray(iterable)) {
             len = iterable.length;
             while (countDown < len) {
                 runAll(countDown, iterable[countDown++], p1, res, onRejected);
@@ -395,6 +395,10 @@
 
     function isFunction (obj) {
         return typeof obj === "function";
+    }
+
+    function isArray (obj) {
+        return obj && typeof obj.length === "number";
     }
 
     /**

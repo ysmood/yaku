@@ -4,6 +4,7 @@
   - opt: performance
   - fix: a bind bug of promisify
   - add: typescript support
+  - fix: a array like argument bug
 
 - v0.8.0
 
