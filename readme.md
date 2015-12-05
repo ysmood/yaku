@@ -6,7 +6,7 @@
 # Overview
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
-If you want to learn how Promise works, read the minimum implementation [docs/minPromiseA+.coffee][]. Without comments, it is only 80 lines of code (gzipped size is 0.5KB).
+If you want to learn how Promise works, read the minimum implementation [docs/minPromiseAplus.js][]. Without comments, it is only 80 lines of code (gzipped size is 0.5KB).
 It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
@@ -960,12 +960,11 @@ If you installed `nokit` globally, you can just run `no -h` without `npm run` an
 [native]: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects
 [q]: https://github.com/kriskowal/q
 [release page]: https://github.com/ysmood/yaku/releases
-[docs/minPromiseA+.coffee]: docs/minPromiseA+.coffee
+[docs/minPromiseAplus.js]: docs/minPromiseAplus.js
 [promises-aplus-tests]: https://github.com/promises-aplus/promises-tests
 [longjohn]: https://github.com/mattinsler/longjohn
 [crhome-lst]: http://www.html5rocks.com/en/tutorials/developertools/async-call-stack
 [Browserify]: http://browserify.org
 [Webpack]: http://webpack.github.io/
-[CoffeeScript]: http://coffeescript.org/
 [nokit]: https://github.com/ysmood/nokit
 [nofile.js]: nofile.js
