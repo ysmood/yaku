@@ -32,7 +32,7 @@ module.exports = function (task, option) {
     }
 
     task("code", ["lint"], "build source code", function () {
-        return kit.warp(["src/*.js", "src/*.d.ts"]).load(function (f) {
+        return kit.warp(["src/**", "src/*.d.ts"]).load(function (f) {
             if (f.dest.name === "yaku") {
                 return f.set(addLicense(f.contents));
             }
@@ -60,7 +60,8 @@ module.exports = function (task, option) {
             args.splice(0, 0, "--nodejs", "--debug-brk=" + opts.port);
         }
         return kit.monitorApp({
-            args: args
+            args: args,
+            watchList: ["src/*.js", "test/**"]
         });
     });
 

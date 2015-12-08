@@ -289,6 +289,32 @@ module.exports = testSuit("basic", function (it) { return [
         });
     }),
 
+    it("callbackify callback", "ok", function () {
+        var fn = utils.callbackify(function (v) {
+            return Yaku.resolve(v);
+        });
+        return new Yaku(function (resolve, reject) {
+            fn("ok", function (err, val) {
+                if (err) reject(err);
+
+                resolve(val);
+            });
+        });
+    }),
+
+    it("callbackify callback only", "ok", function () {
+        var fn = utils.callbackify(function () {
+            return Yaku.resolve("ok");
+        });
+        return new Yaku(function (resolve, reject) {
+            fn(function (err, val) {
+                if (err) reject(err);
+
+                resolve(val);
+            });
+        });
+    }),
+
     it("Observable", "out: 9", function () {
         var one, three, tmr, two, x;
         one = new utils.Observable();
