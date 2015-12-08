@@ -141,6 +141,36 @@ module.exports = {
      */
     flow: require("./flow"),
 
+
+     /**
+      * Enable a helper to catch specific error type.
+      * It will be directly attach to the prototype of the promise.
+      * @param  {class}    error
+      * @param  {Function} onRejected
+      * @return {Promise}
+      * ```js
+      * var Promise = require('yaku');
+      * require('yaku/lib/guard');
+      *
+      * class AnError extends Error {
+      * }
+      *
+      * Promise.reject(new AnError('hey'))
+      * .guard(AnError, (err) => {
+      *      // only log AnError type
+      *      console.log(err);
+      * })
+      * .then(() => {
+      *      console.log('done');
+      * })
+      * .guard(Error, (err) => {
+      *      // log all error type
+      *      console.log(err)
+      * });
+      * ```
+      */
+    guard: require("./guard"),
+
     /**
      * **deprecate** Check if an object is a promise-like object.
      * Don't use it to coercive a value to Promise, instead use `Promise.resolve`.

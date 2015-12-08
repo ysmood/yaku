@@ -482,6 +482,26 @@ module.exports = testSuit("basic", function (it) { return [
         return utils.retry(3, fn)()["catch"](function (errs) {
             return errs;
         });
+    }),
+
+    it("guard basic", "err", function () {
+        return Yaku .reject(new TypeError("err"))
+        .then(function () {
+            return Yaku.reject();
+        })
+        .guard(TypeError, function (err) {
+            return err.message;
+        });
+    }),
+
+    it("guard catch general error", "err", function () {
+        return Yaku .reject(new TypeError("err"))
+        .then(function () {
+            return Yaku.reject();
+        })
+        .guard(Error, function (err) {
+            return err.message;
+        });
     })
 
 ]; });
