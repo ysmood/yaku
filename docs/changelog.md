@@ -5,6 +5,7 @@
   - fix: a bind bug of promisify
   - add: typescript support
   - fix: a array like argument bug
+  - fix: #25 a callbackify bug
 
 - v0.8.0
 
