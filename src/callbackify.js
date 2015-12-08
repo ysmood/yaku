@@ -7,16 +7,20 @@ module.exports = function (fn, self) {
             _.slice.call(arguments, 0, j = arguments.length - 1) :
             (j = 0, []), cb = arguments[j++];
 
-        if (!_.isFunction(cb)) {
+        var isFn = _.isFunction(cb);
+
+        if (!isFn) {
             args.push(cb);
             return fn.apply(self, args);
         }
-        if (arguments.length === 1) {
+
+        if (!isFn && arguments.length === 1) {
             args = [cb];
             cb = null;
         }
+
         return fn.apply(self, args).then(function (val) {
-            return typeof cb === "function" ? cb(null, val) : void 0;
+            return isFn ? cb(null, val) : void 0;
         })["catch"](function (err) {
             if (cb) {
                 return cb(err);
