@@ -38,17 +38,17 @@
     "lib"
   ],
   "devDependencies": {
-    "bluebird": "2.10.2",
+    "bluebird": "3.0.6",
     "es6-promise": "3.0.2",
-    "eslint": "1.7.3",
-    "junit": "0.8.2",
+    "eslint": "1.10.3",
+    "junit": "1.1.1",
     "mocha": "2.3.4",
-    "nokit": "0.14.10",
+    "nokit": "0.16.15",
     "promises-aplus-tests": "*",
     "promises-es6-tests": "*",
     "q": "1.4.1",
-    "uglify-js": "2.5.0",
-    "webpack": "1.12.2"
+    "uglify-js": "2.6.1",
+    "webpack": "1.12.9"
   },
   "eslintConfig": {
     "env": {

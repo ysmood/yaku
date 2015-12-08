@@ -123,6 +123,47 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
 # API
 
+- #### require('yaku')
+  - [Yaku(executor)](#yakuexecutor)
+  - [then(onFulfilled, onRejected)](#thenonfulfilled-onrejected)
+  - [catch(onRejected)](#catchonrejected)
+  - [Yaku.resolve(value)](#yakuresolvevalue)
+  - [Yaku.reject(reason)](#yakurejectreason)
+  - [Yaku.race(iterable)](#yakuraceiterable)
+  - [Yaku.all(iterable)](#yakualliterable)
+  - [Yaku.Symbol](#yakusymbol)
+  - [Yaku.onUnhandledRejection(reason, p)](#yakuonunhandledrejectionreason-p)
+  - [Yaku.enableLongStackTrace](#yakuenablelongstacktrace)
+  - [Yaku.nextTick](#yakunexttick)
+  - [genIterator(obj)](#geniteratorobj)
+
+- #### require('yaku/lib/utils')
+  - [any(iterable)](#anyiterable)
+  - [async(limit, list, saveResults, progress)](#asynclimit-list-saveresults-progress)
+  - [callbackify(fn, self)](#callbackifyfn-self)
+  - [Deferred](#deferred)
+  - [flow(list)](#flowlist)
+  - [isPromise(obj)](#ispromiseobj)
+  - [never()](#never)
+  - [promisify(fn, self)](#promisifyfn-self)
+  - [sleep(time, val)](#sleeptime-val)
+  - [Observable](#observable)
+  - [retry(countdown, fn, this)](#retrycountdown-fn-this)
+  - [throw(err)](#throwerr)
+
+- #### require('yaku/lib/Observable')
+  - [Observable(executor)](#observableexecutor)
+  - [emit(value)](#emitvalue)
+  - [value](#value)
+  - [publisher](#publisher)
+  - [subscribers](#subscribers)
+  - [subscribe(onEmit, onError)](#subscribeonemit-onerror)
+  - [unsubscribe](#unsubscribe)
+  - [Observable.merge(iterable)](#observablemergeiterable)
+
+---------------------------------------
+
+
 - ### **[Yaku(executor)](src/yaku.js?source#L71)**
 
     This class follows the [Promises/A+](https://promisesaplus.com) and

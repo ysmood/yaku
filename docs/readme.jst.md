@@ -123,6 +123,18 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
 # API
 
+- #### require('yaku')
+<%= doc['src/yaku.js-toc'] %>
+
+- #### require('yaku/lib/utils')
+<%= doc['src/utils.js-toc'] %>
+
+- #### require('yaku/lib/Observable')
+<%= doc['src/Observable.js-toc'] %>
+
+---------------------------------------
+
+
 <%= doc['src/yaku.js'] %>
 
 
