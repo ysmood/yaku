@@ -57,19 +57,22 @@ var genIterator = require("./genIterator");
  * ```
  */
 var Observable = module.exports = function Observable (executor) {
-    var self = this
-    , emit = genEmit(self);
+    var self = this;
+
+    genEmit(self);
 
     self.subscribers = [];
 
-    executor && executor(emit);
+    executor && executor(self.emit);
 };
 
 _.extendPrototype(Observable, {
 
     /**
      * Emit a value.
-     * @param  {Any} value
+     * @param  {Any} value If you want to emit a plain error, you should
+     * emit a rejected promise, such as `emit(Promise.reject(new Error('my error')))`,
+     * so that the event will go to `onError` callback.
      */
     emit: null,
 
