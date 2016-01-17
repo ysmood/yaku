@@ -172,6 +172,26 @@ module.exports = {
     guard: require("./guard"),
 
     /**
+     * if-else helper
+     * @param  {Promise} cond
+     * @param  {Function} trueFn
+     * @param  {Function} falseFn
+     * @return {Promise}
+     * @example
+     * ```js
+      * var Promise = require('yaku');
+      * var yutils = require('yaku/lib/utils');
+      *
+      * yutils.if(Promise.resolve(false), () => {
+      *     // true
+      * }, () => {
+      *     // false
+      * })
+     * ```
+     */
+    "if": require("./if"),
+
+    /**
      * **deprecate** Check if an object is a promise-like object.
      * Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
      * @param  {Any}  obj
