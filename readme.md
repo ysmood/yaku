@@ -143,6 +143,8 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [callbackify(fn, self)](#callbackifyfn-self)
   - [Deferred](#deferred)
   - [flow(list)](#flowlist)
+  - [guard(error, onRejected)](#guarderror-onrejected)
+  - [if(cond, trueFn, falseFn)](#ifcond-truefn-falsefn)
   - [isPromise(obj)](#ispromiseobj)
   - [never()](#never)
   - [promisify(fn, self)](#promisifyfn-self)
@@ -667,7 +669,64 @@ var source = require("yaku/lib/source");
         walker('test.com');
         ```
 
-- ### **[isPromise(obj)](src/utils.js?source#L150)**
+- ### **[guard(error, onRejected)](src/utils.js?source#L172)**
+
+    Enable a helper to catch specific error type.
+    It will be directly attach to the prototype of the promise.
+
+    - **<u>param</u>**: `error` { _class_ }
+
+    - **<u>param</u>**: `onRejected` { _Function_ }
+
+    - **<u>return</u>**: { _Promise_ }
+
+        ```js
+        var Promise = require('yaku');
+        require('yaku/lib/guard');
+
+        class AnError extends Error {
+        }
+
+        Promise.reject(new AnError('hey'))
+        .guard(AnError, (err) => {
+             // only log AnError type
+             console.log(err);
+        })
+        .then(() => {
+             console.log('done');
+        })
+        .guard(Error, (err) => {
+             // log all error type
+             console.log(err)
+        });
+        ```
+
+- ### **[if(cond, trueFn, falseFn)](src/utils.js?source#L192)**
+
+    if-else helper
+
+    - **<u>param</u>**: `cond` { _Promise_ }
+
+    - **<u>param</u>**: `trueFn` { _Function_ }
+
+    - **<u>param</u>**: `falseFn` { _Function_ }
+
+    - **<u>return</u>**: { _Promise_ }
+
+    - **<u>example</u>**:
+
+        ```js
+        var Promise = require('yaku');
+        var yutils = require('yaku/lib/utils');
+
+        yutils.if(Promise.resolve(false), () => {
+            // true
+        }, () => {
+            // false
+        })
+        ```
+
+- ### **[isPromise(obj)](src/utils.js?source#L200)**
 
     **deprecate** Check if an object is a promise-like object.
     Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
@@ -676,7 +735,7 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[never()](src/utils.js?source#L156)**
+- ### **[never()](src/utils.js?source#L206)**
 
     Create a promise that never ends.
 
@@ -684,7 +743,7 @@ var source = require("yaku/lib/source");
 
         A promise that will end the current pipeline.
 
-- ### **[promisify(fn, self)](src/utils.js?source#L185)**
+- ### **[promisify(fn, self)](src/utils.js?source#L235)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -719,7 +778,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L198)**
+- ### **[sleep(time, val)](src/utils.js?source#L248)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -740,13 +799,13 @@ var source = require("yaku/lib/source");
         sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[Observable](src/utils.js?source#L204)**
+- ### **[Observable](src/utils.js?source#L254)**
 
     Read the `Observable` section.
 
     - **<u>type</u>**: { _Function_ }
 
-- ### **[retry(countdown, fn, this)](src/utils.js?source#L253)**
+- ### **[retry(countdown, fn, this)](src/utils.js?source#L303)**
 
     Retry a function until it resolves before a mount of times, or reject with all
     the error states.
@@ -813,7 +872,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L267)**
+- ### **[throw(err)](src/utils.js?source#L317)**
 
     Throw an error to break the program.
 
@@ -901,31 +960,35 @@ var source = require("yaku/lib/source");
         keyupTextGT3.subscribe(v => console.log(v));
         ```
 
-- ### **[emit(value)](src/Observable.js?source#L74)**
+- ### **[emit(value)](src/Observable.js?source#L77)**
 
     Emit a value.
 
     - **<u>param</u>**: `value` { _Any_ }
 
-- ### **[value](src/Observable.js?source#L80)**
+        If you want to emit a plain error, you should
+        emit a rejected promise, such as `emit(Promise.reject(new Error('my error')))`,
+        so that the event will go to `onError` callback.
+
+- ### **[value](src/Observable.js?source#L83)**
 
     The promise that will resolve current value.
 
     - **<u>type</u>**: { _Promise_ }
 
-- ### **[publisher](src/Observable.js?source#L86)**
+- ### **[publisher](src/Observable.js?source#L89)**
 
     The publisher observable of this.
 
     - **<u>type</u>**: { _Observable_ }
 
-- ### **[subscribers](src/Observable.js?source#L92)**
+- ### **[subscribers](src/Observable.js?source#L95)**
 
     All the subscribers subscribed this observable.
 
     - **<u>type</u>**: { _Array_ }
 
-- ### **[subscribe(onEmit, onError)](src/Observable.js?source#L100)**
+- ### **[subscribe(onEmit, onError)](src/Observable.js?source#L103)**
 
     It will create a new Observable, like promise.
 
@@ -935,11 +998,11 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Observable_ }
 
-- ### **[unsubscribe](src/Observable.js?source#L115)**
+- ### **[unsubscribe](src/Observable.js?source#L118)**
 
     Unsubscribe this.
 
-- ### **[Observable.merge(iterable)](src/Observable.js?source#L167)**
+- ### **[Observable.merge(iterable)](src/Observable.js?source#L170)**
 
     Merge multiple observables into one.
 
