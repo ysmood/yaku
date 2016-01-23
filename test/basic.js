@@ -520,4 +520,10 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("if only true", "true", function () {
+        return utils.if(utils.sleep(100, true), function () {
+            return "true";
+        });
+    });
+
 });
