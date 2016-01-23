@@ -143,7 +143,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [callbackify(fn, self)](#callbackifyfn-self)
   - [Deferred](#deferred)
   - [flow(list)](#flowlist)
-  - [guard(error, onRejected)](#guarderror-onrejected)
+  - [guard(type, onRejected)](#guardtype-onrejected)
   - [if(cond, trueFn, falseFn)](#ifcond-truefn-falsefn)
   - [isPromise(obj)](#ispromiseobj)
   - [never()](#never)
@@ -669,12 +669,12 @@ var source = require("yaku/lib/source");
         walker('test.com');
         ```
 
-- ### **[guard(error, onRejected)](src/utils.js?source#L172)**
+- ### **[guard(type, onRejected)](src/utils.js?source#L171)**
 
     Enable a helper to catch specific error type.
     It will be directly attach to the prototype of the promise.
 
-    - **<u>param</u>**: `error` { _class_ }
+    - **<u>param</u>**: `type` { _class_ }
 
     - **<u>param</u>**: `onRejected` { _Function_ }
 
@@ -701,7 +701,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[if(cond, trueFn, falseFn)](src/utils.js?source#L192)**
+- ### **[if(cond, trueFn, falseFn)](src/utils.js?source#L191)**
 
     if-else helper
 
@@ -726,7 +726,7 @@ var source = require("yaku/lib/source");
         })
         ```
 
-- ### **[isPromise(obj)](src/utils.js?source#L200)**
+- ### **[isPromise(obj)](src/utils.js?source#L199)**
 
     **deprecate** Check if an object is a promise-like object.
     Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
@@ -735,7 +735,7 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[never()](src/utils.js?source#L206)**
+- ### **[never()](src/utils.js?source#L205)**
 
     Create a promise that never ends.
 
@@ -743,7 +743,7 @@ var source = require("yaku/lib/source");
 
         A promise that will end the current pipeline.
 
-- ### **[promisify(fn, self)](src/utils.js?source#L235)**
+- ### **[promisify(fn, self)](src/utils.js?source#L234)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -778,7 +778,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L248)**
+- ### **[sleep(time, val)](src/utils.js?source#L247)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -799,13 +799,13 @@ var source = require("yaku/lib/source");
         sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[Observable](src/utils.js?source#L254)**
+- ### **[Observable](src/utils.js?source#L253)**
 
     Read the `Observable` section.
 
     - **<u>type</u>**: { _Function_ }
 
-- ### **[retry(countdown, fn, this)](src/utils.js?source#L303)**
+- ### **[retry(countdown, fn, this)](src/utils.js?source#L302)**
 
     Retry a function until it resolves before a mount of times, or reject with all
     the error states.
@@ -872,7 +872,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L317)**
+- ### **[throw(err)](src/utils.js?source#L316)**
 
     Throw an error to break the program.
 
