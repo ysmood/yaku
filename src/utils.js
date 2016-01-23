@@ -141,34 +141,33 @@ module.exports = {
      */
     flow: require("./flow"),
 
-
-     /**
-      * Enable a helper to catch specific error type.
-      * It will be directly attach to the prototype of the promise.
-      * @param  {class}    error
-      * @param  {Function} onRejected
-      * @return {Promise}
-      * ```js
-      * var Promise = require('yaku');
-      * require('yaku/lib/guard');
-      *
-      * class AnError extends Error {
-      * }
-      *
-      * Promise.reject(new AnError('hey'))
-      * .guard(AnError, (err) => {
-      *      // only log AnError type
-      *      console.log(err);
-      * })
-      * .then(() => {
-      *      console.log('done');
-      * })
-      * .guard(Error, (err) => {
-      *      // log all error type
-      *      console.log(err)
-      * });
-      * ```
-      */
+    /**
+     * Enable a helper to catch specific error type.
+     * It will be directly attach to the prototype of the promise.
+     * @param  {class}    type
+     * @param  {Function} onRejected
+     * @return {Promise}
+     * ```js
+     * var Promise = require('yaku');
+     * require('yaku/lib/guard');
+     *
+     * class AnError extends Error {
+     * }
+     *
+     * Promise.reject(new AnError('hey'))
+     * .guard(AnError, (err) => {
+     *      // only log AnError type
+     *      console.log(err);
+     * })
+     * .then(() => {
+     *      console.log('done');
+     * })
+     * .guard(Error, (err) => {
+     *      // log all error type
+     *      console.log(err)
+     * });
+     * ```
+     */
     guard: require("./guard"),
 
     /**
