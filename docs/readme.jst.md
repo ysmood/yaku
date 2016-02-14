@@ -7,7 +7,9 @@
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
 If you want to learn how Promise works, read the minimum implementation [docs/minPromiseAplus.js][]. Without comments, it is only 80 lines of code (gzipped size is 0.5KB).
-It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][] and [promises-es6-tests][].
+It only implements the `constructor` and `then`.
+
+Yaku passed all the tests of [promises-aplus-tests][] and [promises-es6-tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
 Premature optimization is the root of all evil. I write this lib to research one of my data structure
@@ -22,7 +24,7 @@ ideas: [docs/lazyTree.md][].
 - The minified file is only <%= doc.size %>KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
-- 100% compliant with Promises/A+ specs and ES6
+- 100% compliant with Promises/A+ specs and nearly 100% compliant with ES6 specs
 - Designed to work on IE5+ and other major browsers
 - Well commented source code with every Promises/A+ spec
 
