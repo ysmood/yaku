@@ -155,9 +155,11 @@
      * var p = Promise.resolve(10);
      * ```
      */
-    Yaku.resolve = function resolve (val) {
+    Yaku.resolve = resolve;
+
+    function resolve (val) {
         return isYaku(val) ? val : settleWithX(newEmptyYaku(), val);
-    };
+    }
 
     /**
      * The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
@@ -169,9 +171,11 @@
      * var p = Promise.reject(new Error("ERR"));
      * ```
      */
-    Yaku.reject = function reject (reason) {
+    Yaku.reject = reject;
+
+    function reject (reason) {
         return settlePromise(newEmptyYaku(), $rejected, reason);
-    };
+    }
 
     /**
      * The `Promise.race(iterable)` method returns a promise that resolves or rejects
@@ -206,6 +210,9 @@
             }
         } else {
             iter = genIterator(iterable);
+
+            if (isError(iter)) return reject(iter);
+
             while (!(item = iter.next()).done) {
                 settleWithX(p, item.value);
                 if (p._state !== $pending) break;
@@ -262,6 +269,8 @@
             settlePromise(p1, $rejected, reason);
         }
 
+        if (this !== Yaku) throw genTypeError("invalid_this");
+
         if (isArray(iterable)) {
             len = iterable.length;
             while (countDown < len) {
@@ -269,6 +278,9 @@
             }
         } else {
             iter = genIterator(iterable);
+
+            if (isError(iter)) return reject(iter);
+
             while (!(item = iter.next()).done) {
                 runAll(countDown++, item.value, p1, res, onRejected);
             }
@@ -282,7 +294,7 @@
     };
 
     function runAll (i, el, p1, res, onRejected) {
-        Yaku.resolve(el).then(function (value) {
+        resolve(el).then(function (value) {
             res[i] = value;
             if (!--onRejected._c) settlePromise(p1, $resolved, res);
         }, onRejected);
@@ -401,6 +413,10 @@
         return obj && typeof obj.length === "number";
     }
 
+    function isError (obj) {
+        return obj instanceof Error;
+    }
+
     /**
      * Wrap a function into a try-catch.
      * @private
@@ -470,7 +486,7 @@
     /**
      * Generate a iterator
      * @param  {Any} obj
-     * @return {Function}
+     * @return {Object || TypeError}
      */
     function genIterator (obj) {
         if (obj) {
@@ -483,7 +499,8 @@
                 return obj;
             }
         }
-        throw genTypeError("invalid_argument");
+
+        return genTypeError("invalid_argument");
     }
 
     /**
