@@ -39,17 +39,16 @@ module.exports = function (name, Promise) {
             memFormat.push(k + " - " + (Math.floor(v / 1024 / 1024)) + "mb");
         }
 
-        return console.log((cs.cyan(name))
-            + " v"
-            + ver
-            + "\n             total: "
-            + (cs.green(initTime + resolutionTime))
-            + "ms\n                init: "
-            + initTime
-            + "ms\n    resolution: "
-            + resolutionTime
-            + "ms\n            memory: "
-            + (memFormat.join(" | ")));
+        return console.log((cs.cyan(name)) // eslint-disable-line
+            + "  v" + ver + "\n"
+            + "       total: "
+            + (cs.green(initTime + resolutionTime)) + "ms\n"
+            + "        init: "
+            + initTime + "ms\n"
+            + "  resolution: "
+            + resolutionTime + "ms\n"
+            + "      memory: " + (memFormat.join(" | ")) + "\n"
+        );
     }
 
     function resolver (resolve) {

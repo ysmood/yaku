@@ -6,7 +6,6 @@ module.exports = function (task, option) {
     option("--port <8219>", "remote debug server port", 8219);
     option("--grep <pattern>", "run test that match the pattern", ".");
     option("--noAplus", "don't run the promises-aplus-tests");
-    option("--sync", "sync benchmark");
     option("--browserPort <8227>", "browser test port", 8227);
 
     task("default build", ["doc", "code"]);
@@ -80,23 +79,25 @@ module.exports = function (task, option) {
 
     task("test-es6", "test es6 tests", require("./test/promises-es6-tests.js"));
 
-    task("benchmark", "compare performance between different libraries", function (opts) {
-        var os, paths, sync;
+    task("benchmark", "compare performance between different libraries", function () {
         process.env.NODE_ENV = "production";
-        os = require("os");
 
-        console.log("Node " + process.version + "\nOS     " + // eslint-disable-line
-            (os.platform()) + "\nArch " + (os.arch()) +
-            "\nCPU    " + (os.cpus()[0].model) +
-            "\n" + (kit._.repeat("-", 80)));
+        var os = require("os");
+        console.log("Node " + process.version // eslint-disable-line
+            + "\nOS     " + (os.platform())
+            + "\nArch " + (os.arch())
+            + "\nCPU    " + (os.cpus()[0].model) + "\n"
+            + (kit._.repeat("-", 80)));
 
-        paths = kit.globSync("benchmark/*.js");
-        sync = opts.sync ? "sync" : "";
-        return kit.async(paths.map(function (path) {
-            return function () {
-                return kit.spawn("node", [path, sync]);
+        var paths = kit.globSync("benchmark/*.js");
+
+        return kit.async(1, { next: function () {
+            var path = paths.pop();
+            return {
+                done: !path,
+                value: path && kit.spawn("node", [path])
             };
-        }));
+        } });
     });
 
     task("clean", "Clean temp files", function () {

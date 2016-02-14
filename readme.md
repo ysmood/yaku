@@ -69,18 +69,17 @@ Raw usage without:
 These comparisons only reflect some limited truth, no one is better than all others on all aspects.
 For more details see the [benchmark/readme.md](benchmark/readme.md). There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
-| Name                 | promises-es6-tests | 1ms async task / mem | sync task / mem | Helpers | file size |
-| -------------------- | ------------------ | -------------------- | --------------- | ------- | --------- |
-| Yaku                 |         ✓          |  257ms / 110MB       |  126ms / 80MB   | +++     | 3.8KB |
-| [Bluebird][] v2.9    |         x          |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
-| [ES6-promise][] v2.3 |         x          |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
-| [native][] iojs v1.8 |         x          |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
-| [q][] v1.3           |         x          | 2648ms / 646MB       | 2373ms / 580MB  | +++     | 24K       |
+| Name                 | promises-es6-tests | 1ms async task / mem | Helpers | file size |
+| -------------------- | ------------------ | -------------------- | ------- | --------- |
+| Yaku v0.12           |         ✓          |  247ms / 101mb       | +++     | 3.8KB |
+| [Bluebird][] v3.3    |         x          |  166ms / 86mb        | +++++++ | 73KB      |
+| [ES6-promise][] v3.1 |         x          |  342ms / 104mb       | +       | 18KB      |
+| [native][] v5.0      |         x          |  496ms / 166mb       | +       | 0KB       |
+| [q][] v1.4           |         x          | 3109ms / 618mb       | +++     | 24K       |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
 - **1ms async task**: `npm run no -- benchmark`, the smaller the better.
-- **sync task**: `npm run no -- benchmark --sync`, the smaller the better.
 
 
 # FAQ

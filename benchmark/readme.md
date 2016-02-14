@@ -1,68 +1,36 @@
-## Async
 ```
-Node v1.8.4
+Node v5.0.0
 OS     darwin
 Arch x64
 CPU    Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 --------------------------------------------------------------------------------
-yaku v0.3.2
-             total: 257ms
-                init: 172ms
-    resolution: 85ms
-            memory: rss - 110mb | heapTotal - 93mb | heapUsed - 73mb
-bluebird v2.9.34
-             total: 249ms
-                init: 146ms
-    resolution: 103ms
-            memory: rss - 102mb | heapTotal - 85mb | heapUsed - 57mb
-es6-promise v2.3.0
-             total: 427ms
-                init: 165ms
-    resolution: 262ms
-            memory: rss - 120mb | heapTotal - 101mb | heapUsed - 72mb
-native v0.3.2
-             total: 789ms
-                init: 545ms
-    resolution: 244ms
-            memory: rss - 189mb | heapTotal - 170mb | heapUsed - 147mb
-q v1.4.1
-             total: 2648ms
-                init: 874ms
-    resolution: 1774ms
-            memory: rss - 646mb | heapTotal - 619mb | heapUsed - 601mb
-```
+yaku  v0.11.6
+       total: 265ms
+        init: 174ms
+  resolution: 91ms
+      memory: rss - 101mb | heapTotal - 82mb | heapUsed - 54mb
 
-## Sync
+q  v1.4.1
+       total: 3079ms
+        init: 862ms
+  resolution: 2217ms
+      memory: rss - 619mb | heapTotal - 588mb | heapUsed - 526mb
 
-```
-Node v1.8.4
-OS     darwin
-Arch x64
-CPU    Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
---------------------------------------------------------------------------------
-es6-promise v2.3.0
-             total: 92ms
-                init: 78ms
-    resolution: 14ms
-            memory: rss - 78mb | heapTotal - 61mb | heapUsed - 41mb
-yaku v0.3.2
-             total: 126ms
-                init: 110ms
-    resolution: 16ms
-            memory: rss - 80mb | heapTotal - 63mb | heapUsed - 30mb
-bluebird v2.9.34
-             total: 155ms
-                init: 123ms
-    resolution: 32ms
-            memory: rss - 80mb | heapTotal - 61mb | heapUsed - 37mb
-native v0.3.2
-             total: 605ms
-                init: 519ms
-    resolution: 86ms
-            memory: rss - 147mb | heapTotal - 130mb | heapUsed - 108mb
-q v1.4.1
-             total: 2373ms
-                init: 1173ms
-    resolution: 1200ms
-            memory: rss - 580mb | heapTotal - 555mb | heapUsed - 533mb
+native  v0.12.0
+       total: 463ms
+        init: 315ms
+  resolution: 148ms
+      memory: rss - 166mb | heapTotal - 146mb | heapUsed - 127mb
+
+es6-promise  v3.1.2
+       total: 359ms
+        init: 183ms
+  resolution: 176ms
+      memory: rss - 104mb | heapTotal - 85mb | heapUsed - 65mb
+
+bluebird  v3.3.1
+       total: 189ms
+        init: 123ms
+  resolution: 66ms
+      memory: rss - 85mb | heapTotal - 67mb | heapUsed - 49mb
 ```
