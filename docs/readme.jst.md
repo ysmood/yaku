@@ -7,7 +7,7 @@
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
 If you want to learn how Promise works, read the minimum implementation [docs/minPromiseAplus.js][]. Without comments, it is only 80 lines of code (gzipped size is 0.5KB).
-It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][].
+It only implements the `constructor` and `then`. It passed all the tests of [promises-aplus-tests][] and [promises-es6-tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
 Premature optimization is the root of all evil. I write this lib to research one of my data structure
@@ -69,19 +69,18 @@ Raw usage without:
 These comparisons only reflect some limited truth, no one is better than all others on all aspects.
 For more details see the [benchmark/readme.md](benchmark/readme.md). There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
-| Name                 | 1ms async task / mem | sync task / mem | Helpers | file size |
-| -------------------- | -------------------- | --------------- | ------- | --------- |
-| Yaku                 |  257ms / 110MB       |  126ms / 80MB   | +++     | <%= doc.size %>KB |
-| [Bluebird][] v2.9    |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
-| [ES6-promise][] v2.3 |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
-| [native][] iojs v1.8 |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
-| [q][] v1.3           | 2648ms / 646MB       | 2373ms / 580MB  | +++     | 24K       |
+| Name                 | promises-es6-tests | 1ms async task / mem | sync task / mem | Helpers | file size |
+| -------------------- | ------------------ | -------------------- | --------------- | ------- | --------- |
+| Yaku                 |         ✓          |  257ms / 110MB       |  126ms / 80MB   | +++     | <%= doc.size %>KB |
+| [Bluebird][] v2.9    |         x          |  249ms / 102MB       |  155ms / 80MB   | +++++++ | 73KB      |
+| [ES6-promise][] v2.3 |         x          |  427ms / 120MB       |   92ms / 78MB   | +       | 18KB      |
+| [native][] iojs v1.8 |         x          |  789ms / 189MB       |  605ms / 147MB  | +       | 0KB       |
+| [q][] v1.3           |         x          | 2648ms / 646MB       | 2373ms / 580MB  | +++     | 24K       |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
 - **1ms async task**: `npm run no -- benchmark`, the smaller the better.
 - **sync task**: `npm run no -- benchmark --sync`, the smaller the better.
-
 
 
 # FAQ
@@ -190,6 +189,7 @@ If you installed `nokit` globally, you can just run `no -h` without `npm run` an
 [release page]: https://github.com/ysmood/yaku/releases
 [docs/minPromiseAplus.js]: docs/minPromiseAplus.js
 [promises-aplus-tests]: https://github.com/promises-aplus/promises-tests
+[promises-es6-tests]: https://github.com/promises-es6/promises-es6
 [longjohn]: https://github.com/mattinsler/longjohn
 [crhome-lst]: http://www.html5rocks.com/en/tutorials/developertools/async-call-stack
 [Browserify]: http://browserify.org

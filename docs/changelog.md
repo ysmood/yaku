@@ -1,3 +1,8 @@
+- v0.12
+
+  - del: `Observable` value api
+  - opt: now passed all the tests of `promises-es6-tests`
+
 - v0.11
 
   - **API CHANGE** now `utils.source` is removed, instead `utils.Observable` is added.
