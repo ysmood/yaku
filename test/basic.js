@@ -25,22 +25,6 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("constructor abort", 111, function () {
-        var p;
-        p = new Yaku(function (resolve, reject) {
-            var tmr;
-            tmr = setTimeout(resolve, 100, "done");
-            return this.abort = function () {
-                clearTimeout(tmr);
-                return reject(111);
-            };
-        });
-        p.abort($val);
-        return p["catch"](function (e) {
-            return e;
-        });
-    });
-
     it("constructor throw", $val, function () {
         return new Yaku(function () {
             throw $val;

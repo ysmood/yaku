@@ -12,6 +12,8 @@
     , $promiseTrace = "_pt"
     , $settlerTrace = "_st"
 
+    , $invalid_this = "invalid_this"
+    , $invalid_argument = "invalid_argument"
     , $fromPrevious = "From previous event:"
     , $unhandledRejection = "unhandledRejection";
 
@@ -19,63 +21,26 @@
      * This class follows the [Promises/A+](https://promisesaplus.com) and
      * [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
      * with some extra helpers.
-     * @param  {Function} executor Function object with three arguments resolve, reject and
-     * the promise itself.
+     * @param  {Function} executor Function object with two arguments resolve, reject.
      * The first argument fulfills the promise, the second argument rejects it.
      * We can call these functions, once our operation is completed.
-     * The `this` context of the executor is the promise itself, it can be used to add custom handlers,
-     * such as `abort` or `progress` helpers.
-     * @example
-     * Here's an abort example.
-     * ```js
-     * var Promise = require('yaku');
-     * var p = new Promise((resolve, reject) => {
-     *     var tmr = setTimeout(resolve, 3000);
-     *     this.abort = (reason) => {
-     *         clearTimeout(tmr);
-     *         reject(reason);
-     *     };
-     * });
-     *
-     * p.abort(new Error('abort'));
-     * ```
-     * @example
-     * Here's a progress example.
-     * ```js
-     * var Promise = require('yaku');
-     * var p = new Promise((resolve, reject) => {
-     *     var self = this;
-     *     var count = 0;
-     *     var all = 100;
-     *     var tmr = setInterval(() => {
-     *         try {
-     *             self.progress && self.progress(count, all);
-     *         } catch (err) {
-     *             reject(err);
-     *         }
-     *
-     *         if (count < all)
-     *             count++;
-     *         else {
-     *             resolve();
-     *             clearInterval(tmr);
-     *         }
-     *     }, 1000);
-     * });
-     *
-     * p.progress = (curr, all) => {
-     *     console.log(curr, '/', all);
-     * };
-     * ```
      */
     var Yaku = module.exports = function Promise (executor) {
         var self = this,
             err;
 
+        if (!isYaku(self) || self._state !== $nil)
+            throw genTypeError($invalid_this);
+
+        self._state = $pending;
+
         if (isLongStackTrace) self[$promiseTrace] = genTraceInfo();
 
         if (executor !== $noop) {
-            err = genTryCatcher(executor, self)(
+            if (!isFunction(executor))
+                throw genTypeError($invalid_argument);
+
+            err = genTryCatcher(executor)(
                 genSettler(self, $resolved),
                 genSettler(self, $rejected)
             );
@@ -106,6 +71,7 @@
          * ```
          */
         then: function then (onFulfilled, onRejected) {
+            if (this.constructor !== Yaku) throw genTypeError($invalid_this);
             return addHandler(this, newEmptyYaku(), onFulfilled, onRejected);
         },
 
@@ -128,9 +94,6 @@
         "catch": function (onRejected) {
             return this.then($nil, onRejected);
         },
-
-        // Default state
-        _state: $pending,
 
         // The number of current promises that attach to this Yaku instance.
         _pCount: 0,
@@ -155,11 +118,10 @@
      * var p = Promise.resolve(10);
      * ```
      */
-    Yaku.resolve = resolve;
-
-    function resolve (val) {
+    Yaku.resolve = function resolve (val) {
+        throwIfNotYaku(this);
         return isYaku(val) ? val : settleWithX(newEmptyYaku(), val);
-    }
+    };
 
     /**
      * The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
@@ -171,11 +133,10 @@
      * var p = Promise.reject(new Error("ERR"));
      * ```
      */
-    Yaku.reject = reject;
-
-    function reject (reason) {
+    Yaku.reject = function reject (reason) {
+        throwIfNotYaku(this);
         return settlePromise(newEmptyYaku(), $rejected, reason);
-    }
+    };
 
     /**
      * The `Promise.race(iterable)` method returns a promise that resolves or rejects
@@ -198,6 +159,8 @@
      * ```
      */
     Yaku.race = function race (iterable) {
+        throwIfNotYaku(this);
+
         var iter, len, i = 0;
 
         var p = newEmptyYaku(), item;
@@ -211,7 +174,7 @@
         } else {
             iter = genIterator(iterable);
 
-            if (isError(iter)) return reject(iter);
+            if (isError(iter)) return Yaku.reject(iter);
 
             while (!(item = iter.next()).done) {
                 settleWithX(p, item.value);
@@ -258,6 +221,8 @@
      * ```
      */
     Yaku.all = function all (iterable) {
+        throwIfNotYaku(this);
+
         var p1 = newEmptyYaku()
         , res = []
         , item
@@ -269,8 +234,6 @@
             settlePromise(p1, $rejected, reason);
         }
 
-        if (this !== Yaku) throw genTypeError("invalid_this");
-
         if (isArray(iterable)) {
             len = iterable.length;
             while (countDown < len) {
@@ -279,7 +242,7 @@
         } else {
             iter = genIterator(iterable);
 
-            if (isError(iter)) return reject(iter);
+            if (isError(iter)) return Yaku.reject(iter);
 
             while (!(item = iter.next()).done) {
                 runAll(countDown++, item.value, p1, res, onRejected);
@@ -294,7 +257,7 @@
     };
 
     function runAll (i, el, p1, res, onRejected) {
-        resolve(el).then(function (value) {
+        Yaku.resolve(el).then(function (value) {
             res[i] = value;
             if (!--onRejected._c) settlePromise(p1, $resolved, res);
         }, onRejected);
@@ -417,6 +380,10 @@
         return obj instanceof Error;
     }
 
+    function throwIfNotYaku (obj) {
+        if (obj !== Yaku) throw genTypeError($invalid_this);
+    }
+
     /**
      * Wrap a function into a try-catch.
      * @private
@@ -500,7 +467,7 @@
             }
         }
 
-        return genTypeError("invalid_argument");
+        return genTypeError($invalid_argument);
     }
 
     /**

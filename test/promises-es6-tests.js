@@ -4,7 +4,7 @@ var kit = require("nokit");
 
 var Promise = require("../src/yaku");
 
-module.exports = function (opts) {
+module.exports = function () {
     var adapter = {
         deferred: function () {
             var defer;
@@ -26,5 +26,5 @@ module.exports = function (opts) {
         }
     };
 
-    return kit.promisify(promisesES6Tests)(adapter, opts);
+    return kit.promisify(promisesES6Tests)(adapter);
 };
