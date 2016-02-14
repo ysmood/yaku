@@ -77,12 +77,6 @@ _.extendPrototype(Observable, {
     emit: null,
 
     /**
-     * The promise that will resolve current value.
-     * @type {Promise}
-     */
-    value: _.Promise.resolve(),
-
-    /**
      * The publisher observable of this.
      * @type {Observable}
      */
@@ -127,8 +121,7 @@ function genEmit (self) {
         var i = 0, len = self.subscribers.length, subscriber;
         while (i < len) {
             subscriber = self.subscribers[i++];
-            self.value = _.Promise.resolve(val);
-            self.value.then(
+            _.Promise.resolve(val).then(
                 subscriber._onEmit,
                 subscriber._onError
             ).then(
