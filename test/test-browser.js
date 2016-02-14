@@ -1,4 +1,4 @@
-var junit = require("junit");
+var junit = require("junit").default;
 
 var it = junit();
 
