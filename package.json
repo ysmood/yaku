@@ -47,6 +47,7 @@
     "promises-aplus-tests": "*",
     "promises-es6-tests": "*",
     "q": "1.4.1",
+    "setprototypeof": "1.0.1",
     "uglify-js": "2.6.1",
     "webpack": "1.12.13"
   },
