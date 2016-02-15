@@ -729,7 +729,13 @@
                 if (isLongStackTrace && isYaku(x))
                     p._next = x;
 
-                settleXthen(p, x, xthen);
+                // Fix https://bugs.chromium.org/p/v8/issues/detail?id=4162
+                if (isYaku(x))
+                    settleXthen(p, x, xthen);
+                else
+                    Yaku.nextTick(function () {
+                        settleXthen(p, x, xthen);
+                    });
             }
             else
                 // 2.3.3.4

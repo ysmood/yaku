@@ -9,6 +9,58 @@ var $val = {
 
 module.exports = testSuit("basic", function (it) {
 
+    it("resolve order", ["DEHAFGBC", "DEHAFGBC"], function () {
+        return new Yaku(function (assertResolve) {
+            var assertRes = [];
+            var result = "";
+            var resolve, resolve2;
+
+            var p = new Yaku(function (r) {
+                resolve = r;
+            });
+
+            resolve({
+                then: function () {
+                    result += "A";
+                    throw Error();
+                }
+            });
+
+            p.catch(function () {
+                result += "B";
+            });
+            p.catch(function () {
+                result += "C";
+                assertRes.push(result);
+            });
+
+            var p2 = new Yaku(function (r) {
+                resolve2 = r;
+            });
+            resolve2(Object.defineProperty({}, "then", {
+                get: function () {
+                    result += "D";
+                    throw Error();
+                }
+            }));
+            result += "E";
+            p2.catch(function () {
+                result += "F";
+            });
+            p2.catch(function () {
+                result += "G";
+            });
+            result += "H";
+            setTimeout(function () {
+                if (~result.indexOf("C")) {
+                    assertRes.push(result);
+                }
+
+                assertResolve(assertRes);
+            }, 100);
+        });
+    });
+
     it("resolve", $val, function () {
         return new Yaku(function (resolve) {
             return resolve($val);
