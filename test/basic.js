@@ -147,6 +147,21 @@ module.exports = testSuit("basic", function (it) {
         ]);
     });
 
+    it("all with custom Symbol.iterator", [1, 2, 3], function () {
+        var arr = [], Symbol;
+
+        if (!global.Symbol)
+            throw "Please use a newer js runtime that supports Symbol";
+        else
+            Symbol = global.Symbol;
+
+        arr[Symbol.iterator] = function () {
+            return [1, 2, 3][Symbol.iterator]();
+        };
+
+        return Yaku.all(arr);
+    });
+
     it("race", 0, function () {
         return Yaku.race([
             new Yaku(function (r) {
@@ -160,6 +175,21 @@ module.exports = testSuit("basic", function (it) {
                 });
             })
         ]);
+    });
+
+    it("race with custom Symbol.iterator", 1, function () {
+        var arr = [], Symbol;
+
+        if (!global.Symbol)
+            throw "Please use a newer js runtime that supports Symbol";
+        else
+            Symbol = global.Symbol;
+
+        arr[Symbol.iterator] = function () {
+            return [1, 2, 3][Symbol.iterator]();
+        };
+
+        return Yaku.race(arr);
     });
 
     it("any one resolved", 0, function () {

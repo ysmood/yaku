@@ -9,6 +9,9 @@
     , $resolved = 1
     , $pending = 2
 
+    , $Symbol = "Symbol"
+    , $iterator = "iterator"
+
     , $promiseTrace = "_pt"
     , $settlerTrace = "_st"
 
@@ -165,7 +168,7 @@
 
         var p = newEmptyYaku(), item;
 
-        if (isArray(iterable)) {
+        if (isPlainArray(iterable)) {
             len = iterable.length;
             while (i < len) {
                 settleWithX(p, iterable[i++]);
@@ -234,7 +237,7 @@
             settlePromise(p1, $rejected, reason);
         }
 
-        if (isArray(iterable)) {
+        if (isPlainArray(iterable)) {
             len = iterable.length;
             while (countDown < len) {
                 runAll(countDown, iterable[countDown++], p1, res, onRejected);
@@ -274,7 +277,7 @@
      * Promise.Symbol = core.Symbol;
      * ```
      */
-    Yaku.Symbol = root.Symbol || {};
+    Yaku.Symbol = root[$Symbol] || {};
 
     /**
      * Catch all possibly unhandled rejections. If you want to use specific
@@ -372,8 +375,10 @@
         return typeof obj === "function";
     }
 
-    function isArray (obj) {
-        return obj && typeof obj.length === "number";
+    function isPlainArray (obj) {
+        return obj
+            && typeof obj.length === "number"
+            && !isFunction(obj[Yaku[$Symbol][$iterator]]);
     }
 
     function isError (obj) {
@@ -457,7 +462,7 @@
      */
     function genIterator (obj) {
         if (obj) {
-            var gen = obj[Yaku.Symbol.iterator];
+            var gen = obj[Yaku[$Symbol][$iterator]];
             if (isFunction(gen)) {
                 return gen.call(obj);
             }
