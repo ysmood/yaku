@@ -2,7 +2,7 @@ var promisesES6Tests = require("promises-es6-tests");
 var assert = require("assert");
 var kit = require("nokit");
 
-var Promise = require("es6-promise");
+var Promise = require("../src/yaku");
 
 module.exports = function () {
     var adapter = {
