@@ -74,8 +74,12 @@
          * ```
          */
         then: function then (onFulfilled, onRejected) {
-            if (this.constructor !== Yaku) throw genTypeError($invalid_this);
-            return addHandler(this, newEmptyYaku(), onFulfilled, onRejected);
+            return addHandler(
+                this,
+                newEmptyPromise(this.constructor),
+                onFulfilled,
+                onRejected
+            );
         },
 
         /**
@@ -122,8 +126,7 @@
      * ```
      */
     Yaku.resolve = function resolve (val) {
-        throwIfNotYaku(this);
-        return isYaku(val) ? val : settleWithX(newEmptyYaku(), val);
+        return isYaku(val) ? val : settleWithX(newEmptyPromise(this), val);
     };
 
     /**
@@ -137,8 +140,7 @@
      * ```
      */
     Yaku.reject = function reject (reason) {
-        throwIfNotYaku(this);
-        return settlePromise(newEmptyYaku(), $rejected, reason);
+        return settlePromise(newEmptyPromise(this), $rejected, reason);
     };
 
     /**
@@ -162,11 +164,9 @@
      * ```
      */
     Yaku.race = function race (iterable) {
-        throwIfNotYaku(this);
-
         var iter, len, i = 0;
 
-        var p = newEmptyYaku(), item;
+        var p = newEmptyPromise(this), item;
 
         if (isPlainArray(iterable)) {
             len = iterable.length;
@@ -224,9 +224,7 @@
      * ```
      */
     Yaku.all = function all (iterable) {
-        throwIfNotYaku(this);
-
-        var p1 = newEmptyYaku()
+        var p1 = newEmptyPromise(this)
         , res = []
         , item
         , countDown = 0
@@ -358,7 +356,7 @@
     var $tryCatchFn
     , $tryCatchThis
     , $tryErr = { e: null }
-    , $noop = {};
+    , $noop = function () {};
 
     function extendPrototype (src, target) {
         for (var k in target) {
@@ -383,10 +381,6 @@
 
     function isError (obj) {
         return obj instanceof Error;
-    }
-
-    function throwIfNotYaku (obj) {
-        if (obj !== Yaku) throw genTypeError($invalid_this);
     }
 
     /**
@@ -543,12 +537,9 @@
 
     function isYaku (val) { return val && val._Yaku; }
 
-    /**
-     * Create an empty promise.
-     * @private
-     * @return {Yaku}
-     */
-    function newEmptyYaku () { return new Yaku($noop); }
+    function newEmptyPromise (self) {
+        return new self($noop);
+    }
 
     /**
      * It will produce a settlePromise function to user.

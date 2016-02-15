@@ -192,6 +192,49 @@ module.exports = testSuit("basic", function (it) {
         return Yaku.race(arr);
     });
 
+    it("subclass", ["subclass", "subclass", "subclass", "subclass", "subclass", true, true, 5, 6], function () {
+        function SubPromise (it){
+            var self;
+            self = new Yaku(it);
+            Object.setPrototypeOf(self, SubPromise.prototype);
+            self.mine = "subclass";
+            return self;
+        }
+
+        var result = [];
+
+        Object.setPrototypeOf(SubPromise, Yaku);
+        SubPromise.prototype = Object.create(Yaku.prototype);
+        SubPromise.prototype.constructor = SubPromise;
+
+        var p1 = SubPromise.resolve(5);
+        result.push(p1.mine);
+        p1 = p1.then(function (it){
+            return result.push(it);
+        });
+        result.push(p1.mine);
+
+        var p2 = new SubPromise(function (it){
+            return it(6);
+        });
+        result.push(p2.mine);
+        p2 = p2.then(function (it){
+            return result.push(it);
+        });
+        result.push(p2.mine);
+
+        var p3 = SubPromise.all([p1, p2]);
+        result.push(p3.mine);
+        result.push(p3 instanceof Yaku);
+        result.push(p3 instanceof SubPromise);
+
+        return p3.then(utils.sleep(50), function (it){
+            return result.push(it);
+        }).then(function () {
+            return result;
+        });
+    });
+
     it("any one resolved", 0, function () {
         return utils.any([
             Yaku.reject(1),
