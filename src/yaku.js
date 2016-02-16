@@ -454,6 +454,7 @@
     /**
      * Generate a iterator
      * @param  {Any} obj
+     * @private
      * @return {Object || TypeError}
      */
     function genIterator (obj) {

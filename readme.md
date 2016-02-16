@@ -135,7 +135,6 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [Yaku.onUnhandledRejection(reason, p)](#yakuonunhandledrejectionreason-p)
   - [Yaku.enableLongStackTrace](#yakuenablelongstacktrace)
   - [Yaku.nextTick](#yakunexttick)
-  - [genIterator(obj)](#geniteratorobj)
 
 - #### require('yaku/lib/utils')
   - [any(iterable)](#anyiterable)
@@ -424,14 +423,6 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         var Promise = require('yaku');
         Promise.nextTick = fn => fn();
         ```
-
-- ### **[genIterator(obj)](src/yaku.js?source#L457)**
-
-    Generate a iterator
-
-    - **<u>param</u>**: `obj` { _Any_ }
-
-    - **<u>return</u>**: { _Object || TypeError_ }
 
 
 
