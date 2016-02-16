@@ -73,11 +73,12 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 
 | Name                 | promises-es6-tests | 1ms async task / mem | Helpers | file size |
 | -------------------- | ------------------ | -------------------- | ------- | --------- |
-| Yaku v0.12           |         ✓          |  247ms / 101mb       | +++     | 3.8KB |
-| [Bluebird][] v3.3    |         x          |  166ms / 86mb        | +++++++ | 73KB      |
-| [ES6-promise][] v3.1 |         x          |  342ms / 104mb       | +       | 18KB      |
-| [native][] v5.0      |         x          |  496ms / 166mb       | +       | 0KB       |
-| [q][] v1.4           |         x          | 3109ms / 618mb       | +++     | 24K       |
+| Yaku v0.12           |         ✓          |  328ms / 105mb       | +++     | 3.8KB |
+| [Bluebird][] v3.3    |         x          |  244ms / 86mb        | +++++++ | 73KB      |
+| [ES6-promise][] v3.1 |         x          |  423ms / 112mb       | +       | 18KB      |
+| [native][] v5.0      |         x          |  597ms / 173mb       | +       | 0KB       |
+| [core-js][] v2.1.0   |         x          |  883ms / 196mb       | +       | 77KB      |
+| [q][] v1.4           |         x          | 3313ms / 592mb       | +++     | 24K       |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
