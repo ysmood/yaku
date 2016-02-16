@@ -21,7 +21,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.8KB (1.5KB gzipped) ([Bluebird][] / 73KB, [ES6-promise][] / 18KB)
+- The minified file is only 3.8KB (1.5KB gzipped)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and nearly 100% compliant with ES6 specs
@@ -71,18 +71,34 @@ Raw usage without:
 These comparisons only reflect some limited truth, no one is better than all others on all aspects.
 For more details see the [benchmark/readme.md](benchmark/readme.md). There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
-| Name                 | promises-es6-tests | 1ms async task / mem | Helpers | file size |
-| -------------------- | ------------------ | -------------------- | ------- | --------- |
-| Yaku v0.12           |         ✓          |  328ms / 105mb       | +++     | 3.8KB |
-| [Bluebird][] v3.3    |         x          |  244ms / 86mb        | +++++++ | 73KB      |
-| [ES6-promise][] v3.1 |         x          |  423ms / 112mb       | +       | 18KB      |
-| [native][] v5.0      |         x          |  597ms / 173mb       | +       | 0KB       |
-| [core-js][] v2.1.0   |         x          |  883ms / 196mb       | +       | 77KB      |
-| [q][] v1.4           |         x          | 3313ms / 592mb       | +++     | 24K       |
+```
+Node v5.6.0
+OS   darwin
+Arch x64
+CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
+```
+
+| name | unit tests | 1ms async task | optional helpers | helpers | min js |
+| ---- | ---------- | -------------- | ---------------- | ------- | ------ |
+| [yaku][]@0.11.6 | ✓ | 330ms / 106MB | ✓ | 29 | 3.8KB |
+| [bluebird][]@3.3.1 | x (18 failing) | 265ms / 88MB | partial | 100 | 52.2KB |
+| [es6-promise][]@3.1.2 | x (52 failing) | 426ms / 113MB | x | 10 | 6.3KB |
+| [native][]@0.12.4 | x ( 4 failing) | 590ms / 173MB | x | 13 | 0KB |
+| [core-js][]@2.1.0 | x ( 4 failing) | 838ms / 198MB | x | 11 | 13.9KB |
+| [es6-shim][]@0.34.4 | ✓ | 950ms / 145MB | x | 12 | 130.8KB |
+| [q][]@1.4.1 | x (47 failing) | 1599ms / 425MB | x | 74 | 15.4KB |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
-- **1ms async task**: `npm run no -- benchmark`, the smaller the better.
+
+- **1ms async task**: `npm run no -- benchmark`, the smaller the better (total time / memory rss).
+
+- **promises-es6-tests**: If you want to test `bluebird` against promises-es6-tests,
+  run `npm run no -- test-es6 --shim bluebird`.
+
+- **optional helpers**: Whether the helpers can be imported separately or not,
+  which means you can load the lib without helpers. Such as the `bluebird-core`, it will inevitably load
+  some nonstandard helpers: `spread`, `finally`, etc.
 
 
 # FAQ
@@ -114,7 +130,7 @@ For more details see the [benchmark/readme.md](benchmark/readme.md). There are t
 # Unhandled Rejection
 
 Yaku will report any unhandled rejection via `console.error` by default, in case you forget to write `catch`.
-You can catch with them manually:
+You can catch them manually:
 
 - Browser: `window.onunhandledrejection = ({ promise, reason }) => { /* Your Code */ };`
 - Node: `process.on("unhandledRejection", (reason, promise) => { /* Your Code */ });`
@@ -976,8 +992,21 @@ var source = require("yaku/lib/source");
 
 This project use [promises-aplus-tests][] to test the compliance of Promises/A+ specification. There are about 900 test cases.
 
-Use `npm run no -- test` to run the unit test.
+Use `npm run no -- test` to run the unit test against yaku.
 
+## Test other libs
+
+### aplus test
+
+To test `bluebird`: `npm run no -- test-aplus --shim bluebird`
+
+The `bluebird` can be replaced with other lib, see the `test/getPromise.js` for which libs are supported.
+
+### es6 test
+
+To test `bluebird`: `npm run no -- test-es6 --shim bluebird`
+
+The `bluebird` can be replaced with other lib, see the `test/getPromise.js` for which libs are supported.
 
 
 # Benchmark
@@ -999,6 +1028,9 @@ If you installed `nokit` globally, you can just run `no -h` without `npm run` an
 [ES6-promise]: https://github.com/jakearchibald/es6-promise
 [native]: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects
 [q]: https://github.com/kriskowal/q
+[core-js]: https://github.com/zloirock/core-js
+[yaku]: https://github.com/ysmood/yaku
+[es6-shim]: https://github.com/paulmillr/es6-shim
 [release page]: https://github.com/ysmood/yaku/releases
 [docs/minPromiseAplus.js]: docs/minPromiseAplus.js
 [promises-aplus-tests]: https://github.com/promises-aplus/promises-tests

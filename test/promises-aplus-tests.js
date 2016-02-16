@@ -1,9 +1,11 @@
 var promisesAplusTests = require("promises-aplus-tests");
 var kit = require("nokit");
+var getPromise = require("./getPromise");
 
-var Promise = require("../src/yaku");
 
 module.exports = function (opts) {
+    var Promise = getPromise(opts.shim);
+
     var adapter = {
         deferred: function () {
             var defer;

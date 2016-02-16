@@ -1,12 +1,14 @@
 var kit = require("nokit");
+var _ = kit._;
 kit.require("drives");
 
 module.exports = function (task, option) {
     option("--debug", "run with remote debug server");
     option("--port <8219>", "remote debug server port", 8219);
-    option("--grep <pattern>", "run test that match the pattern", ".");
+    option("-g, --grep <pattern>", "run test that match the pattern", ".");
     option("--noAplus", "don't run the promises-aplus-tests");
     option("--browserPort <8227>", "browser test port", 8227);
+    option("-s, --shim <name>", "the promise shim to require, check the test/getPromise.js file for details", "yaku");
 
     task("default build", ["doc", "code"]);
 
@@ -71,6 +73,7 @@ module.exports = function (task, option) {
 
         return kit.spawn("junit", junitOpts.concat([
             "test/basic.js",
+            "test/utils.js",
             "test/unhandledRejection.js"])
         );
     });
@@ -84,18 +87,21 @@ module.exports = function (task, option) {
 
         var os = require("os");
         console.log("Node " + process.version // eslint-disable-line
-            + "\nOS     " + (os.platform())
+            + "\nOS   " + (os.platform())
             + "\nArch " + (os.arch())
-            + "\nCPU    " + (os.cpus()[0].model) + "\n"
-            + (kit._.repeat("-", 80)));
+            + "\nCPU  " + (os.cpus()[0].model) + "\n\n"
+            + "| name | unit tests | 1ms async task | optional helpers | helpers | min js |\n"
+            + "| ---- | ---------- | -------------- | ---------------- | ------- | ------ |"
 
-        var paths = kit.globSync("benchmark/*.js");
+        );
+
+        var names = _.keys(require("./test/getPromise").map);
 
         return kit.async(1, { next: function () {
-            var path = paths.pop();
+            var name = names.shift();
             return {
-                done: !path,
-                value: path && kit.spawn("node", [path])
+                done: !name,
+                value: name && kit.spawn("node", ["benchmark/index.js", name])
             };
         } });
     });
