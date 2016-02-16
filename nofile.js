@@ -64,7 +64,7 @@ module.exports = function (task, option) {
         });
     });
 
-    task("test", "run Promises/A+ tests", ["test-yaku", "test-aplus"], true);
+    task("test", "run Promises/A+ tests", ["test-yaku", "test-aplus", "test-es6"], true);
 
     task("test-yaku", "test yaku specs tests", function (opts) {
         var junitOpts = ["-g", opts.grep];

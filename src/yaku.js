@@ -346,6 +346,8 @@
 
     // ********************** Private **********************
 
+    Yaku._Yaku = 1;
+
     /**
      * All static variable name will begin with `$`. Such as `$rejected`.
      * @private
@@ -538,6 +540,8 @@
     function isYaku (val) { return val && val._Yaku; }
 
     function newEmptyPromise (self) {
+        if (!isYaku(self)) throw genTypeError($invalid_this);
+
         return new self($noop);
     }
 

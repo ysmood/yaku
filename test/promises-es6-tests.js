@@ -26,8 +26,5 @@ module.exports = function () {
         }
     };
 
-    return kit.promisify(promisesES6Tests)(adapter, {
-        // incorrect subclassing test is too old and the specs may changed
-        grep: /^(?!incorrect subclassing)/
-    });
+    return kit.promisify(promisesES6Tests)(adapter);
 };
