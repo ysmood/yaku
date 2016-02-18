@@ -30,16 +30,12 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
             return it("no unhandled rejection", $val, function () {
                 return new Promise(function (resolve, reject) {
-                    function handler () {
-                        process.removeListener("unhandledRejection", handler);
-                        return reject();
-                    }
-                    process.once("unhandledRejection", handler);
+                    process.once("unhandledRejection", reject);
 
                     return Promise.reject()["catch"](function () {
                         return setTimeout(function () {
                             return resolve($val);
-                        }, 100);
+                        }, 20);
                     });
                 });
             });
@@ -65,10 +61,10 @@ module.exports = testSuit("unhandledRejection", function (it) {
                 return new Promise(function (resolve) {
                     var promise;
                     process.once("unhandledRejection", function handler (reason, p) {
-                        return p.catch(function () {});
+                        p.catch(function () {});
                     });
                     process.once("rejectionHandled", function (p) {
-                        return resolve(p === promise);
+                        resolve(p === promise);
                     });
                     promise = Promise.reject();
                 });
@@ -76,23 +72,14 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
         }).then(function () {
 
-            return it("unhandled rejection only once", 1, function () {
-                var count = 0;
-                function handler () {
-                    return count++;
-                }
-
-                process.on("unhandledRejection", handler);
-
-                Promise.reject().then(function () {
-                    return $val;
-                });
-
+            return it("unhandled rejection only once", "ok", function () {
                 return new Promise(function (r) {
-                    return setTimeout(function () {
-                        process.removeListener("unhandledRejection", handler);
-                        return r(count);
-                    }, 50);
+                    process.once("unhandledRejection", function () {
+                        r("ok");
+                    });
+                    Promise.reject().then(function () {
+                        return $val;
+                    });
                 });
             });
 
@@ -146,10 +133,13 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
         }).then(function () {
 
-            return it("unhandled rejection inside a catch", $val, function () {
+            return it("unhandled rejection inside a catch", $val, function (after) {
+                after(function () {
+                    root.onunhandledrejection = null;
+                });
+
                 return new Promise(function (r) {
                     function handler (e) {
-                        root.onunhandledrejection = null;
                         return r(e.reason);
                     }
                     root.onunhandledrejection = handler;
@@ -162,7 +152,30 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
         }).then(function () {
 
-            return it("unhandled rejection only once", 1, function () {
+            return it("rejection handled", true, function (after) {
+                after(function () {
+                    root.onunhandledrejection = root.onrejectionhandled = null;
+                });
+
+                return new Promise(function (resolve) {
+                    var promise;
+                    root.onunhandledrejection = function (e) {
+                        e.promise.catch(function () {});
+                    };
+                    root.onrejectionhandled = function (e) {
+                        resolve(e.promise === promise);
+                    };
+                    promise = Promise.reject();
+                });
+            });
+
+        }).then(function () {
+
+            return it("unhandled rejection only once", 1, function (after) {
+                after(function () {
+                    root.onunhandledrejection = null;
+                });
+
                 var count = 0;
                 function handler () {
                     return count++;
@@ -176,7 +189,6 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
                 return new Promise(function (r) {
                     return setTimeout(function () {
-                        root.onunhandledrejection = null;
                         return r(count);
                     }, 50);
                 });

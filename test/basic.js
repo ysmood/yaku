@@ -1,4 +1,4 @@
-var Yaku = require("../src/yaku");
+var Promise = require("../src/yaku");
 var utils = require("../src/utils");
 var testSuit = require("./testSuit");
 var setPrototypeOf = require("setprototypeof");
@@ -10,12 +10,12 @@ var $val = {
 module.exports = testSuit("basic", function (it) {
 
     it("resolve order", ["DEHAFGBC", "DEHAFGBC"], function () {
-        return new Yaku(function (assertResolve) {
+        return new Promise(function (assertResolve) {
             var assertRes = [];
             var result = "";
             var resolve, resolve2;
 
-            var p = new Yaku(function (r) {
+            var p = new Promise(function (r) {
                 resolve = r;
             });
 
@@ -34,7 +34,7 @@ module.exports = testSuit("basic", function (it) {
                 assertRes.push(result);
             });
 
-            var p2 = new Yaku(function (r) {
+            var p2 = new Promise(function (r) {
                 resolve2 = r;
             });
             resolve2(Object.defineProperty({}, "then", {
@@ -62,13 +62,13 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("resolve", $val, function () {
-        return new Yaku(function (resolve) {
+        return new Promise(function (resolve) {
             return resolve($val);
         });
     });
 
     it("resolve promise like value", $val, function () {
-        return new Yaku(function (resolve) {
+        return new Promise(function (resolve) {
             return resolve({
                 then: function (fulfil) {
                     return fulfil($val);
@@ -78,7 +78,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("constructor throw", $val, function () {
-        return new Yaku(function () {
+        return new Promise(function () {
             throw $val;
         })["catch"](function (e) {
             return e;
@@ -86,21 +86,21 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("resolve static", $val, function () {
-        return Yaku.resolve($val);
+        return Promise.resolve($val);
     });
 
     it("resolve promise", $val, function () {
-        return Yaku.resolve(Yaku.resolve($val));
+        return Promise.resolve(Promise.resolve($val));
     });
 
     it("reject", $val, function () {
-        return Yaku.reject($val)["catch"](function (val) {
+        return Promise.reject($val)["catch"](function (val) {
             return val;
         });
     });
 
     it("catch", $val, function () {
-        return new Yaku(function (nil, reject) {
+        return new Promise(function (nil, reject) {
             return reject($val);
         })["catch"](function (val) {
             return val;
@@ -108,8 +108,8 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("chain", "ok", function () {
-        return Yaku.resolve().then(function () {
-            return new Yaku(function (r) {
+        return Promise.resolve().then(function () {
+            return new Promise(function (r) {
                 return setTimeout(function () {
                     return r("ok");
                 }, 10);
@@ -118,30 +118,30 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("empty all", [], function () {
-        return Yaku.all([]);
+        return Promise.all([]);
     });
 
     it("array like", [1, 2, 3], function () {
-        return Yaku.all({
+        return Promise.all({
             "0": 1, "1": 2, "2": 3, length: 3
         });
     });
 
     it("all", [1, "test", "x", 10, 0], function () {
         function randomPromise (i) {
-            return new Yaku(function (r) {
+            return new Promise(function (r) {
                 return setTimeout(function () {
                     return r(i);
                 }, Math.random() * 10);
             });
         }
 
-        return Yaku.all([
-            randomPromise(1), randomPromise("test"), Yaku.resolve("x"), new Yaku(function (r) {
+        return Promise.all([
+            randomPromise(1), randomPromise("test"), Promise.resolve("x"), new Promise(function (r) {
                 return setTimeout(function () {
                     return r(10);
                 }, 1);
-            }), new Yaku(function (r) {
+            }), new Promise(function (r) {
                 return r(0);
             })
         ]);
@@ -160,17 +160,17 @@ module.exports = testSuit("basic", function (it) {
             return [1, 2, 3][Symbol.iterator]();
         };
 
-        return Yaku.all(arr);
+        return Promise.all(arr);
     });
 
     it("race", 0, function () {
-        return Yaku.race([
-            new Yaku(function (r) {
+        return Promise.race([
+            new Promise(function (r) {
                 return setTimeout(function () {
                     return r(1);
                 }, 10);
             }),
-            new Yaku(function (r) {
+            new Promise(function (r) {
                 return setTimeout(function () {
                     return r(0);
                 });
@@ -191,13 +191,13 @@ module.exports = testSuit("basic", function (it) {
             return [1, 2, 3][Symbol.iterator]();
         };
 
-        return Yaku.race(arr);
+        return Promise.race(arr);
     });
 
     it("subclass", ["subclass", "subclass", "subclass", "subclass", "subclass", true, true, 5, 6], function () {
         function SubPromise (it) {
             var self;
-            self = new Yaku(it);
+            self = new Promise(it);
             setPrototypeOf(self, SubPromise.prototype);
             self.mine = "subclass";
             return self;
@@ -205,8 +205,8 @@ module.exports = testSuit("basic", function (it) {
 
         var result = [];
 
-        setPrototypeOf(SubPromise, Yaku);
-        SubPromise.prototype = Object.create(Yaku.prototype);
+        setPrototypeOf(SubPromise, Promise);
+        SubPromise.prototype = Object.create(Promise.prototype);
         SubPromise.prototype.constructor = SubPromise;
 
         var p1 = SubPromise.resolve(5);
@@ -227,7 +227,7 @@ module.exports = testSuit("basic", function (it) {
 
         var p3 = SubPromise.all([p1, p2]);
         result.push(p3.mine);
-        result.push(p3 instanceof Yaku);
+        result.push(p3 instanceof Promise);
         result.push(p3 instanceof SubPromise);
 
         return p3.then(utils.sleep(50), function (it) {
@@ -239,15 +239,15 @@ module.exports = testSuit("basic", function (it) {
 
     it("any one resolved", 0, function () {
         return utils.any([
-            Yaku.reject(1),
-            Yaku.resolve(0)
+            Promise.reject(1),
+            Promise.resolve(0)
         ]);
     });
 
     it("any all rejected", [0, 1], function () {
         return utils.any([
-            Yaku.reject(0),
-            Yaku.reject(1)
+            Promise.reject(0),
+            Promise.reject(1)
         ]).catch(function (v) {
             return v;
         });
