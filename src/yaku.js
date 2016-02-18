@@ -1,7 +1,8 @@
 (function () {
     "use strict";
 
-    var $nil
+    var $undefined
+    , $null = null
     , root = typeof global === "object" ? global : window
     , isLongStackTrace = false
 
@@ -15,9 +16,11 @@
     , $promiseTrace = "_pt"
     , $settlerTrace = "_st"
 
-    , $invalid_this = "invalid_this"
-    , $invalid_argument = "invalid_argument"
+    , $invalid_this = "Invalid this"
+    , $invalid_argument = "Invalid argument"
     , $fromPrevious = "From previous event:"
+    , $promise_circular_chain = "Chaining cycle detected for promise"
+    , $unhandledRejectionMsg = "Uncaught (in promise)"
     , $unhandledRejection = "unhandledRejection";
 
     /**
@@ -32,7 +35,7 @@
         var self = this,
             err;
 
-        if (!isYaku(self) || self._state !== $nil)
+        if (!isYaku(self) || self._state !== $undefined)
             throw genTypeError($invalid_this);
 
         self._state = $pending;
@@ -99,14 +102,14 @@
          * ```
          */
         "catch": function (onRejected) {
-            return this.then($nil, onRejected);
+            return this.then($undefined, onRejected);
         },
 
         // The number of current promises that attach to this Yaku instance.
         _pCount: 0,
 
         // The parent Yaku.
-        _pre: null,
+        _pre: $null,
 
         // A unique type flag, it helps different versions of Yaku know each other.
         _Yaku: 1
@@ -301,7 +304,7 @@
         var con = root.console;
         if (con) {
             var info = genStackInfo(reason, p);
-            con.error($unhandledRejection, info[0], info[1] || "");
+            con.error($unhandledRejectionMsg, info[0], info[1] || "");
         }
     };
 
@@ -357,7 +360,7 @@
 
     var $tryCatchFn
     , $tryCatchThis
-    , $tryErr = { e: null }
+    , $tryErr = { e: $null }
     , $noop = function () {};
 
     function extendPrototype (src, target) {
@@ -435,8 +438,8 @@
             var i = 0;
             while (i < fnQueueLen) {
                 fn(fnQueue[i], fnQueue[i + 1]);
-                fnQueue[i++] = $nil;
-                fnQueue[i++] = $nil;
+                fnQueue[i++] = $undefined;
+                fnQueue[i++] = $undefined;
             }
 
             fnQueueLen = 0;
@@ -507,7 +510,7 @@
 
         // 2.2.7.3
         // 2.2.7.4
-        if (handler === $nil) {
+        if (handler === $undefined) {
             settlePromise(p2, p1._state, p1._value);
             return;
         }
@@ -710,13 +713,13 @@
     function settleWithX (p, x) {
         // 2.3.1
         if (x === p && x) {
-            settlePromise(p, $rejected, genTypeError("promise_circular_chain"));
+            settlePromise(p, $rejected, genTypeError($promise_circular_chain));
             return p;
         }
 
         // 2.3.2
         // 2.3.3
-        if (x != null && (isFunction(x) || isObject(x))) {
+        if (x !== $null && (isFunction(x) || isObject(x))) {
             // 2.3.2.1
             var xthen = genTryCatcher(getThen)(x);
 
@@ -768,7 +771,7 @@
         var err = genTryCatcher(xthen, x)(function (y) {
             // 2.3.3.3.3
             if (x) {
-                x = null;
+                x = $null;
 
                 // 2.3.3.3.1
                 settleWithX(p, y);
@@ -776,7 +779,7 @@
         }, function (r) {
             // 2.3.3.3.3
             if (x) {
-                x = null;
+                x = $null;
 
                 // 2.3.3.3.2
                 settlePromise(p, $rejected, r);
@@ -787,7 +790,7 @@
         if (err === $tryErr && x) {
             // 2.3.3.3.4.2
             settlePromise(p, $rejected, err.e);
-            x = null;
+            x = $null;
         }
     }
 
