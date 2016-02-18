@@ -79,7 +79,7 @@
         then: function then (onFulfilled, onRejected) {
             return addHandler(
                 this,
-                newEmptyPromise(this.constructor),
+                newEmptyPromise(Yaku.SpeciesConstructor(this)),
                 onFulfilled,
                 onRejected
             );
@@ -279,6 +279,13 @@
      * ```
      */
     Yaku.Symbol = root[$Symbol] || {};
+
+    /**
+     * Use this api to custom the species behavior.
+     * https://tc39.github.io/ecma262/#sec-speciesconstructor
+     * @param {Any} O The current this object.
+     */
+    Yaku.SpeciesConstructor = function (O) { return O.constructor; };
 
     /**
      * Catch all possibly unhandled rejections. If you want to use specific
