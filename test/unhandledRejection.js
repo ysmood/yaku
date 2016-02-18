@@ -163,9 +163,9 @@ module.exports = testSuit("unhandledRejection", function (it) {
                         e.promise.catch(function () {});
                     };
                     root.onrejectionhandled = function (e) {
-                        resolve(e.promise === promise);
+                        resolve(e.promise === promise && e.reason === $val);
                     };
-                    promise = Promise.reject();
+                    promise = Promise.reject($val);
                 });
             });
 

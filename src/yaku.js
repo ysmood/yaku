@@ -328,7 +328,8 @@
     /**
      * Emitted whenever a Promise was rejected and an error handler was
      * attached to it (for example with .catch()) later than after an event loop turn.
-     * @param {Yaku} p The handled promise.
+     * @param {Any} reason The rejection reason.
+     * @param {Yaku} p The promise that was rejected.
      */
     Yaku.rejectionHandled = $noop;
 
@@ -548,20 +549,21 @@
     var scheduleUnhandledRejection = genScheduler(9, function (p) {
         if (!hashOnRejected(p)) {
             p[$unhandled] = 1;
-            emitEvent($unhandledRejection, p._value, p);
+            emitEvent($unhandledRejection, p);
         }
     });
 
-    function emitEvent (name, arg1, arg2) {
+    function emitEvent (name, p) {
         var browserEventName = "on" + name.toLowerCase()
             , browserHandler = root[browserEventName];
 
         if (process && process.listeners(name).length)
-            process.emit(name, arg1, arg2);
+            name === $unhandledRejection ?
+                process.emit(name, p._value, p) : process.emit(name, p);
         else if (browserHandler)
-            browserHandler({ reason: arg1, promise: arg2 });
+            browserHandler({ reason: p._value, promise: p });
         else
-            Yaku[name](arg1, arg2);
+            Yaku[name](p._value, p);
     }
 
     function isYaku (val) { return val && val._Yaku; }
