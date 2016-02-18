@@ -21,7 +21,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.9KB (1.5KB gzipped)
+- The minified file is only 3.3KB (2KB gzipped)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and nearly 100% compliant with ES6 specs
@@ -80,7 +80,7 @@ CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
 
 | name | unit tests | 1ms async task | optional helpers | helpers | min js |
 | ---- | ---------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.11.6 | ✓ | 330ms / 106MB | ✓ | 29 | 3.8KB |
+| [yaku][]@0.11.6 | ✓ | 330ms / 106MB | ✓ | 29 | 3.3KB |
 | [bluebird][]@3.3.1 | x (18 failing) | 265ms / 88MB | partial | 100 | 52.2KB |
 | [es6-promise][]@3.1.2 | x (52 failing) | 426ms / 113MB | x | 10 | 6.3KB |
 | [native][]@0.12.4 | x ( 4 failing) | 590ms / 173MB | x | 13 | 0KB |
@@ -150,7 +150,8 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [Yaku.all(iterable)](#yakualliterable)
   - [Yaku.Symbol](#yakusymbol)
   - [Yaku.speciesConstructor(O, defaultConstructor)](#yakuspeciesconstructoro-defaultconstructor)
-  - [Yaku.onUnhandledRejection(reason, p)](#yakuonunhandledrejectionreason-p)
+  - [Yaku.unhandledRejection(reason, p)](#yakuunhandledrejectionreason-p)
+  - [Yaku.rejectionHandled(p)](#yakurejectionhandledp)
   - [Yaku.enableLongStackTrace](#yakuenablelongstacktrace)
   - [Yaku.nextTick](#yakunexttick)
 
@@ -182,7 +183,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 ---------------------------------------
 
 
-- ### **[Yaku(executor)](src/yaku.js?source#L34)**
+- ### **[Yaku(executor)](src/yaku.js?source#L43)**
 
     This class follows the [Promises/A+](https://promisesaplus.com) and
     [ES6](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects) spec
@@ -194,7 +195,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         The first argument fulfills the promise, the second argument rejects it.
         We can call these functions, once our operation is completed.
 
-- ### **[then(onFulfilled, onRejected)](src/yaku.js?source#L79)**
+- ### **[then(onFulfilled, onRejected)](src/yaku.js?source#L88)**
 
     Appends fulfillment and rejection handlers to the promise,
     and returns a new promise resolving to the return value of the called handler.
@@ -223,7 +224,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[catch(onRejected)](src/yaku.js?source#L104)**
+- ### **[catch(onRejected)](src/yaku.js?source#L113)**
 
     The `catch()` method returns a Promise and deals with rejected cases only.
     It behaves the same as calling `Promise.prototype.then(undefined, onRejected)`.
@@ -248,7 +249,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.resolve(value)](src/yaku.js?source#L131)**
+- ### **[Yaku.resolve(value)](src/yaku.js?source#L140)**
 
     The `Promise.resolve(value)` method returns a Promise object that is resolved with the given value.
     If the value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
@@ -268,7 +269,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         var p = Promise.resolve(10);
         ```
 
-- ### **[Yaku.reject(reason)](src/yaku.js?source#L145)**
+- ### **[Yaku.reject(reason)](src/yaku.js?source#L154)**
 
     The `Promise.reject(reason)` method returns a Promise object that is rejected with the given reason.
 
@@ -285,7 +286,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         var p = Promise.reject(new Error("ERR"));
         ```
 
-- ### **[Yaku.race(iterable)](src/yaku.js?source#L169)**
+- ### **[Yaku.race(iterable)](src/yaku.js?source#L178)**
 
     The `Promise.race(iterable)` method returns a promise that resolves or rejects
     as soon as one of the promises in the iterable resolves or rejects,
@@ -314,7 +315,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.all(iterable)](src/yaku.js?source#L229)**
+- ### **[Yaku.all(iterable)](src/yaku.js?source#L238)**
 
     The `Promise.all(iterable)` method returns a promise that resolves when
     all of the promises in the iterable argument have resolved.
@@ -358,7 +359,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         });
         ```
 
-- ### **[Yaku.Symbol](src/yaku.js?source#L281)**
+- ### **[Yaku.Symbol](src/yaku.js?source#L290)**
 
     The ES6 Symbol object that Yaku should use, by default it will use the
     global one.
@@ -373,7 +374,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.Symbol = core.Symbol;
         ```
 
-- ### **[Yaku.speciesConstructor(O, defaultConstructor)](src/yaku.js?source#L289)**
+- ### **[Yaku.speciesConstructor(O, defaultConstructor)](src/yaku.js?source#L298)**
 
     Use this api to custom the species behavior.
     https://tc39.github.io/ecma262/#sec-speciesconstructor
@@ -384,7 +385,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
     - **<u>param</u>**: `defaultConstructor` { _Function_ }
 
-- ### **[Yaku.onUnhandledRejection(reason, p)](src/yaku.js?source#L311)**
+- ### **[Yaku.unhandledRejection(reason, p)](src/yaku.js?source#L320)**
 
     Catch all possibly unhandled rejections. If you want to use specific
     format to display the error stack, overwrite it.
@@ -413,7 +414,16 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.reject('v').catch(() => {});
         ```
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L331)**
+- ### **[Yaku.rejectionHandled(p)](src/yaku.js?source#L333)**
+
+    Emitted whenever a Promise was rejected and an error handler was
+    attached to it (for example with .catch()) later than after an event loop turn.
+
+    - **<u>param</u>**: `p` { _Yaku_ }
+
+        The handled promise.
+
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L347)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -428,7 +438,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L354)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L370)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you

@@ -1,6 +1,10 @@
+- v0.13
+
+  - **API CHANGE** rename `onUnhandledRejection` to `unhandledRejection`
+
 - v0.12
 
-  - del: `Observable` value api
+  - **API CHANGE** del: `Observable` value api
   - opt: now passed all the tests of `promises-es6-tests`
 
 - v0.11
