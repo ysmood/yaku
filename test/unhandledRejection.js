@@ -61,6 +61,21 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
         }).then(function () {
 
+            return it("rejection handled", true, function () {
+                return new Promise(function (resolve) {
+                    var promise;
+                    process.once("unhandledRejection", function handler (reason, p) {
+                        return p.catch(function () {});
+                    });
+                    process.once("rejectionHandled", function (p) {
+                        return resolve(p === promise);
+                    });
+                    promise = Promise.reject();
+                });
+            });
+
+        }).then(function () {
+
             return it("unhandled rejection only once", 1, function () {
                 var count = 0;
                 function handler () {
