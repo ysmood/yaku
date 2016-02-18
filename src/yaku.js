@@ -16,10 +16,10 @@
     , $promiseTrace = "_pt"
     , $settlerTrace = "_st"
 
-    , $invalid_this = "Invalid this"
-    , $invalid_argument = "Invalid argument"
+    , $invalidThis = "Invalid this"
+    , $invalidArgument = "Invalid argument"
     , $fromPrevious = "From previous event:"
-    , $promise_circular_chain = "Chaining cycle detected for promise"
+    , $promiseCircularChain = "Chaining cycle detected for promise"
     , $unhandledRejectionMsg = "Uncaught (in promise)"
     , $unhandledRejection = "unhandledRejection";
 
@@ -36,7 +36,7 @@
             err;
 
         if (!isYaku(self) || self._state !== $undefined)
-            throw genTypeError($invalid_this);
+            throw genTypeError($invalidThis);
 
         self._state = $pending;
 
@@ -44,7 +44,7 @@
 
         if (executor !== $noop) {
             if (!isFunction(executor))
-                throw genTypeError($invalid_argument);
+                throw genTypeError($invalidArgument);
 
             err = genTryCatcher(executor)(
                 genSettler(self, $resolved),
@@ -56,7 +56,7 @@
         }
     };
 
-    Yaku.default = Yaku;
+    Yaku["default"] = Yaku;
 
     extendPrototype(Yaku, {
         /**
@@ -79,7 +79,7 @@
         then: function then (onFulfilled, onRejected) {
             return addHandler(
                 this,
-                newEmptyPromise(Yaku.SpeciesConstructor(this)),
+                newEmptyPromise(Yaku.speciesConstructor(this, Yaku)),
                 onFulfilled,
                 onRejected
             );
@@ -284,8 +284,9 @@
      * Use this api to custom the species behavior.
      * https://tc39.github.io/ecma262/#sec-speciesconstructor
      * @param {Any} O The current this object.
+     * @param {Function} defaultConstructor
      */
-    Yaku.SpeciesConstructor = function (O) { return O.constructor; };
+    Yaku.speciesConstructor = function (O, D) { return O.constructor || D; };
 
     /**
      * Catch all possibly unhandled rejections. If you want to use specific
@@ -479,7 +480,7 @@
             }
         }
 
-        return genTypeError($invalid_argument);
+        return genTypeError($invalidArgument);
     }
 
     /**
@@ -550,10 +551,10 @@
 
     function isYaku (val) { return val && val._Yaku; }
 
-    function newEmptyPromise (self) {
-        if (!isYaku(self)) throw genTypeError($invalid_this);
+    function newEmptyPromise (Self) {
+        if (!isYaku(Self)) throw genTypeError($invalidThis);
 
-        return new self($noop);
+        return new Self($noop);
     }
 
     /**
@@ -564,15 +565,17 @@
      * @param  {Integer} state The value is one of `$pending`, `$resolved` or `$rejected`.
      * @return {Function} `(value) -> undefined` A resolve or reject function.
      */
-    function genSettler (self, state) { return function (value) {
-        if (isLongStackTrace)
-            self[$settlerTrace] = genTraceInfo(true);
+    function genSettler (self, state) {
+        return function (value) {
+            if (isLongStackTrace)
+                self[$settlerTrace] = genTraceInfo(true);
 
-        if (state === $resolved)
-            settleWithX(self, value);
-        else
-            settlePromise(self, state, value);
-    }; }
+            if (state === $resolved)
+                settleWithX(self, value);
+            else
+                settlePromise(self, state, value);
+        };
+    }
 
     /**
      * Link the promise1 to the promise2.
@@ -720,7 +723,7 @@
     function settleWithX (p, x) {
         // 2.3.1
         if (x === p && x) {
-            settlePromise(p, $rejected, genTypeError($promise_circular_chain));
+            settlePromise(p, $rejected, genTypeError($promiseCircularChain));
             return p;
         }
 
@@ -747,8 +750,7 @@
                     Yaku.nextTick(function () {
                         settleXthen(p, x, xthen);
                     });
-            }
-            else
+            } else
                 // 2.3.3.4
                 settlePromise(p, $resolved, x);
         } else
