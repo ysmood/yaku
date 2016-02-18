@@ -1,6 +1,7 @@
 var kit = require("nokit");
 var _ = kit._;
 kit.require("drives");
+var compressor = require("./compressor");
 
 module.exports = function (task, option) {
     option("--debug", "run with remote debug server");
@@ -39,7 +40,10 @@ module.exports = function (task, option) {
             }
         }).run("lib").then(function () {
             kit.mkdirsSync("dist");
-            return kit.spawn("uglifyjs", ["-mc", "-o", "dist/yaku.min.js", "lib/yaku.js"]);
+            return kit.spawn("uglifyjs", ["-mc", "-o", "dist/yaku.min.js", "lib/yaku.js"])
+            .then(function () {
+                return compressor("dist/yaku.min.js");
+            });
         });
     });
 
