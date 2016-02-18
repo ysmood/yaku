@@ -21,7 +21,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.3KB (2KB gzipped)
+- The minified file is only 3.4KB (2KB gzipped)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and nearly 100% compliant with ES6 specs
@@ -80,7 +80,7 @@ CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
 
 | name | unit tests | 1ms async task | optional helpers | helpers | min js |
 | ---- | ---------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.11.6 | ✓ | 330ms / 106MB | ✓ | 29 | 3.3KB |
+| [yaku][]@0.11.6 | ✓ | 330ms / 106MB | ✓ | 29 | 3.4KB |
 | [bluebird][]@3.3.1 | x (18 failing) | 265ms / 88MB | partial | 100 | 52.2KB |
 | [es6-promise][]@3.1.2 | x (52 failing) | 426ms / 113MB | x | 10 | 6.3KB |
 | [native][]@0.12.4 | x ( 4 failing) | 590ms / 173MB | x | 13 | 0KB |
@@ -151,7 +151,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [Yaku.Symbol](#yakusymbol)
   - [Yaku.speciesConstructor(O, defaultConstructor)](#yakuspeciesconstructoro-defaultconstructor)
   - [Yaku.unhandledRejection(reason, p)](#yakuunhandledrejectionreason-p)
-  - [Yaku.rejectionHandled(p)](#yakurejectionhandledp)
+  - [Yaku.rejectionHandled(reason, p)](#yakurejectionhandledreason-p)
   - [Yaku.enableLongStackTrace](#yakuenablelongstacktrace)
   - [Yaku.nextTick](#yakunexttick)
 
@@ -414,16 +414,20 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.reject('v').catch(() => {});
         ```
 
-- ### **[Yaku.rejectionHandled(p)](src/yaku.js?source#L333)**
+- ### **[Yaku.rejectionHandled(reason, p)](src/yaku.js?source#L334)**
 
     Emitted whenever a Promise was rejected and an error handler was
     attached to it (for example with .catch()) later than after an event loop turn.
 
+    - **<u>param</u>**: `reason` { _Any_ }
+
+        The rejection reason.
+
     - **<u>param</u>**: `p` { _Yaku_ }
 
-        The handled promise.
+        The promise that was rejected.
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L347)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L348)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -438,7 +442,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L370)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L371)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
