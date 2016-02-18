@@ -1,8 +1,30 @@
 /*eslint-disable */
 
-var Yaku = require("../src/yaku");
-var utils = require("../src/utils");
+var Promise = require("../src/yaku");
+// Promise.enableLongStackTrace()
 
-var one = new utils.Observable();
+process.on('unhandledRejection', (r, p) => {
+    setTimeout(function () {
+        p.catch(function () { })
+    }, 1)
+    console.log('##')
+});
 
-var two = new utils.Observable();
+process.on('rejectionHandled', (p) => {
+    console.log('**', p === gp)
+});
+
+var gp = Promise.reject(10)
+
+// window.onunhandledrejection = (r, p) => {
+//     setTimeout(function () {
+//         p.catch(function () { })
+//     }, 1000)
+//     console.log('##')
+// };
+
+// window.onrejectionhandled = (p) => {
+//     console.log('**')
+// };
+
+// Promise.reject(10)

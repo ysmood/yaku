@@ -5,6 +5,7 @@
     , $null = null
     , root = typeof global === "object" ? global : window
     , isLongStackTrace = false
+    , process = root.process
 
     , $rejected = 0
     , $resolved = 1
@@ -13,6 +14,7 @@
     , $Symbol = "Symbol"
     , $iterator = "iterator"
 
+    , $unhandled = "_uh"
     , $promiseTrace = "_pt"
     , $settlerTrace = "_st"
 
@@ -21,7 +23,14 @@
     , $fromPrevious = "From previous event:"
     , $promiseCircularChain = "Chaining cycle detected for promise"
     , $unhandledRejectionMsg = "Uncaught (in promise)"
-    , $unhandledRejection = "unhandledRejection";
+    , $rejectionHandled = "rejectionHandled"
+    , $unhandledRejection = "unhandledRejection"
+
+    , $tryCatchFn
+    , $tryCatchThis
+    , $tryErr = { e: $null }
+    , $noop = function () {}
+    ;
 
     /**
      * This class follows the [Promises/A+](https://promisesaplus.com) and
@@ -308,13 +317,20 @@
      * Promise.reject('v').catch(() => {});
      * ```
      */
-    Yaku.onUnhandledRejection = function (reason, p) {
+    Yaku.unhandledRejection = function (reason, p) {
         var con = root.console;
         if (con) {
             var info = genStackInfo(reason, p);
             con.error($unhandledRejectionMsg, info[0], info[1] || "");
         }
     };
+
+    /**
+     * Emitted whenever a Promise was rejected and an error handler was
+     * attached to it (for example with .catch()) later than after an event loop turn.
+     * @param {Yaku} p The handled promise.
+     */
+    Yaku.rejectionHandled = $noop;
 
     /**
      * It is used to enable the long stack trace.
@@ -351,8 +367,8 @@
      * Promise.nextTick = fn => fn();
      * ```
      */
-    Yaku.nextTick = root.process ?
-        root.process.nextTick :
+    Yaku.nextTick = process ?
+        process.nextTick :
         function (fn) { setTimeout(fn); };
 
     // ********************** Private **********************
@@ -365,11 +381,6 @@
      */
 
     // ******************************* Utils ********************************
-
-    var $tryCatchFn
-    , $tryCatchThis
-    , $tryErr = { e: $null }
-    , $noop = function () {};
 
     function extendPrototype (src, target) {
         for (var k in target) {
@@ -536,18 +547,22 @@
 
     var scheduleUnhandledRejection = genScheduler(9, function (p) {
         if (!hashOnRejected(p)) {
-            var process = root.process
-            , onunhandledrejection = root.onunhandledrejection
-            , reason = p._value;
-
-            if (process && process.listeners($unhandledRejection).length)
-                process.emit($unhandledRejection, reason, p);
-            else if (onunhandledrejection)
-                onunhandledrejection({ promise: p, reason: reason });
-            else
-                Yaku.onUnhandledRejection(reason, p);
+            p[$unhandled] = 1;
+            emitEvent($unhandledRejection, p._value, p);
         }
     });
+
+    function emitEvent (name, arg1, arg2) {
+        var browserEventName = "on" + name.toLowerCase()
+            , browserHandler = root[browserEventName];
+
+        if (process && process.listeners(name).length)
+            process.emit(name, arg1, arg2);
+        else if (browserHandler)
+            browserHandler({ reason: arg1, promise: arg2 });
+        else
+            Yaku[name](arg1, arg2);
+    }
 
     function isYaku (val) { return val && val._Yaku; }
 
@@ -589,8 +604,11 @@
         // 2.2.1
         if (isFunction(onFulfilled))
             p2._onFulfilled = onFulfilled;
-        if (isFunction(onRejected))
+        if (isFunction(onRejected)) {
+            if (p1[$unhandled]) emitEvent($rejectionHandled, p1);
+
             p2._onRejected = onRejected;
+        }
 
         if (isLongStackTrace) p2._pre = p1;
         p1[p1._pCount++] = p2;
