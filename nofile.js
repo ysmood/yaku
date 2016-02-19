@@ -9,6 +9,7 @@ module.exports = function (task, option) {
     option("-g, --grep <pattern>", "run test that match the pattern", ".");
     option("--noAplus", "don't run the promises-aplus-tests");
     option("--browserPort <8227>", "browser test port", 8227);
+    option("-w, --watch", "webpack watch");
     option("-s, --shim <name>", "the promise shim to require, check the test/getPromise.js file for details", "yaku");
 
     task("default build", ["doc", "code"]);
@@ -114,7 +115,7 @@ module.exports = function (task, option) {
         return kit.remove("{.nokit,lib,.nobone}");
     });
 
-    task("browser", "Unit test on browser", function () {
-        kit.spawn("webpack", ["--progress", "--watch"]);
+    task("browser", "Unit test on browser", function (opts) {
+        return kit.spawn("webpack", ["--progress",  opts.watch ? "--watch" : ""]);
     });
 };
