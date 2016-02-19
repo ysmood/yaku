@@ -6,6 +6,7 @@
     , root = typeof global === "object" ? global : window
     , isLongStackTrace = false
     , process = root.process
+    , Err = Error
 
     , $rejected = 0
     , $resolved = 1
@@ -20,7 +21,7 @@
 
     , $invalidThis = "Invalid this"
     , $invalidArgument = "Invalid argument"
-    , $fromPrevious = "From previous event:"
+    , $fromPrevious = "\nFrom previous "
     , $promiseCircularChain = "Chaining cycle detected for promise"
     , $unhandledRejectionMsg = "Uncaught (in promise)"
     , $rejectionHandled = "rejectionHandled"
@@ -405,7 +406,7 @@
     }
 
     function isError (obj) {
-        return obj instanceof Error;
+        return obj instanceof Err;
     }
 
     /**
@@ -506,10 +507,7 @@
     }
 
     function genTraceInfo (noTitle) {
-        return ((new Error()).stack || "").replace(
-            "Error",
-            noTitle ? "" : $fromPrevious
-        );
+        return (noTitle ? "" : $fromPrevious) + (new Err().stack || "");
     }
 
 
@@ -715,7 +713,10 @@
             if (state === $rejected) {
                 if (isLongStackTrace && value && value.stack) {
                     stack = genStackInfo(value, p);
+                    // TODO: Error.prototype.stack in the phantomjs is readonly.
+                    value = new Err(value.message);
                     value.stack = stack[0] + stack[1];
+                    p._value = value;
                 }
 
                 scheduleUnhandledRejection(p);

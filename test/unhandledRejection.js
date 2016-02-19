@@ -90,7 +90,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
                 return Promise.resolve().then(function () {
                     throw new Error("abc");
                 })["catch"](function (err) {
-                    return err.stack.match(/From previous event:/g).length;
+                    return err.stack.match(/From previous/g).length;
                 });
             });
 
@@ -201,7 +201,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
                 return Promise.resolve().then(function () {
                     throw new Error("abc");
                 })["catch"](function (err) {
-                    return err.stack.match(/From previous event:/g).length;
+                    return err.stack.match(/From previous/g).length;
                 });
             });
 
