@@ -45,10 +45,13 @@
         var self = this,
             err;
 
-        if (!isYaku(self) || self._state !== $undefined)
+        // "this._s" is the internal state of: pending, resolved or rejected
+        // "this._v" is the internal value
+
+        if (!isYaku(self) || self._s !== $undefined)
             throw genTypeError($invalidThis);
 
-        self._state = $pending;
+        self._s = $pending;
 
         if (isLongStackTrace) self[$promiseTrace] = genTraceInfo();
 
@@ -185,7 +188,7 @@
             len = iterable.length;
             while (i < len) {
                 settleWithX(p, iterable[i++]);
-                if (p._state !== $pending) break;
+                if (p._s !== $pending) break;
             }
         } else {
             iter = genIterator(iterable);
@@ -194,7 +197,7 @@
 
             while (!(item = iter.next()).done) {
                 settleWithX(p, item.value);
-                if (p._state !== $pending) break;
+                if (p._s !== $pending) break;
             }
         }
 
@@ -524,17 +527,17 @@
 
         // 2.2.2
         // 2.2.3
-        handler = p1._state ? p2._onFulfilled : p2._onRejected;
+        handler = p1._s ? p2._onFulfilled : p2._onRejected;
 
         // 2.2.7.3
         // 2.2.7.4
         if (handler === $undefined) {
-            settlePromise(p2, p1._state, p1._value);
+            settlePromise(p2, p1._s, p1._v);
             return;
         }
 
         // 2.2.7.1
-        x = genTryCatcher(callHanler)(handler, p1._value);
+        x = genTryCatcher(callHanler)(handler, p1._v);
         if (x === $tryErr) {
             // 2.2.7.2
             settlePromise(p2, $rejected, x.e);
@@ -557,11 +560,11 @@
 
         if (process && process.listeners(name).length)
             name === $unhandledRejection ?
-                process.emit(name, p._value, p) : process.emit(name, p);
+                process.emit(name, p._v, p) : process.emit(name, p);
         else if (browserHandler)
-            browserHandler({ reason: p._value, promise: p });
+            browserHandler({ reason: p._v, promise: p });
         else
-            Yaku[name](p._value, p);
+            Yaku[name](p._v, p);
     }
 
     function isYaku (val) { return val && val._Yaku; }
@@ -614,7 +617,7 @@
         p1[p1._pCount++] = p2;
 
         // 2.2.6
-        if (p1._state !== $pending)
+        if (p1._s !== $pending)
             scheduleHandler(p1, p2);
 
         // 2.2.7
@@ -705,10 +708,10 @@
 
         // 2.1.2
         // 2.1.3
-        if (p._state === $pending) {
+        if (p._s === $pending) {
             // 2.1.1.1
-            p._state = state;
-            p._value = value;
+            p._s = state;
+            p._v = value;
 
             if (state === $rejected) {
                 if (isLongStackTrace && value && value.stack) {
@@ -716,7 +719,7 @@
                     // TODO: Error.prototype.stack in the phantomjs is readonly.
                     value = new Err(value.message);
                     value.stack = stack[0] + stack[1];
-                    p._value = value;
+                    p._v = value;
                 }
 
                 scheduleUnhandledRejection(p);
@@ -726,7 +729,7 @@
             while (i < len) {
                 p2 = p[i++];
 
-                if (p2._state !== $pending) continue;
+                if (p2._s !== $pending) continue;
 
                 scheduleHandler(p, p2);
             }
