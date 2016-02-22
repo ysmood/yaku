@@ -1,30 +1,21 @@
 /*eslint-disable */
 
 var Promise = require("../src/yaku");
-// Promise.enableLongStackTrace()
+// var utils = require("../src/utils")
 
-process.on('unhandledRejection', (r, p) => {
-    setTimeout(function () {
-        p.catch(function () { })
-    }, 1)
-    console.log('##')
-});
+function BadResolverPromise(executor) {
+    // var p = new Promise(executor);
+    // executor(3, function () {});
 
-process.on('rejectionHandled', (p) => {
-    console.log('**', p === gp)
-});
+    // this.then = p.then;
+    this.constructor = BadResolverPromise;
+}
+BadResolverPromise.prototype = Promise.prototype;
+// BadResolverPromise.all = Promise.all;
+// BadResolverPromise.race = Promise.race;
+// BadResolverPromise.reject = Promise.reject;
+// BadResolverPromise.resolve = Promise.resolve;
 
-var gp = Promise.reject(10)
+console.log('####', (new BadResolverPromise)._Yaku)
 
-// window.onunhandledrejection = (r, p) => {
-//     setTimeout(function () {
-//         p.catch(function () { })
-//     }, 1000)
-//     console.log('##')
-// };
-
-// window.onrejectionhandled = (p) => {
-//     console.log('**')
-// };
-
-// Promise.reject(10)
+// BadResolverPromise.race([1, 2])

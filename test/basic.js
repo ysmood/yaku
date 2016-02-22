@@ -163,6 +163,32 @@ module.exports = testSuit("basic", function (it) {
         return Promise.all(arr);
     });
 
+    it("all with iterator like", [1, 2, 3], function () {
+        var arr = {
+            list: [3, 2, 1],
+            next: function () {
+                return {
+                    done: !this.list.length,
+                    value: this.list.pop()
+                };
+            }
+        };
+
+        return Promise.all(arr);
+    });
+
+    it("all with iterator like, iteration error", "error", function () {
+        var arr = {
+            next: function () {
+                throw "error";
+            }
+        };
+
+        return Promise.all(arr).catch(function (err) {
+            return err;
+        });
+    });
+
     it("race", 0, function () {
         return Promise.race([
             new Promise(function (r) {
@@ -192,6 +218,32 @@ module.exports = testSuit("basic", function (it) {
         };
 
         return Promise.race(arr);
+    });
+
+    it("race with iterator like", 1, function () {
+        var arr = {
+            list: [3, 2, 1],
+            next: function () {
+                return {
+                    done: !this.list.length,
+                    value: this.list.pop()
+                };
+            }
+        };
+
+        return Promise.race(arr);
+    });
+
+    it("race with iterator like, iteration error", "error", function () {
+        var arr = {
+            next: function () {
+                throw "error";
+            }
+        };
+
+        return Promise.race(arr).catch(function (err) {
+            return err;
+        });
     });
 
     it("subclass", ["subclass", "subclass", "subclass", "subclass", "subclass", true, true, 5, 6], function () {
