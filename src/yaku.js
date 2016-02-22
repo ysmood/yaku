@@ -14,6 +14,7 @@
 
     , $Symbol = "Symbol"
     , $iterator = "iterator"
+    , $return = "return"
 
     , $unhandled = "_uh"
     , $promiseTrace = "_pt"
@@ -48,7 +49,7 @@
         // "this._s" is the internal state of: pending, resolved or rejected
         // "this._v" is the internal value
 
-        if (!isYaku(self) || self._s !== $undefined)
+        if (!isObject(self) || self._s !== $undefined)
             throw genTypeError($invalidThis);
 
         self._s = $pending;
@@ -180,28 +181,13 @@
      * ```
      */
     Yaku.race = function race (iterable) {
-        var iter, len, i = 0;
+        var self = this;
 
-        var p = newEmptyPromise(this), item;
-
-        if (isPlainArray(iterable)) {
-            len = iterable.length;
-            while (i < len) {
-                settleWithX(p, iterable[i++]);
-                if (p._s !== $pending) break;
-            }
-        } else {
-            iter = genIterator(iterable);
-
-            if (isError(iter)) return Yaku.reject(iter);
-
-            while (!(item = iter.next()).done) {
-                settleWithX(p, item.value);
-                if (p._s !== $pending) break;
-            }
-        }
-
-        return p;
+        return new this(function (resolve, reject) {
+            each(iterable, function (v) {
+                self.resolve(v).then(resolve, reject);
+            });
+        });
     };
 
     /**
@@ -240,45 +226,29 @@
      * ```
      */
     Yaku.all = function all (iterable) {
-        var p1 = newEmptyPromise(this)
+        var self = this
+        , p1 = newEmptyPromise(self)
         , res = []
-        , item
-        , countDown = 0
-        , iter
-        , len;
+        , ret
+        ;
 
-        function onRejected (reason) {
+        function reject (reason) {
             settlePromise(p1, $rejected, reason);
         }
 
-        if (isPlainArray(iterable)) {
-            len = iterable.length;
-            while (countDown < len) {
-                runAll(countDown, iterable[countDown++], p1, res, onRejected);
-            }
-        } else {
-            iter = genIterator(iterable);
+        ret = genTryCatcher(each)(iterable, function (item, i) {
+            self.resolve(item).then(function (value) {
+                res[i] = value;
+                if (!--ret) settlePromise(p1, $resolved, res);
+            }, reject);
+        });
 
-            if (isError(iter)) return Yaku.reject(iter);
+        if (ret === $tryErr) return self.reject(ret.e);
 
-            while (!(item = iter.next()).done) {
-                runAll(countDown++, item.value, p1, res, onRejected);
-            }
-        }
-
-        onRejected._c = countDown;
-
-        if (!countDown) settlePromise(p1, $resolved, []);
+        if (!ret) settlePromise(p1, $resolved, []);
 
         return p1;
     };
-
-    function runAll (i, el, p1, res, onRejected) {
-        Yaku.resolve(el).then(function (value) {
-            res[i] = value;
-            if (!--onRejected._c) settlePromise(p1, $resolved, res);
-        }, onRejected);
-    }
 
     /**
      * The ES6 Symbol object that Yaku should use, by default it will use the
@@ -408,10 +378,6 @@
             && !isFunction(obj[Yaku[$Symbol][$iterator]]);
     }
 
-    function isError (obj) {
-        return obj instanceof Err;
-    }
-
     /**
      * Wrap a function into a try-catch.
      * @private
@@ -484,19 +450,38 @@
      * @private
      * @return {Object || TypeError}
      */
-    function genIterator (obj) {
-        if (obj) {
-            var gen = obj[Yaku[$Symbol][$iterator]];
-            if (isFunction(gen)) {
-                return gen.call(obj);
-            }
+    function each (iterable, fn) {
+        var len
+        , i = 0
+        , iter
+        , item
+        , ret
+        ;
 
-            if (isFunction(obj.next)) {
-                return obj;
+        if (isPlainArray(iterable)) {
+            len = iterable.length;
+            while (i < len) {
+                fn(iterable[i], i++);
+            }
+        } else if (iterable) {
+            var gen = iterable[Yaku[$Symbol][$iterator]];
+            if (isFunction(gen))
+                iter = gen.call(iterable);
+            else if (isFunction(iterable.next))
+                iter = iterable;
+            else
+                throw genTypeError($invalidArgument);
+
+            while (!(item = iter.next()).done) {
+                ret = genTryCatcher(fn)(item.value, i++);
+                if (ret === $tryErr) {
+                    if (isFunction(iter[$return])) iter[$return]();
+                    throw ret.e;
+                }
             }
         }
 
-        return genTypeError($invalidArgument);
+        return i;
     }
 
     /**
