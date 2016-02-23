@@ -189,6 +189,36 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("all with iterator like, resolve error", "clean", function () {
+        function SubPromise (it) {
+            var self;
+            self = new Promise(it);
+            setPrototypeOf(self, SubPromise.prototype);
+        }
+
+        setPrototypeOf(SubPromise, Promise);
+        SubPromise.prototype = Object.create(Promise.prototype);
+        SubPromise.prototype.constructor = SubPromise;
+
+        return new Promise(function (resolve) {
+            var arr = {
+                count: 2,
+                "return": function () {
+                    resolve("clean");
+                },
+                next: function () {
+                    return {
+                        done: !--this.count
+                    };
+                }
+            };
+
+            SubPromise.resolve = function () { throw "err"; };
+
+            SubPromise.all(arr).catch(function () {});
+        });
+    });
+
     it("race", 0, function () {
         return Promise.race([
             new Promise(function (r) {
@@ -243,6 +273,36 @@ module.exports = testSuit("basic", function (it) {
 
         return Promise.race(arr).catch(function (err) {
             return err;
+        });
+    });
+
+    it("race with iterator like, resolve error", "clean", function () {
+        function SubPromise (it) {
+            var self;
+            self = new Promise(it);
+            setPrototypeOf(self, SubPromise.prototype);
+        }
+
+        setPrototypeOf(SubPromise, Promise);
+        SubPromise.prototype = Object.create(Promise.prototype);
+        SubPromise.prototype.constructor = SubPromise;
+
+        return new Promise(function (resolve) {
+            var arr = {
+                count: 2,
+                "return": function () {
+                    resolve("clean");
+                },
+                next: function () {
+                    return {
+                        done: !--this.count
+                    };
+                }
+            };
+
+            SubPromise.resolve = function () { throw "err"; };
+
+            SubPromise.race(arr).catch(function () {});
         });
     });
 
