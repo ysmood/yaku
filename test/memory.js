@@ -20,5 +20,5 @@ setInterval(function () {
 });
 
 setInterval(function () {
-    return console.log(count, process.memoryUsage());
+    return global.console.log(count, process.memoryUsage());
 }, 1000);

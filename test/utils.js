@@ -139,7 +139,7 @@ module.exports = testSuit("basic", function (it) {
                 return cb(a);
             });
         });
-        return fn("err").catch(function (v) { return v });
+        return fn("err").catch(function (v) { return v; });
     });
 
     it("promisify callback", 1, function () {

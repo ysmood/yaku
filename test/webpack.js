@@ -7,5 +7,5 @@ new Promise(function (resolve) {
         resolve();
     });
 }).then(function () {
-    console.log("done");
+    global.console.log("done");
 });

@@ -50,7 +50,7 @@ module.exports = function (task, option) {
 
     task("lint", "lint js files", function () {
         kit.removeSync("{lib,dist}");
-        return kit.spawn("eslint", ["src/*.js"]);
+        return kit.spawn("eslint", ["src/*.js", "test/*.js"]);
     });
 
     task("all", ["lint"], "bundle all", function () {
