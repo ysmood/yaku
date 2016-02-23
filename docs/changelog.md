@@ -1,6 +1,7 @@
 - v0.13
 
   - **API CHANGE** rename `onUnhandledRejection` to `unhandledRejection`
+  - opt: `race` and `all` error compatibility with ES6 specs
 
 - v0.12
 
