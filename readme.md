@@ -21,7 +21,7 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only 3.2KB (2KB gzipped)
+- The minified file is only 3.8KB (2KB gzipped)
 - [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
 - Much better performance than the native Promise
 - 100% compliant with Promises/A+ specs and nearly 100% compliant with ES6 specs
@@ -80,7 +80,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 | name | unit tests | 1ms async task | optional helpers | helpers | min js |
 | ---- | ---------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.13.1 | ✓ | 337ms / 106MB | ✓ | 31 | 3.2KB |
+| [yaku][]@0.13.1 | ✓ | 337ms / 106MB | ✓ | 31 | 3.8KB |
 | [bluebird][]@3.3.1 | x (26 failing) | 258ms / 88MB | partial | 100 | 52.2KB |
 | [es6-promise][]@3.1.2 | x (39 failing) | 457ms / 112MB | x | 10 | 6.3KB |
 | [native][]@0.13.2 | x (7 failing) | 653ms / 168MB | x | 13 | 0KB |

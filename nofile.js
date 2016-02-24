@@ -1,7 +1,6 @@
 var kit = require("nokit");
 var _ = kit._;
 kit.require("drives");
-var compressor = require("./compressor");
 
 module.exports = function (task, option) {
     option("--debug", "run with remote debug server");
@@ -12,7 +11,7 @@ module.exports = function (task, option) {
     option("-w, --watch", "webpack watch");
     option("-s, --shim <name>", "the promise shim to require, check the test/getPromise.js file for details", "yaku");
 
-    task("default build", ["doc", "code"]);
+    task("default build", ["doc", "code", "browser"]);
 
     task("doc", ["code"], "build doc", function () {
         var size;
@@ -41,15 +40,11 @@ module.exports = function (task, option) {
             }
         }).run("lib").then(function () {
             kit.mkdirsSync("dist");
-            return kit.spawn("uglifyjs", ["-mc", "-o", "dist/yaku.min.js", "lib/yaku.js"])
-            .then(function () {
-                return compressor("dist/yaku.min.js");
-            });
+            return kit.spawn("uglifyjs", ["-mc", "-o", "dist/yaku.min.js", "lib/yaku.js"]);
         });
     });
 
     task("lint", "lint js files", function () {
-        kit.removeSync("{lib,dist}");
         return kit.spawn("eslint", ["src/*.js", "test/*.js"]);
     });
 

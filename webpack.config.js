@@ -14,6 +14,15 @@ var self = module.exports = {
         pathinfo: true
     },
 
+    module: {
+        loaders: [
+            {
+                test: /getPromise\.js$/,
+                loader: "./getPromiseBrowser"
+            }
+        ]
+    },
+
     debug: true
 };
 
