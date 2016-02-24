@@ -71,16 +71,23 @@ module.exports = function (task, option) {
         });
     });
 
-    task("test", "run Promises/A+ tests", ["test-yaku", "test-aplus", "test-es6"], true);
+    task("test", "run Promises/A+ tests", ["test-basic", "test-yaku", "test-aplus", "test-es6"], true);
 
-    task("test-yaku", "test yaku specs tests", function (opts) {
+    task("test-yaku", "test yaku specs", function (opts) {
         var junitOpts = ["-g", opts.grep];
 
         return kit.spawn("junit", junitOpts.concat([
-            "test/basic.js",
             "test/utils.js",
             "test/unhandledRejection.js"])
         );
+    });
+
+    task("test-basic", "test basic specs tests", function (opts) {
+        var junitOpts = ["-g", opts.grep];
+
+        process.env.shim = opts.shim;
+
+        return kit.spawn("junit", junitOpts.concat(["test/basic.js"]));
     });
 
     task("test-aplus", "test aplus tests", require("./test/promises-aplus-tests.js"));

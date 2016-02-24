@@ -39,7 +39,7 @@ var map = {
     },
 
     "core-js": function () {
-        require("core-js");
+        require("core-js/modules/es6.promise.js");
 
         var Promise = global.Promise;
         map["core-js"].test = "x ( 4 failing)";

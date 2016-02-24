@@ -1,7 +1,10 @@
-var Promise = require("../src/yaku");
+var name = process.env.shim;
+var getPromise = require("../test/getPromise");
+var Promise = getPromise(name);
 var utils = require("../src/utils");
 var testSuit = require("./testSuit");
 var setPrototypeOf = require("setprototypeof");
+var Symbol = global.Symbol || {};
 
 var $val = {
     val: "ok"
@@ -117,13 +120,21 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("empty all", [], function () {
+    it("all with empty", [], function () {
         return Promise.all([]);
     });
 
-    it("array like", [1, 2, 3], function () {
+    it("all with null", true, function () {
+        return Promise.all(null).catch(function (err) {
+            return err instanceof TypeError;
+        });
+    });
+
+    it("all with array like", true, function () {
         return Promise.all({
             "0": 1, "1": 2, "2": 3, length: 3
+        }).catch(function (err) {
+            return err instanceof TypeError;
         });
     });
 
@@ -148,13 +159,11 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("all with custom Symbol.iterator", [1, 2, 3], function () {
-        var arr = [], Symbol;
+        var arr = [];
 
-        if (!global.Symbol)
+        if (!Symbol.iterator)
             // skip the test
             return [1, 2, 3];
-        else
-            Symbol = global.Symbol;
 
         arr[Symbol.iterator] = function () {
             return [1, 2, 3][Symbol.iterator]();
@@ -173,6 +182,7 @@ module.exports = testSuit("basic", function (it) {
                 };
             }
         };
+        arr[Symbol.iterator] = function () { return this; };
 
         return Promise.all(arr);
     });
@@ -183,6 +193,7 @@ module.exports = testSuit("basic", function (it) {
                 throw "error";
             }
         };
+        arr[Symbol.iterator] = function () { return this; };
 
         return Promise.all(arr).catch(function (err) {
             return err;
@@ -191,9 +202,9 @@ module.exports = testSuit("basic", function (it) {
 
     it("all with iterator like, resolve error", "clean", function () {
         function SubPromise (it) {
-            var self;
-            self = new Promise(it);
+            var self = new Promise(it);
             setPrototypeOf(self, SubPromise.prototype);
+            return self;
         }
 
         setPrototypeOf(SubPromise, Promise);
@@ -212,10 +223,29 @@ module.exports = testSuit("basic", function (it) {
                     };
                 }
             };
+            arr[Symbol.iterator] = function () { return this; };
 
             SubPromise.resolve = function () { throw "err"; };
 
             SubPromise.all(arr).catch(function () {});
+        });
+    });
+
+    it("race with empty should never resolve", "ok", function () {
+        return new Promise(function (resolve) {
+            Promise.race([]).then(function () {
+                resolve("err");
+            });
+
+            utils.sleep(30).then(function () {
+                resolve("ok");
+            });
+        });
+    });
+
+    it("race with null", true, function () {
+        return Promise.race(null).catch(function (err) {
+            return err instanceof TypeError;
         });
     });
 
@@ -235,13 +265,11 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("race with custom Symbol.iterator", 1, function () {
-        var arr = [], Symbol;
+        var arr = [];
 
-        if (!global.Symbol)
+        if (!Symbol.iterator)
             // skip the test
             return 1;
-        else
-            Symbol = global.Symbol;
 
         arr[Symbol.iterator] = function () {
             return [1, 2, 3][Symbol.iterator]();
@@ -260,6 +288,7 @@ module.exports = testSuit("basic", function (it) {
                 };
             }
         };
+        arr[Symbol.iterator] = function () { return this; };
 
         return Promise.race(arr);
     });
@@ -270,6 +299,7 @@ module.exports = testSuit("basic", function (it) {
                 throw "error";
             }
         };
+        arr[Symbol.iterator] = function () { return this; };
 
         return Promise.race(arr).catch(function (err) {
             return err;
@@ -281,6 +311,7 @@ module.exports = testSuit("basic", function (it) {
             var self;
             self = new Promise(it);
             setPrototypeOf(self, SubPromise.prototype);
+            return self;
         }
 
         setPrototypeOf(SubPromise, Promise);
@@ -299,6 +330,7 @@ module.exports = testSuit("basic", function (it) {
                     };
                 }
             };
+            arr[Symbol.iterator] = function () { return this; };
 
             SubPromise.resolve = function () { throw "err"; };
 
