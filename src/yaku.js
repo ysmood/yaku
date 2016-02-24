@@ -372,12 +372,6 @@
         return typeof obj === "function";
     }
 
-    function isPlainArray (obj) {
-        return obj
-            && typeof obj.length === "number"
-            && !isFunction(obj[Yaku[$Symbol][$iterator]]);
-    }
-
     /**
      * Wrap a function into a try-catch.
      * @private
@@ -458,26 +452,27 @@
         , ret
         ;
 
-        if (isPlainArray(iterable)) {
+        if (!iterable) throw genTypeError($invalidArgument);
+
+        var gen = iterable[Yaku[$Symbol][$iterator]];
+        if (isFunction(gen))
+            iter = gen.call(iterable);
+        else if (isFunction(iterable.next))
+            iter = iterable;
+        else if (iterable instanceof Array) {
             len = iterable.length;
             while (i < len) {
                 fn(iterable[i], i++);
             }
-        } else if (iterable) {
-            var gen = iterable[Yaku[$Symbol][$iterator]];
-            if (isFunction(gen))
-                iter = gen.call(iterable);
-            else if (isFunction(iterable.next))
-                iter = iterable;
-            else
-                throw genTypeError($invalidArgument);
+            return i;
+        } else
+            throw genTypeError($invalidArgument);
 
-            while (!(item = iter.next()).done) {
-                ret = genTryCatcher(fn)(item.value, i++);
-                if (ret === $tryErr) {
-                    if (isFunction(iter[$return])) iter[$return]();
-                    throw ret.e;
-                }
+        while (!(item = iter.next()).done) {
+            ret = genTryCatcher(fn)(item.value, i++);
+            if (ret === $tryErr) {
+                if (isFunction(iter[$return])) iter[$return]();
+                throw ret.e;
             }
         }
 
