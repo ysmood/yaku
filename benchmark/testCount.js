@@ -11,8 +11,10 @@ module.exports = function (name) {
         return s;
     }, "");
 
+    // remove terminal color codes
     out = out.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/g, "");
 
+    // search the stdout "failing 11", "failed 23"
     var count = [/^junit cli > failed (\d+)$/mg, /^\s*(\d+) failing$/mg]
         .reduce(function (s, reg) {
             var ms = out.match(reg);

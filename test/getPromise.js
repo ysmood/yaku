@@ -35,9 +35,7 @@ var map = {
     },
 
     "core-js": function () {
-        require("core-js/modules/es6.promise.js");
-
-        var Promise = global.Promise;
+        var Promise = require("core-js/fn/promise");
         map["core-js"].optionalHelper = "x";
         map["core-js"].helper = propSize(Promise) + propSize(Promise.prototype);
 
