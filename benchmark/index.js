@@ -2,6 +2,7 @@
 var name = process.argv[2];
 var getPromise = require("../test/getPromise");
 var Promise = getPromise(name);
+var testCount = require("./testCount");
 
 /**
  * The test will run 10 ^ 5 promises.
@@ -32,7 +33,7 @@ function logResult () {
 
     return console.log( // eslint-disable-line
         "| [" + name + "][]@" + ver
-        + " | " + getPromise.map[name].test
+        + " | " + testCount(name)
         + " | " + (initTime + resolutionTime) + "ms"
         + " / " + (Math.floor(mem.rss / 1024 / 1024)) + "MB"
         + " | " + getPromise.map[name].optionalHelper
