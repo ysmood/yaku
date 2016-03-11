@@ -27,7 +27,7 @@ export default class Promise<R> implements Thenable<R> {
      * @param onFulfilled called when/if "promise" resolves
      * @param onRejected called when/if "promise" rejects
      */
-    then<U>(onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U> | void): Thenable<U>;
+    then<U>(onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U> | void): Promise<U>;
 
     /**
      * Sugar for promise.then(undefined, onRejected)
