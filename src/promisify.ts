@@ -1,9 +1,9 @@
-var _ = require("./_");
-var isFn = _.isFunction;
+import _ from "./_";
+let isFn = _.isFunction;
 
-module.exports = function (fn, self) {
+export default function (fn: Function, self?): (...args: any[]) => Promise<any> {
     return function (a, b, c, d, e) {
-        var len = arguments.length
+        let len = arguments.length
         , args, promise, resolve, reject;
 
         promise = new _.Promise(function (r, rj) {
@@ -23,9 +23,10 @@ module.exports = function (fn, self) {
         case 4: isFn(d) ? fn.call(self, a, b, c, d) : fn.call(self, a, b, c, d, cb); break;
         case 5: isFn(e) ? fn.call(self, a, b, c, d, e) : fn.call(self, a, b, c, d, e, cb); break;
         default:
+            let i;
             args = new Array(len);
 
-            for (var i = 0; i < len; i++) {
+            for (i = 0; i < len; i++) {
                 args[i] = arguments[i];
             }
 

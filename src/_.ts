@@ -1,23 +1,23 @@
-var Promise = require("./yaku");
+import Promise from "./yaku";
 
-module.exports = {
+export default {
 
-    extendPrototype: function (src, target) {
-        for (var k in target) {
+    extendPrototype: function (src: Function, target): Function {
+        for (let k in target) {
             src.prototype[k] = target[k];
         }
         return src;
     },
 
-    isArray: function (obj) {
+    isArray: function (obj): boolean {
         return obj instanceof Array;
     },
 
-    isFunction: function (obj) {
+    isFunction: function (obj): boolean {
         return typeof obj === "function";
     },
 
-    isNumber: function (obj) {
+    isNumber: function (obj): boolean {
         return typeof obj === "number";
     },
 

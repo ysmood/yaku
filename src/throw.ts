@@ -1,4 +1,4 @@
-module.exports = function (err) {
+export default function (err?) {
     setTimeout(function () {
         throw err;
     });

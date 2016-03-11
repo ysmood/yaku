@@ -1,9 +1,19 @@
-var _ = require("./_");
-var genIterator = require("./genIterator");
-var isPromise = require("./isPromise");
+import _ from "./_";
+import genIterator from "./genIterator";
+import isPromise from "./isPromise";
 
-module.exports = function (limit, list, saveResults, progress) {
-    var resutls, running;
+interface Progress<T> {
+    (val: T): void;
+}
+
+interface Async {
+    <T>(iterable: Iterable<T>, saveResults?: boolean, progress?: Progress<T>): Promise<T[]>;
+
+    <T>(limit: number, iterable: Iterable<T>, saveResults?: boolean, progress?: Progress<T>): Promise<T[]>;
+}
+
+ let async: Async = function (limit, list?, saveResults?, progress?) {
+    let resutls, running;
     resutls = [];
     running = 0;
     if (!_.isNumber(limit)) {
@@ -16,13 +26,13 @@ module.exports = function (limit, list, saveResults, progress) {
         saveResults = true;
     }
 
-    var iter = genIterator(list);
+    let iter = genIterator(list);
 
     return new _.Promise(function (resolve, reject) {
-        var results, resultIndex = 0;
+        let results, resultIndex = 0;
 
         function addTask (index) {
-            var p, task;
+            let p, task;
 
             task = iter.next();
             if (task.done) {
@@ -65,7 +75,7 @@ module.exports = function (limit, list, saveResults, progress) {
             }
         }
 
-        var i = limit;
+        let i = limit;
         results = [];
         while (i--) {
             if (!addTask(resultIndex++)) {
@@ -78,3 +88,5 @@ module.exports = function (limit, list, saveResults, progress) {
         return results;
     });
 };
+
+export default async;

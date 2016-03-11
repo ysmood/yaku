@@ -1,10 +1,14 @@
-var _ = require("./_");
-var $retryError = {};
+import _ from "./_";
+let $retryError = {};
 
-module.exports = function (retries, fn, self) {
-    var errs = [], args;
-    var countdown = _.isFunction(retries) ?
-        retries : function () { return retries--; };
+interface Retry {
+    (errs: any[]): boolean | Promise<boolean>;
+}
+
+export default function (retries: number | Retry, fn: Function, self?) {
+    let errs = [], args;
+    let countdown = _.isFunction(retries) ?
+        <Retry>retries : function () { return Boolean(retries = <number>retries - 1); };
 
     function tryFn (isContinue) {
         return isContinue ? fn.apply(self, args) : _.Promise.reject($retryError);

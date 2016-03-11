@@ -1,6 +1,6 @@
-var _ = require("./_");
+import _ from "./_";
 
-module.exports = function (time, val) {
+export default function (time?: number, val?) {
     return new _.Promise(function (r) {
         return setTimeout((function () {
             return r(val);

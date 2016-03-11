@@ -1,15 +1,17 @@
-var _ = require("./_");
+import _ from "./_";
 
 // Hack: we don't create new object to pass the newly iterated object.
-var $ArrIterContainer = {};
+let $ArrIterContainer: IteratorResult<any> = {
+    value: null, done: null
+};
 
-var ArrIter = _.extendPrototype(function (arr) {
+let ArrIter: any = _.extendPrototype(function (arr) {
     this.arr = arr;
     this.len = arr.length;
 }, {
     i: 0,
     next: function () {
-        var self = this;
+        let self = this;
         $ArrIterContainer.value = self.arr[self.i++];
         $ArrIterContainer.done = self.i > self.len;
         return $ArrIterContainer;
@@ -21,9 +23,9 @@ var ArrIter = _.extendPrototype(function (arr) {
  * @param  {Any} obj
  * @return {Function}
  */
-function genIterator (obj) {
+function genIterator (obj): Iterator<any> {
     if (obj) {
-        var gen = obj[_.Promise.Symbol.iterator];
+        let gen = obj[_.Promise.Symbol.iterator];
         if (_.isFunction(gen)) {
             return gen.call(obj);
         }
@@ -39,4 +41,4 @@ function genIterator (obj) {
     throw new TypeError("invalid_argument");
 }
 
-module.exports = genIterator;
+export default genIterator;

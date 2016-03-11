@@ -4,7 +4,7 @@ var isProduction = process.env.NODE_ENV === "production";
 var self = module.exports = {
     entry: {
         "test-browser": "./test/test-browser.js",
-        "yaku.browser.full": "./src/browser.full",
+        "yaku.browser.full": "./dist/browser.full",
         "coreJsPromise": "./test/coreJsPromise"
     },
 

@@ -1,13 +1,13 @@
-var _ = require("./_");
+import _ from "./_";
 
-module.exports = function (fn, self) {
+export default function (fn: Function, self?): Function {
     return function () {
-        var args, cb, j;
+        let args, cb, j;
         args = 2 <= arguments.length ?
             _.slice.call(arguments, 0, j = arguments.length - 1) :
             (j = 0, []), cb = arguments[j++];
 
-        var isFn = _.isFunction(cb);
+        let isFn = _.isFunction(cb);
 
         if (!isFn) {
             args.push(cb);
