@@ -121,7 +121,7 @@ interface Iterable<T> {
     [Symbol.iterator](): Iterator<T>;
 }
 
-type IterableOrArray<T> = Iterable<T> | T[];
+export type IterableOrArray<T> = Iterable<T> | T[];
 
 /**
  * Represents the completion of an asynchronous operation
@@ -191,27 +191,31 @@ interface PromiseConstructor {
      * @param reason The reason the promise was rejected.
      * @returns A new rejected Promise.
      */
-    reject(reason: any): Promise<void>;
+    reject(reason?: any): Promise<void>;
 
     /**
      * Creates a new rejected promise for the provided reason.
      * @param reason The reason the promise was rejected.
      * @returns A new rejected Promise.
      */
-    reject<T>(reason: any): Promise<T>;
+    reject<T>(reason?: any): Promise<T>;
+
+    /**
+     * Creates a new resolved promise .
+     * @returns A resolved promise.
+     */
+    resolve(value?: any): Promise<void>;
 
     /**
       * Creates a new resolved promise for the provided value.
       * @param value A promise.
       * @returns A promise whose internal state matches the provided promise.
       */
-    resolve<T>(value: T | PromiseLike<T>): Promise<T>;
-
-    /**
-     * Creates a new resolved promise .
-     * @returns A resolved promise.
-     */
-    resolve(): Promise<void>;
+    resolve<T>(value?: T | PromiseLike<T>): Promise<T>;
 
     [Symbol.species]: Function;
 }
+
+declare var Promise: PromiseConstructor;
+
+export default Promise;

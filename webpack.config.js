@@ -18,8 +18,9 @@ var self = module.exports = {
         loaders: [
             {
                 test: /getPromise\.js$/,
-                loader: "./getPromiseBrowser"
-            }
+                loader: "./test/getPromiseBrowser-lodaer"
+            },
+            { test: /\.ts$/, loader: 'ts-loader' }
         ]
     },
 

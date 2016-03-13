@@ -1,16 +1,16 @@
 
-var Yaku = require("../src/yaku");
-var utils = require("../src/utils");
-var testSuit = require("./testSuit");
+import Yaku from "../src/yaku";
+import utils from "../src/utils";
+import testSuit from "./testSuit";
 
-var $val = {
+let $val = {
     val: "ok"
 };
 
-module.exports = testSuit("basic", function (it) {
+export default testSuit("basic", function (it) {
 
     it("async array", [0, null, void 0, 1, 2, 3], function () {
-        var list;
+        let list;
         list = [
             0,
             null,
@@ -23,10 +23,10 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("async error", $val, function () {
-        var iter = {
+        let iter = {
             i: 0,
             next: function () {
-                var fn = [
+                let fn = [
                     function () {
                         return utils.sleep(10, 1);
                     }, function () {
@@ -39,14 +39,14 @@ module.exports = testSuit("basic", function (it) {
                 return { done: !fn, value: fn && fn() };
             }
         };
-        return utils.async(2, iter)["catch"](function (err) {
+        return utils.async(2, <any>iter)["catch"](function (err) {
             return err;
         });
     });
 
     it("async iter progress", 10, function () {
-        var iter = { i: 0, next: function () {
-            var done = iter.i++ >= 10;
+        let iter = { i: 0, next: function () {
+            let done = iter.i++ >= 10;
             return {
                 done: done,
                 value: !done && new Yaku(function (r) {
@@ -57,9 +57,9 @@ module.exports = testSuit("basic", function (it) {
             };
         } };
 
-        var count = 0;
-        return utils.async(3, iter, false, function (ret) {
-            return count += ret;
+        let count = 0;
+        return utils.async(3, <any>iter, false, function (ret) {
+            return count += +ret;
         }).then(function () {
             return count;
         });
@@ -84,7 +84,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("flow iter", [0, 1, 2, 3], function () {
-        var list;
+        let list;
         list = [];
         return utils.flow({ next: function (v) {
             return {
@@ -101,7 +101,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("promisify promise with this", "OK0", function () {
-        var obj = {
+        let obj = {
             val: "OK",
             foo: function (val, cb) {
                 return setTimeout(function (val) {
@@ -113,7 +113,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("promisify promise", 1, function () {
-        var fn;
+        let fn;
         fn = utils.promisify(function (val, cb) {
             return setTimeout(function () {
                 return cb(null, val + 1);
@@ -123,7 +123,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("promisify promise 2", 3, function () {
-        var fn;
+        let fn;
         fn = utils.promisify(function (a, b, cb) {
             return setTimeout(function () {
                 return cb(null, a + b);
@@ -133,7 +133,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("promisify promise err", "err", function () {
-        var fn;
+        let fn;
         fn = utils.promisify(function (a, cb) {
             return setTimeout(function () {
                 return cb(a);
@@ -143,7 +143,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("promisify callback", 1, function () {
-        var fn;
+        let fn;
         fn = utils.promisify(function (val, cb) {
             return setTimeout(function () {
                 return cb(null, val + 1);
@@ -157,7 +157,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("callbackify callback", "ok", function () {
-        var fn = utils.callbackify(function (v) {
+        let fn = utils.callbackify(function (v) {
             return Yaku.resolve(v);
         });
         return new Yaku(function (resolve, reject) {
@@ -170,7 +170,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("callbackify callback only", "ok", function () {
-        var fn = utils.callbackify(function () {
+        let fn = utils.callbackify(function () {
             return Yaku.resolve("ok");
         });
         return new Yaku(function (resolve, reject) {
@@ -183,7 +183,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("Observable", "out: 9", function () {
-        var one, three, tmr, two, x;
+        let one, three, tmr, two, x;
         one = new utils.Observable();
         x = 1;
 
@@ -200,7 +200,7 @@ module.exports = testSuit("basic", function (it) {
         });
 
         return new Yaku(function (r) {
-            var count;
+            let count;
             count = 0;
             return three.subscribe(function (v) {
                 if (count++ === 2) {
@@ -212,7 +212,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("Observable error", "error", function () {
-        var one, three, tmr, two, x;
+        let one, three, tmr, two, x;
         one = new utils.Observable();
         x = 1;
         tmr = setInterval(function () {
@@ -239,7 +239,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("Observable subscribers", "ok", function () {
-        var one, tmr;
+        let one, tmr;
         tmr = null;
         one = new utils.Observable(function (emit) {
             return tmr = setInterval(function () {
@@ -259,18 +259,18 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("Observable unsubscribe null publisher", null, function () {
-        var o = new utils.Observable();
+        let o = new utils.Observable();
         o.unsubscribe();
         return o.publisher;
     });
 
     it("Observable unsubscribe", "ok", function () {
         return new Yaku(function (r) {
-            var one = new utils.Observable(function (emit) {
+            let one = new utils.Observable(function (emit) {
                 setTimeout(emit, 1);
             });
 
-            var two = one.subscribe(function () {
+            let two = one.subscribe(function () {
                 r("err");
             });
 
@@ -284,18 +284,18 @@ module.exports = testSuit("basic", function (it) {
 
     it("Observable merge", ["one", "two"], function () {
         return new Yaku(function (r) {
-            var flag = false;
+            let flag = false;
 
-            var one = new utils.Observable(function (emit) { setTimeout(emit, 0, "one"); });
-            var two = new utils.Observable(function (emit) {
+            let one = new utils.Observable(function (emit) { setTimeout(emit, 0, "one"); });
+            let two = new utils.Observable(function (emit) {
                 setTimeout(function () {
                     flag = true;
                     emit("two");
                 }, 0);
             });
 
-            var three = utils.Observable.merge([one, two]);
-            var out = [];
+            let three = utils.Observable.merge([one, two]);
+            let out = [];
             three.subscribe(function (v) {
                 out.push(v);
 
@@ -305,14 +305,14 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("Observable merge error", 0, function () {
-        var src = new utils.Observable(function (emit) {
+        let src = new utils.Observable(function (emit) {
             setTimeout(emit, 10, 0);
         });
 
-        var a = src.subscribe(function (v) { return Yaku.reject(v); });
-        var b = src.subscribe(function (v) { return Yaku.reject(v + 1); });
+        let a = src.subscribe(function (v) { return Yaku.reject(v); });
+        let b = src.subscribe(function (v) { return Yaku.reject(v + 1); });
 
-        var out = utils.Observable.merge([a, b]);
+        let out = utils.Observable.merge([a, b]);
 
         return new Yaku(function (r, rr) {
             out.subscribe(rr, r);
@@ -320,7 +320,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("retry once", "ok", function () {
-        var fn;
+        let fn;
         fn = function (val) {
             return val;
         };
@@ -328,7 +328,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("retry 2 times", "ok", function () {
-        var count, fn;
+        let count, fn;
         count = 0;
         fn = function (v) {
             if (count < 2) {
@@ -341,7 +341,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("retry 3 times", ["err0", "err1", "err2"], function () {
-        var count, fn;
+        let count, fn;
         count = 0;
         fn = function () {
             throw "err" + count++;

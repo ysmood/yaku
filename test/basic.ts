@@ -1,24 +1,25 @@
-var name = process.env.shim;
-var getPromise = require("../test/getPromise");
-var Promise = getPromise(name);
-var utils = require("../src/utils");
-var testSuit = require("./testSuit");
-var setPrototypeOf = require("setprototypeof");
-var Symbol = global.Symbol || {};
+import "../typings/node.d.ts";
+import getPromise from "../test/getPromise";
+import utils from "../src/utils";
+import testSuit from "./testSuit";
 
-var $val = {
+let Promise = getPromise(process.env.shim);
+let setPrototypeOf = require("setprototypeof");
+let Symbol = global.Symbol || {};
+
+let $val = {
     val: "ok"
 };
 
-module.exports = testSuit("basic", function (it) {
+export default testSuit("basic", function (it) {
 
     it("resolve order", ["DEHAFGBC", "DEHAFGBC"], function () {
         return new Promise(function (assertResolve) {
-            var assertRes = [];
-            var result = "";
-            var resolve, resolve2;
+            let assertRes = [];
+            let result = "";
+            let resolve, resolve2;
 
-            var p = new Promise(function (r) {
+            let p = new Promise(function (r) {
                 resolve = r;
             });
 
@@ -37,7 +38,7 @@ module.exports = testSuit("basic", function (it) {
                 assertRes.push(result);
             });
 
-            var p2 = new Promise(function (r) {
+            let p2 = new Promise(function (r) {
                 resolve2 = r;
             });
             resolve2(Object.defineProperty({}, "then", {
@@ -159,21 +160,21 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("all with custom Symbol.iterator", [1, 2, 3], function () {
-        var arr = [];
+        let arr = [];
 
         if (!Symbol.iterator)
             // skip the test
             return [1, 2, 3];
 
         arr[Symbol.iterator] = function () {
-            return [1, 2, 3][Symbol.iterator]();
+            return (<any>[1, 2, 3][Symbol.iterator])();
         };
 
         return Promise.all(arr);
     });
 
     it("all with iterator like", [1, 2, 3], function () {
-        var arr = {
+        let arr = {
             list: [3, 2, 1],
             next: function () {
                 return {
@@ -188,7 +189,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("all with iterator like, iteration error", "error", function () {
-        var arr = {
+        let arr = {
             next: function () {
                 throw "error";
             }
@@ -202,7 +203,7 @@ module.exports = testSuit("basic", function (it) {
 
     it("all with iterator like, resolve error", "clean", function () {
         function SubPromise (it) {
-            var self = new Promise(it);
+            let self = new Promise(it);
             setPrototypeOf(self, SubPromise.prototype);
             return self;
         }
@@ -212,7 +213,7 @@ module.exports = testSuit("basic", function (it) {
         SubPromise.prototype.constructor = SubPromise;
 
         return new Promise(function (resolve) {
-            var arr = {
+            let arr = {
                 count: 2,
                 "return": function () {
                     resolve("clean");
@@ -225,9 +226,9 @@ module.exports = testSuit("basic", function (it) {
             };
             arr[Symbol.iterator] = function () { return this; };
 
-            SubPromise.resolve = function () { throw "err"; };
+            SubPromise["resolve"] = function () { throw "err"; };
 
-            SubPromise.all(arr).catch(function () {});
+            SubPromise["all"](arr).catch(function () {});
         });
     });
 
@@ -265,21 +266,21 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("race with custom Symbol.iterator", 1, function () {
-        var arr = [];
+        let arr = [];
 
         if (!Symbol.iterator)
             // skip the test
             return 1;
 
         arr[Symbol.iterator] = function () {
-            return [1, 2, 3][Symbol.iterator]();
+            return (<any>[1, 2, 3][Symbol.iterator])();
         };
 
         return Promise.race(arr);
     });
 
     it("race with iterator like", 1, function () {
-        var arr = {
+        let arr = {
             list: [3, 2, 1],
             next: function () {
                 return {
@@ -294,7 +295,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("race with iterator like, iteration error", "error", function () {
-        var arr = {
+        let arr = {
             next: function () {
                 throw "error";
             }
@@ -308,7 +309,7 @@ module.exports = testSuit("basic", function (it) {
 
     it("race with iterator like, resolve error", "clean", function () {
         function SubPromise (it) {
-            var self;
+            let self;
             self = new Promise(it);
             setPrototypeOf(self, SubPromise.prototype);
             return self;
@@ -319,7 +320,7 @@ module.exports = testSuit("basic", function (it) {
         SubPromise.prototype.constructor = SubPromise;
 
         return new Promise(function (resolve) {
-            var arr = {
+            let arr = {
                 count: 2,
                 "return": function () {
                     resolve("clean");
@@ -332,35 +333,35 @@ module.exports = testSuit("basic", function (it) {
             };
             arr[Symbol.iterator] = function () { return this; };
 
-            SubPromise.resolve = function () { throw "err"; };
+            SubPromise["resolve"] = function () { throw "err"; };
 
-            SubPromise.race(arr).catch(function () {});
+            SubPromise["race"](arr).catch(function () {});
         });
     });
 
     it("subclass", ["subclass", "subclass", "subclass", "subclass", "subclass", true, true, 5, 6], function () {
         function SubPromise (it) {
-            var self;
+            let self;
             self = new Promise(it);
             setPrototypeOf(self, SubPromise.prototype);
             self.mine = "subclass";
             return self;
         }
 
-        var result = [];
+        let result = [];
 
         setPrototypeOf(SubPromise, Promise);
         SubPromise.prototype = Object.create(Promise.prototype);
         SubPromise.prototype.constructor = SubPromise;
 
-        var p1 = SubPromise.resolve(5);
+        let p1 = SubPromise["resolve"](5);
         result.push(p1.mine);
         p1 = p1.then(function (it) {
             return result.push(it);
         });
         result.push(p1.mine);
 
-        var p2 = new SubPromise(function (it) {
+        let p2 = new (<any>SubPromise)(function (it) {
             return it(6);
         });
         result.push(p2.mine);
@@ -369,7 +370,7 @@ module.exports = testSuit("basic", function (it) {
         });
         result.push(p2.mine);
 
-        var p3 = SubPromise.all([p1, p2]);
+        let p3 = SubPromise["all"]([p1, p2]);
         result.push(p3.mine);
         result.push(p3 instanceof Promise);
         result.push(p3 instanceof SubPromise);

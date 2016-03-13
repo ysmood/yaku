@@ -1,13 +1,15 @@
-var Promise = require("../src/yaku");
-var testSuit = require("./testSuit");
+/// <reference path="../typings/node.d.ts" />
+
+import Promise from "../src/yaku";
+import testSuit from "./testSuit";
 
 
-var root = typeof global === "object" ? global : window;
+let root = typeof global === "object" ? global : window;
 
-module.exports = testSuit("unhandledRejection", function (it) {
+export default testSuit("unhandledRejection", function (it) {
 
-    var process = root.process;
-    var $val = { val: "OK" };
+    let process = root.process;
+    let $val = { val: "OK" };
 
     // Node or Browser
     if (process) {
@@ -59,7 +61,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
             return it("rejection handled", true, function () {
                 return new Promise(function (resolve) {
-                    var promise;
+                    let promise;
                     process.once("unhandledRejection", function handler (reason, p) {
                         p.catch(function () {});
                     });
@@ -158,7 +160,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
                 });
 
                 return new Promise(function (resolve) {
-                    var promise;
+                    let promise;
                     root.onunhandledrejection = function (e) {
                         e.promise.catch(function () {});
                     };
@@ -176,7 +178,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
                     root.onunhandledrejection = null;
                 });
 
-                var count = 0;
+                let count = 0;
                 function handler () {
                     return count++;
                 }

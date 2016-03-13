@@ -1,14 +1,16 @@
-var promisesES6Tests = require("promises-es6-tests");
-var assert = require("assert");
-var kit = require("nokit");
-var getPromise = require("./getPromise");
+/// <reference path="../typings/node.d.ts" />
 
-module.exports = function (opts) {
-    var Promise = getPromise(opts.shim);
+let promisesES6Tests = require("promises-es6-tests");
+let assert = require("assert");
+let kit = require("nokit");
+let getPromise = require("./getPromise");
 
-    var adapter = {
+export default function (opts) {
+    let Promise = getPromise(opts.shim);
+
+    let adapter = {
         deferred: function () {
-            var defer;
+            let defer;
             defer = {};
             defer.promise = new Promise(function (resolve, reject) {
                 defer.resolve = resolve;

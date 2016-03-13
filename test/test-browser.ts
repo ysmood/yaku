@@ -1,6 +1,6 @@
-var junit = require("junit").default;
+let junit = require("junit").default;
 
-var it = junit();
+let it = junit();
 
 require("./basic")(it);
 require("./utils")(it);

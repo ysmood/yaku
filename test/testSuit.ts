@@ -1,11 +1,11 @@
 
 // Keep the native out of the place.
-var root = typeof global === "object" ? global : window;
+let root = typeof global === "object" ? global : window;
 root.Promise = null;
 
-var Yaku = require("../src/yaku");
+let Yaku = require("../src/yaku");
 
-module.exports = function (title, fn) {
+export default function (title, fn) {
     return function (it) {
         return it.describe(title, function (it) {
             return fn(function (msg, expected, test) {

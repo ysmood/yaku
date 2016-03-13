@@ -1,14 +1,16 @@
-var promisesAplusTests = require("promises-aplus-tests");
-var kit = require("nokit");
-var getPromise = require("./getPromise");
+/// <reference path="../typings/node.d.ts" />
+
+let promisesAplusTests = require("promises-aplus-tests");
+let kit = require("nokit");
+let getPromise = require("./getPromise");
 
 
-module.exports = function (opts) {
-    var Promise = getPromise(opts.shim);
+export default function (opts) {
+    let Promise = getPromise(opts.shim);
 
-    var adapter = {
+    let adapter = {
         deferred: function () {
-            var defer;
+            let defer;
             defer = {};
             defer.promise = new Promise(function (resolve, reject) {
                 defer.resolve = resolve;

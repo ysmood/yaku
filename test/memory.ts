@@ -1,10 +1,11 @@
-var Promise, count, p;
+/// <reference path="../typings/node.d.ts" />
 
-Promise = require("../src/yaku");
 
-p = Promise.resolve();
+import Promise from "../src/yaku";
 
-count = 0;
+let p = Promise.resolve<any>(null);
+
+let count = 0;
 
 setInterval(function () {
     return p = p.then(function () {
