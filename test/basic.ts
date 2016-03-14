@@ -1,6 +1,6 @@
 import "../typings/node.d.ts";
 import getPromise from "../test/getPromise";
-import utils from "../src/utils";
+import * as utils from "../src/utils";
 import testSuit from "./testSuit";
 
 let Promise = getPromise(process.env.shim);
