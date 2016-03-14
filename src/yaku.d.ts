@@ -1,3 +1,3 @@
-import Promise from "./Promise.d.ts";
+import "../typings/Promise.d.ts";
 
 export default Promise;

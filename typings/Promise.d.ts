@@ -121,7 +121,7 @@ interface Iterable<T> {
     [Symbol.iterator](): Iterator<T>;
 }
 
-export type IterableOrArray<T> = Iterable<T> | T[];
+type IterableOrArray<T> = Iterable<T> | T[];
 
 /**
  * Represents the completion of an asynchronous operation
@@ -133,16 +133,14 @@ interface Promise<T> {
     * @param onrejected The callback to execute when the Promise is rejected.
     * @returns A Promise for the completion of which ever callback is executed.
     */
-    then<TResult>(onfulfilled?: (value: T) => TResult | PromiseLike<TResult>, onrejected?: (reason: any) => TResult | PromiseLike<TResult>): Promise<TResult>;
-    then<TResult>(onfulfilled?: (value: T) => TResult | PromiseLike<TResult>, onrejected?: (reason: any) => void): Promise<TResult>;
+    then<TResult>(onfulfilled?: (value: T) => TResult | PromiseLike<TResult> | void, onrejected?: (reason: any) => TResult | PromiseLike<TResult> | void): Promise<TResult>;
 
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch(onrejected?: (reason: any) => T | PromiseLike<T>): Promise<T>;
-    catch(onrejected?: (reason: any) => void): Promise<T>;
+    catch(onrejected?: (reason: any) => T | PromiseLike<T> | void): Promise<T>;
 
     [Symbol.toStringTag]: "Promise";
 }
@@ -191,20 +189,7 @@ interface PromiseConstructor {
      * @param reason The reason the promise was rejected.
      * @returns A new rejected Promise.
      */
-    reject(reason?: any): Promise<void>;
-
-    /**
-     * Creates a new rejected promise for the provided reason.
-     * @param reason The reason the promise was rejected.
-     * @returns A new rejected Promise.
-     */
     reject<T>(reason?: any): Promise<T>;
-
-    /**
-     * Creates a new resolved promise .
-     * @returns A resolved promise.
-     */
-    resolve(value?: any): Promise<void>;
 
     /**
       * Creates a new resolved promise for the provided value.
@@ -216,6 +201,28 @@ interface PromiseConstructor {
     [Symbol.species]: Function;
 }
 
-declare var Promise: PromiseConstructor;
 
-export default Promise;
+/**
+ * Some extra helper of Yaku
+ */
+
+interface Promise<T> {
+    guard(type, onRejected?: Function): any;
+}
+
+interface PromiseConstructor {
+    Symbol: SymbolConstructor;
+
+    speciesConstructor(O, defaultConstructor: Function): void;
+
+    unhandledRejection<T>(reason, p: Promise<T>): void;
+
+    rejectionHandled<T>(reason, p: Promise<T>): void;
+
+    enableLongStackTrace(): void;
+
+    nextTick(fn: Function): void;
+}
+
+
+declare var Promise: PromiseConstructor;
