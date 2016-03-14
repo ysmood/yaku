@@ -1,4 +1,3 @@
-import "../typings/node.d.ts";
 import getPromise from "../test/getPromise";
 import * as utils from "../src/utils";
 import testSuit from "./testSuit";
