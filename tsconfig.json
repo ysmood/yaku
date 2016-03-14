@@ -1,5 +1,10 @@
 {
     "compilerOptions": {
-        "target": "es5"
-    }
+        "target": "es3",
+        "outDir": "lib",
+        "declaration": true
+    },
+    "files": [
+        "src/utils.ts"
+    ]
 }

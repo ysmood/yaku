@@ -1,7 +1,7 @@
 import _ from "./_";
 let $retryError = {};
 
-interface Retry {
+export interface Retry {
     (errs: any[]): boolean | Promise<boolean>;
 }
 

@@ -1,7 +1,7 @@
 import _ from "./_";
 import genIterator from "./genIterator";
 
-interface Emit {
+export interface Emit {
     (value?: any): Promise<any> | any;
 }
 

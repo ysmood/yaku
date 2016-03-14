@@ -7,9 +7,19 @@ import any from "./any";
 import async from "./async";
 import callbackify from "./callbackify";
 import Deferred from "./Deferred";
+import flow from "./flow";
+import if_ from "./if";
+import "./guard";
+import isPromise from "./isPromise";
+import never from "./never";
+import sleep from "./sleep";
+import Observable from "./Observable";
+import retry from "./retry";
+import throw_ from "./throw";
 
+let guard = null;
 
-export default {
+export {
 
     /**
      * Similar with the `Promise.race`, but only rejects when every entry rejects.
@@ -28,7 +38,7 @@ export default {
      * });
      * ```
      */
-    any: any,
+    any,
 
     /**
      * A function that helps run functions under a concurrent limitation.
@@ -75,7 +85,7 @@ export default {
      * .then(() => kit.log('all done!'));
      * ```
      */
-    async: async,
+    async,
 
     /**
      * If a function returns promise, convert it to
@@ -84,13 +94,13 @@ export default {
      * @param  {Any} self The `this` to bind to the fn.
      * @return {Function}
      */
-    callbackify: callbackify,
+    callbackify,
 
     /**
      * **deprecate** Create a `jQuery.Deferred` like object.
      * It will cause some buggy problems, please don't use it.
      */
-    Deferred: Deferred,
+    Deferred,
 
     /**
      * Creates a function that is the composition of the provided functions.
@@ -148,7 +158,7 @@ export default {
      * walker('test.com');
      * ```
      */
-    flow: flow,
+    flow,
 
     /**
      * Enable a helper to catch specific error type.
@@ -177,7 +187,7 @@ export default {
      * });
      * ```
      */
-    guard: guard,
+     guard,
 
     /**
      * if-else helper
@@ -197,7 +207,7 @@ export default {
       * })
      * ```
      */
-    "if": if,
+    if_ as if,
 
     /**
      * **deprecate** Check if an object is a promise-like object.
@@ -205,13 +215,13 @@ export default {
      * @param  {Any}  obj
      * @return {Boolean}
      */
-    isPromise: isPromise,
+    isPromise,
 
     /**
      * Create a promise that never ends.
      * @return {Promise} A promise that will end the current pipeline.
      */
-    never: never,
+    never,
 
     /**
      * Convert a node callback style function to a function that returns
@@ -240,7 +250,7 @@ export default {
      * });
      * ```
      */
-    promisify: promisify,
+    promisify,
 
     /**
      * Create a promise that will wait for a while before resolution.
@@ -253,13 +263,13 @@ export default {
      * sleep(1000).then(() => console.log('after one second'));
      * ```
      */
-    sleep: sleep,
+    sleep,
 
     /**
      * Read the `Observable` section.
      * @type {Function}
      */
-    Observable: Observable,
+    Observable,
 
     /**
      * Retry a function until it resolves before a mount of times, or reject with all
@@ -308,7 +318,7 @@ export default {
      * );
      * ```
      */
-    retry: retry,
+    retry,
 
     /**
      * Throw an error to break the program.
@@ -322,5 +332,5 @@ export default {
      * });
      * ```
      */
-    "throw": throw
+    throw_ as throw
 };

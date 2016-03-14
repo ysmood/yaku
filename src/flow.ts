@@ -2,7 +2,7 @@ import _ from "./_";
 import genIterator from "./genIterator";
 import isPromise from "./isPromise";
 
-interface Flow {
+export interface Flow {
     (iterable: Iterable<any>): (val) => Promise<any>;
     (...args: Function[]): (val) => Promise<any>;
 }

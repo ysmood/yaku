@@ -1,12 +1,8 @@
-/// <reference path="./typings/node.d.ts" />
-
-let kit = require("nokit");
-let _ = kit._;
+var kit = require("nokit");
+var _ = kit._;
 kit.require("drives");
 
-declare let __dirname;
-
-export default function (task, option) {
+module.exports = function (task, option) {
     option("--debug", "run with remote debug server");
     option("--port <8219>", "remote debug server port", 8219);
     option("-g, --grep <pattern>", "run test that match the pattern", ".");
@@ -18,8 +14,9 @@ export default function (task, option) {
     task("default build", ["doc", "code", "browser"]);
 
     task("doc", ["code"], "build doc", function () {
-        let size;
+        var size;
         size = kit.statSync("dist/yaku.min.js").size / 1024;
+
         return kit.warp("src/*.ts")
         .load(kit.drives.comment2md({
             tpl: "docs/readme.jst.md",
@@ -30,7 +27,7 @@ export default function (task, option) {
     });
 
     function addLicense (str) {
-        let version;
+        var version;
         version = kit.require("./package", __dirname).version;
         return ("/*\n Yaku v" + version +
             "\n (c) 2015 Yad Smood. http://ysmood.org\n License MIT\n*/\n")
@@ -58,7 +55,7 @@ export default function (task, option) {
     });
 
     task("lab l", "run and monitor \"test/lab.js\"", function (opts) {
-        let args;
+        var args;
         args = ["test/lab.ts"];
         if (opts.debug) {
             kit.log(opts.debug);
@@ -73,7 +70,7 @@ export default function (task, option) {
     task("test", "run Promises/A+ tests", ["test-basic", "test-yaku", "test-aplus", "test-es6"], true);
 
     task("test-yaku", "test yaku specs", function (opts) {
-        let junitOpts = ["-g", opts.grep, "-r", "ts-node/register"];
+        var junitOpts = ["-g", opts.grep, "-r", "ts-node/register"];
 
         return kit.spawn("junit", junitOpts.concat([
             "test/utils.ts",
@@ -82,7 +79,7 @@ export default function (task, option) {
     });
 
     task("test-basic", "test basic specs tests", function (opts) {
-        let junitOpts = ["-g", opts.grep, "-r", "ts-node/register"];
+        var junitOpts = ["-g", opts.grep, "-r", "ts-node/register"];
 
         process.env.shim = opts.shim;
 
@@ -96,7 +93,7 @@ export default function (task, option) {
     task("benchmark", "compare performance between different libraries", function () {
         process.env.NODE_ENV = "production";
 
-        let os = require("os");
+        var os = require("os");
         console.log("Node " + process.version // eslint-disable-line
             + "\nOS   " + (os.platform())
             + "\nArch " + (os.arch())
@@ -106,10 +103,10 @@ export default function (task, option) {
 
         );
 
-        let names = _.keys(require("./test/getPromise").map);
+        var names = _.keys(require("./test/getPromise").map);
 
         return kit.async(1, { next: function () {
-            let name = names.shift();
+            var name = names.shift();
             return {
                 done: !name,
                 value: name && kit.spawn("node", ["benchmark/index.js", name])

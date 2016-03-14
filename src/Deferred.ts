@@ -1,6 +1,6 @@
 import _ from "./_";
 
-interface Deferred<T> {
+export interface Deferred<T> {
     promise: Promise<T>;
     resolve: (val?) => void;
     reject: (reason?) => void;

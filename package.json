@@ -51,7 +51,7 @@
     "q": "1.4.1",
     "setprototypeof": "1.0.1",
     "ts-loader": "^0.8.1",
-    "ts-node": "^0.5.5",
+    "ts-node": "*",
     "typescript": "^1.8.7",
     "uglify-js": "2.6.2",
     "webpack": "1.12.14"

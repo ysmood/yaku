@@ -2,17 +2,17 @@ import _ from "./_";
 import genIterator from "./genIterator";
 import isPromise from "./isPromise";
 
-interface Progress<T> {
+export interface Progress<T> {
     (val: T): void;
 }
 
-interface Async {
+export interface Async {
     <T>(iterable: Iterable<T>, saveResults?: boolean, progress?: Progress<T>): Promise<T[]>;
 
     <T>(limit: number, iterable: Iterable<T>, saveResults?: boolean, progress?: Progress<T>): Promise<T[]>;
 }
 
- let async: Async = function (limit, list?, saveResults?, progress?) {
+let async: Async = function (limit, list?, saveResults?, progress?) {
     let resutls, running;
     resutls = [];
     running = 0;
