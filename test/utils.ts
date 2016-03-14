@@ -1,6 +1,6 @@
 
 import Yaku from "../src/yaku";
-import utils from "../src/utils";
+import * as utils from "../src/utils";
 import testSuit from "./testSuit";
 
 let $val = {
@@ -328,9 +328,8 @@ export default testSuit("basic", function (it) {
     });
 
     it("retry 2 times", "ok", function () {
-        let count, fn;
-        count = 0;
-        fn = function (v) {
+        let count = 0;
+        let fn = function (v) {
             if (count < 2) {
                 throw "err" + count++;
             } else {

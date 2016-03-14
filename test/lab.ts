@@ -1,5 +1,6 @@
-import utils from "../src/utils";
-import an from "../src/any";
+import * as utils from "../src/utils";
 import Promise from "../src/yaku";
 
-
+Promise.resolve().then(() => {
+    console.log("OK");
+});

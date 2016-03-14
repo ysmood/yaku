@@ -4,7 +4,7 @@ import isPromise from "./isPromise";
 
 export interface Flow {
     (iterable: Iterable<any>): (val) => Promise<any>;
-    (...args: Function[]): (val) => Promise<any>;
+    (...args: any[]): (val) => Promise<any>;
 }
 
 let flow: Flow = function (...args) {

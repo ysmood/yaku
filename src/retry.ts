@@ -5,8 +5,14 @@ export interface Retry {
     (errs: any[]): boolean | Promise<boolean>;
 }
 
+export interface Attempt {
+    (...args: any[]): Promise<any>;
+}
+
 export default function (retries: number | Retry, fn: Function, self?) {
     let errs = [], args;
+    let attempt: Attempt;
+
     let countdown = _.isFunction(retries) ?
         <Retry>retries : function () { return Boolean(retries = <number>retries - 1); };
 
@@ -21,7 +27,7 @@ export default function (retries: number | Retry, fn: Function, self?) {
         return attempt();
     }
 
-    function attempt () {
+    attempt = function () {
         if (args === void 0) args = arguments;
         return _.Promise.resolve(countdown(errs)).then(tryFn).catch(onError);
     }

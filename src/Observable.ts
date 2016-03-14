@@ -105,7 +105,7 @@ class Observable {
      * @param  {Function} onError
      * @return {Observable}
      */
-    subscribe (onEmit: Emit, onError: Emit) {
+    subscribe (onEmit: Emit, onError?: Emit) {
         let self = this, subscriber = new Observable();
         subscriber._onEmit = onEmit;
         subscriber._onError = onError;

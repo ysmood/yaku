@@ -1,3 +1,5 @@
+/// <reference path="../typings/node.d.ts" />
+
 
 // Keep the native out of the place.
 let root = typeof global === "object" ? global : window;
