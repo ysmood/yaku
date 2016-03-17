@@ -651,7 +651,7 @@
         stackStr = "\n" + stackInfo.join("\n");
 
         function clean (stack, cleanPrev) {
-            if (cleanPrev && (i = stack.indexOf("\n" + $fromPrevious)) > 0)
+            if (cleanPrev && (i = stack.indexOf($fromPrevious)) > 0)
                 stack = stack.slice(0, i);
 
             return stack.replace(/^.+\/node_modules\/yaku\/.+\n?/mg, "");
