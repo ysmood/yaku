@@ -696,10 +696,7 @@
             if (state === $rejected) {
                 if (isLongStackTrace && value && value.stack) {
                     stack = genStackInfo(value, p);
-                    // TODO: Error.prototype.stack in the phantomjs is readonly.
-                    value = new Err(value.message);
                     value.stack = stack[0] + stack[1];
-                    p._v = value;
                 }
 
                 scheduleUnhandledRejection(p);
