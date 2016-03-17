@@ -11,7 +11,7 @@ module.exports = function (task, option) {
     option("-w, --watch", "webpack watch");
     option("-s, --shim <name>", "the promise shim to require, check the test/getPromise.js file for details", "yaku");
 
-    task("default build", ["doc", "code", "browser"]);
+    task("default build", ["doc", "code", "browser"], true);
 
     task("doc", ["code"], "build doc", function () {
         var size;
@@ -114,7 +114,7 @@ module.exports = function (task, option) {
     });
 
     task("clean", "Clean temp files", function () {
-        return kit.remove("{.nokit,lib,.nobone}");
+        return kit.remove("lib");
     });
 
     task("browser", "Unit test on browser", function (opts) {
