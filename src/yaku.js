@@ -696,7 +696,7 @@
             if (state === $rejected) {
                 if (isLongStackTrace && value && value.stack) {
                     stack = genStackInfo(value, p);
-                    value.stack = stack[0] + stack[1];
+                    value.longStack = stack[0] + stack[1];
                 }
 
                 scheduleUnhandledRejection(p);

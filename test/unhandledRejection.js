@@ -92,7 +92,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
                     err.custom = "ok";
                     throw err;
                 })["catch"](function (err) {
-                    return [err.stack.match(/From previous/g).length, err.custom];
+                    return [err.longStack.match(/From previous/g).length, err.custom];
                 });
             });
 
@@ -205,7 +205,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
                     err.custom = "ok";
                     throw err;
                 })["catch"](function (err) {
-                    return [err.stack.match(/From previous/g).length, err.custom];
+                    return [err.longStack.match(/From previous/g).length, err.custom];
                 });
             });
 
