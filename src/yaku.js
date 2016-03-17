@@ -294,8 +294,7 @@
     Yaku.unhandledRejection = function (reason, p) {
         var con = root.console;
         if (con) {
-            var info = genStackInfo(reason, p);
-            con.error($unhandledRejectionMsg, info[0], info[1] || "");
+            con.error($unhandledRejectionMsg, genStackInfo(reason, p));
         }
     };
 
@@ -623,9 +622,7 @@
     }
 
     function genStackInfo (reason, p) {
-        var stackInfo = []
-        , stackStr
-        , i;
+        var stackInfo = [];
 
         function trim (str) { return str.replace(/^\s+|\s+$/g, ""); }
 
@@ -648,24 +645,15 @@
             })(p);
         }
 
-        stackStr = "\n" + stackInfo.join("\n");
-
-        function clean (stack, cleanPrev) {
-            if (cleanPrev && (i = stack.indexOf($fromPrevious)) > 0)
-                stack = stack.slice(0, i);
-
-            return stack.replace(/^.+\/node_modules\/yaku\/.+\n?/mg, "");
-        }
-
-        return [(
+        return (
             reason ?
                 reason.stack ?
-                    clean(trim(reason.stack), true)
+                    reason.stack
                 :
                     reason
             :
                 reason
-        ), clean(stackStr)];
+        ) + ("\n" + stackInfo.join("\n")).replace(/^.+\/node_modules\/yaku\/.+\n?/mg, "");
     }
 
     function callHanler (handler, value) {
@@ -695,8 +683,7 @@
 
             if (state === $rejected) {
                 if (isLongStackTrace && value && value.stack) {
-                    stack = genStackInfo(value, p);
-                    value.longStack = stack[0] + stack[1];
+                    value.longStack = genStackInfo(value, p);
                 }
 
                 scheduleUnhandledRejection(p);
