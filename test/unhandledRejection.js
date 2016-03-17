@@ -85,12 +85,14 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
         }).then(function () {
 
-            return it("long stack trace", 2, function () {
+            return it("long stack trace", [2, "ok"], function () {
                 Promise.enableLongStackTrace();
                 return Promise.resolve().then(function () {
-                    throw new Error("abc");
+                    var err = new Error("abc");
+                    err.custom = "ok";
+                    throw err;
                 })["catch"](function (err) {
-                    return err.stack.match(/From previous/g).length;
+                    return [err.stack.match(/From previous/g).length, err.custom];
                 });
             });
 
@@ -196,12 +198,14 @@ module.exports = testSuit("unhandledRejection", function (it) {
 
         }).then(function () {
 
-            return it("long stack trace", 2, function () {
+            return it("long stack trace", [2, "ok"], function () {
                 Promise.enableLongStackTrace();
                 return Promise.resolve().then(function () {
-                    throw new Error("abc");
+                    var err = new Error("abc");
+                    err.custom = "ok";
+                    throw err;
                 })["catch"](function (err) {
-                    return err.stack.match(/From previous/g).length;
+                    return [err.stack.match(/From previous/g).length, err.custom];
                 });
             });
 
