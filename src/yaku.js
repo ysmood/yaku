@@ -6,6 +6,7 @@
     , root = typeof global === "object" ? global : window
     , isLongStackTrace = false
     , process = root.process
+    , Arr = Array
     , Err = Error
 
     , $rejected = 0
@@ -371,6 +372,14 @@
         return typeof obj === "function";
     }
 
+    function isInstanceOf (a, b) {
+        return a instanceof b;
+    }
+
+    function isError (obj) {
+        return isInstanceOf(obj, Err);
+    }
+
     /**
      * Wrap a function into a try-catch.
      * @private
@@ -410,7 +419,7 @@
          * here, so that they can be execute on the next tick.
          * @private
          */
-        var fnQueue = Array(initQueueSize)
+        var fnQueue = Arr(initQueueSize)
         , fnQueueLen = 0;
 
         /**
@@ -458,7 +467,7 @@
             iter = gen.call(iterable);
         else if (isFunction(iterable.next))
             iter = iterable;
-        else if (iterable instanceof Array) {
+        else if (isInstanceOf(iterable, Arr)) {
             len = iterable.length;
             while (i < len) {
                 fn(iterable[i], i++);
@@ -645,15 +654,8 @@
             })(p);
         }
 
-        return (
-            reason ?
-                reason.stack ?
-                    reason.stack
-                :
-                    reason
-            :
-                reason
-        ) + ("\n" + stackInfo.join("\n")).replace(/^.+\/node_modules\/yaku\/.+\n?/mg, "");
+        return (isError(reason) ? reason.stack : reason)
+            + ("\n" + stackInfo.join("\n")).replace(/^.+\/node_modules\/yaku\/.+\n?/mg, "");
     }
 
     function callHanler (handler, value) {
@@ -671,8 +673,7 @@
     function settlePromise (p, state, value) {
         var i = 0
         , len = p._pCount
-        , p2
-        , stack;
+        , p2;
 
         // 2.1.2
         // 2.1.3
@@ -682,7 +683,7 @@
             p._v = value;
 
             if (state === $rejected) {
-                if (isLongStackTrace && value && value.stack) {
+                if (isLongStackTrace && isError(value)) {
                     value.longStack = genStackInfo(value, p);
                 }
 
