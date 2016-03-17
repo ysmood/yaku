@@ -66,7 +66,7 @@ module.exports = function (task, option) {
         });
     });
 
-    task("test", "run Promises/A+ tests", ["test-basic", "test-yaku", "test-aplus", "test-es6"], true);
+    task("test", "run Promises/A+ tests", ["test-basic", "test-yaku", "test-browser", "test-aplus", "test-es6"], true);
 
     task("test-yaku", "test yaku specs", function (opts) {
         var junitOpts = ["-g", opts.grep];
@@ -88,6 +88,10 @@ module.exports = function (task, option) {
     task("test-aplus", "test aplus tests", require("./test/promises-aplus-tests.js"));
 
     task("test-es6", "test es6 tests", require("./test/promises-es6-tests.js"));
+
+    task("test-browser", ["browser"], "use phantomjs to test", function () {
+        return kit.spawn("phantomjs", ["test/phantom.js"]);
+    });
 
     task("benchmark", "compare performance between different libraries", function () {
         process.env.NODE_ENV = "production";

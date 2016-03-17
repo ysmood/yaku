@@ -46,6 +46,7 @@
     "junit": "1.2.0",
     "mocha": "2.4.5",
     "nokit": "0.17.2",
+    "phantomjs-prebuilt": "2.1.4",
     "promises-aplus-tests": "*",
     "promises-es6-tests": "*",
     "q": "1.4.1",
