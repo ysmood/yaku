@@ -1,80 +1,43 @@
 var _ = require("./_");
-var genIterator = require("./genIterator");
-var isPromise = require("./isPromise");
 
-module.exports = function (limit, list, saveResults, progress) {
-    var resutls, running;
-    resutls = [];
-    running = 0;
-    if (!_.isNumber(limit)) {
-        progress = saveResults;
-        saveResults = list;
-        list = limit;
-        limit = Infinity;
+var tryErr = {};
+
+function tryCatch (gen, key, val) {
+    try {
+        return gen[key](val);
+    } catch (err) {
+        tryErr.err = err;
+        return tryErr;
     }
-    if (saveResults == null) {
-        saveResults = true;
-    }
+}
 
-    var iter = genIterator(list);
+module.exports = function (generator) {
+    return function () {
+        var gen = generator.apply(this, arguments);
 
-    return new _.Promise(function (resolve, reject) {
-        var results, resultIndex = 0;
+        return new _.Promise(function (resolve, reject) {
+            function genNext (val) {
+                return step("next", val);
+            }
 
-        function addTask (index) {
-            var p, task;
+            function genThrow (val) {
+                return step("throw", val);
+            }
 
-            task = iter.next();
-            if (task.done) {
-                if (running === 0) {
-                    allDone();
+            function step (key, val) {
+                var info = tryCatch(gen, key, val);
+
+                if (info === tryErr)
+                    return reject(info.err);
+
+                if (info.done) {
+                    resolve(info.value);
+                } else {
+                    return _.Promise.resolve(info.value).then(genNext, genThrow);
                 }
-                return false;
             }
 
-            if (isPromise(task.value)) {
-                p = task.value;
-            } else {
-                p = _.Promise.resolve(task.value);
-            }
-
-            running++;
-
-            p.then(function (ret) {
-                running--;
-                if (saveResults) {
-                    resutls[index] = ret;
-                }
-                if (typeof progress === "function") {
-                    progress(ret);
-                }
-                return addTask(resultIndex++);
-            })["catch"](function (err) {
-                running--;
-                return reject(err);
-            });
-
-            return true;
-        }
-
-        function allDone () {
-            if (saveResults) {
-                return resolve(resutls);
-            } else {
-                return resolve();
-            }
-        }
-
-        var i = limit;
-        results = [];
-        while (i--) {
-            if (!addTask(resultIndex++)) {
-                break;
-            } else {
-                results.push(void 0);
-            }
-        }
-
-        return results;
-    });
+            return step("next");
+        });
+    };
 };

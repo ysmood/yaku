@@ -9,7 +9,7 @@ var $val = {
 
 module.exports = testSuit("basic", function (it) {
 
-    it("async array", [0, null, void 0, 1, 2, 3], function () {
+    it("all array", [0, null, void 0, 1, 2, 3], function () {
         var list;
         list = [
             0,
@@ -19,10 +19,10 @@ module.exports = testSuit("basic", function (it) {
             utils.sleep(10, 2),
             utils.sleep(10, 3)
         ];
-        return utils.async(2, list);
+        return utils.all(2, list);
     });
 
-    it("async error", $val, function () {
+    it("all error", $val, function () {
         var iter = {
             i: 0,
             next: function () {
@@ -39,12 +39,12 @@ module.exports = testSuit("basic", function (it) {
                 return { done: !fn, value: fn && fn() };
             }
         };
-        return utils.async(2, iter)["catch"](function (err) {
+        return utils.all(2, iter)["catch"](function (err) {
             return err;
         });
     });
 
-    it("async iter progress", 10, function () {
+    it("all iter progress", 10, function () {
         var iter = { i: 0, next: function () {
             var done = iter.i++ >= 10;
             return {
@@ -58,11 +58,29 @@ module.exports = testSuit("basic", function (it) {
         } };
 
         var count = 0;
-        return utils.async(3, iter, false, function (ret) {
+        return utils.all(3, iter, false, function (ret) {
             return count += ret;
         }).then(function () {
             return count;
         });
+    });
+
+    it("async basic", false, function () {
+        function gen () {
+            return { i: 0, next: function () {
+                var done = this.i++ >= 10;
+                return {
+                    done: done,
+                    value: !done && new Yaku(function (r) {
+                        return setTimeout((function () {
+                            return r(1);
+                        }), 1);
+                    })
+                };
+            } };
+        }
+
+        return utils.async(gen)();
     });
 
     it("flow array", "bc", function () {

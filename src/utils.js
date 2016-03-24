@@ -3,6 +3,53 @@
 module.exports = {
 
     /**
+     * A function that helps run functions under a concurrent limitation.
+     * To run functions sequentially, use `yaku/lib/flow`.
+     * @param  {Int} limit The max task to run at a time. It's optional.
+     * Default is `Infinity`.
+     * @param  {Iterable} list Any [iterable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
+     * don't pass in a normal Array with promises.
+     * @param {Boolean} saveResults Whether to save each promise's result or
+     * not. Default is true.
+     * @param {Function} progress If a task ends, the resolved value will be
+     * passed to this function.
+     * @return {Promise}
+     * @example
+     * ```js
+     * var kit = require('nokit');
+     * var all = require('yaku/lib/all');
+     *
+     * var urls = [
+     *     'http://a.com',
+     *     'http://b.com',
+     *     'http://c.com',
+     *     'http://d.com'
+     * ];
+     * var tasks = function * () {
+     *     var i = 0;
+     *     yield kit.request(url[i++]);
+     *     yield kit.request(url[i++]);
+     *     yield kit.request(url[i++]);
+     *     yield kit.request(url[i++]);
+     * }();
+     *
+     * all(tasks).then(() => kit.log('all done!'));
+     *
+     * all(2, tasks).then(() => kit.log('max concurrent limit is 2'));
+     *
+     * all(3, { next: () => {
+     *     var url = urls.pop();
+     *     return {
+     *          done: !url,
+     *          value: url && kit.request(url)
+     *     };
+     * } })
+     * .then(() => kit.log('all done!'));
+     * ```
+     */
+    all: require("./all"),
+
+    /**
      * Similar with the `Promise.race`, but only rejects when every entry rejects.
      * @param  {iterable} iterable An iterable object, such as an Array.
      * @return {Yaku}
@@ -22,48 +69,21 @@ module.exports = {
     any: require("./any"),
 
     /**
-     * A function that helps run functions under a concurrent limitation.
-     * To run functions sequentially, use `yaku/lib/flow`.
-     * @param  {Int} limit The max task to run at a time. It's optional.
-     * Default is `Infinity`.
-     * @param  {Iterable} list Any [iterable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
-     * don't pass in a normal Array with promises.
-     * @param {Boolean} saveResults Whether to save each promise's result or
-     * not. Default is true.
-     * @param {Function} progress If a task ends, the resolved value will be
-     * passed to this function.
-     * @return {Promise}
+     * Generator based async/await wrapper.
+     * @param  {Generator} gen A generator function
+     * @return {Yaku}
      * @example
      * ```js
-     * var kit = require('nokit');
      * var async = require('yaku/lib/async');
+     * var sleep = require('yaku/lib/sleep');
      *
-     * var urls = [
-     *     'http://a.com',
-     *     'http://b.com',
-     *     'http://c.com',
-     *     'http://d.com'
-     * ];
-     * var tasks = function * () {
-     *     var i = 0;
-     *     yield kit.request(url[i++]);
-     *     yield kit.request(url[i++]);
-     *     yield kit.request(url[i++]);
-     *     yield kit.request(url[i++]);
-     * }();
+     * var fn = async(function * () {
+     *     return yield sleep(1000, 'ok');
+     * });
      *
-     * async(tasks).then(() => kit.log('all done!'));
-     *
-     * async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
-     *
-     * async(3, { next: () => {
-     *     var url = urls.pop();
-     *     return {
-     *          done: !url,
-     *          value: url && kit.request(url)
-     *     };
-     * } })
-     * .then(() => kit.log('all done!'));
+     * fn().then(function (v) {
+     *     console.log(v);
+     * });
      * ```
      */
     async: require("./async"),
