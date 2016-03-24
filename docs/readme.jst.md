@@ -80,14 +80,13 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
 | name | unit tests | 1ms async task | optional helpers | helpers | min js |
 | ---- | ---------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.13.1 | ✓ | 337ms / 106MB | ✓ | 31 | <%= doc.size %>KB |
-| [bluebird][]@3.3.1 | x (26 failing) | 258ms / 88MB | partial | 100 | 52.2KB |
-| [es6-promise][]@3.1.2 | x (39 failing) | 457ms / 112MB | x | 10 | 6.3KB |
-| [native][]@0.13.2 | x (7 failing) | 653ms / 168MB | x | 13 | 0KB |
-| [core-js][]@2.1.1 | x (2 failing) | 1014ms / 197MB | x | 11 | 18.7KB |
-| [es6-shim][]@0.34.4 | ✓ | 927ms / 145MB | x | 12 | 130.8KB |
-| [q][]@1.4.1 | x (68 failing) | 1609ms / 426MB | x | 74 | 15.4KB |
-
+| [yaku][]@0.13.7 | ✓ | 341ms / 108MB | ✓ | 31 | 3.9KB |
+| [bluebird][]@3.3.4 | x (28 failing) | 291ms / 89MB | partial | 100 | 52.2KB |
+| [es6-promise][]@3.1.2 | x (27 failing) | 509ms / 113MB | x | 10 | 6.3KB |
+| [native][]@0.13.7 | x (9 failing) | 681ms / 168MB | x | 13 | 0KB |
+| [core-js][]@2.2.1 | x (4 failing) | 910ms / 195MB | x | 11 | 12.2KB |
+| [es6-shim][]@0.35.0 | x (2 failing) | 1055ms / 145MB | x | 12 | 131.5KB |
+| [q][]@1.4.1 | x (68 failing) | 1594ms / 425MB | x | 74 | 15.4KB |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
