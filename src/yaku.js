@@ -94,7 +94,7 @@
         then: function then (onFulfilled, onRejected) {
             return addHandler(
                 this,
-                newEmptyPromise(Yaku.speciesConstructor(this, Yaku)),
+                newCapablePromise(Yaku.speciesConstructor(this, Yaku)),
                 onFulfilled,
                 onRejected
             );
@@ -144,7 +144,7 @@
      * ```
      */
     Yaku.resolve = function resolve (val) {
-        return isYaku(val) ? val : settleWithX(newEmptyPromise(this), val);
+        return isYaku(val) ? val : settleWithX(newCapablePromise(this), val);
     };
 
     /**
@@ -158,7 +158,7 @@
      * ```
      */
     Yaku.reject = function reject (reason) {
-        return settlePromise(newEmptyPromise(this), $rejected, reason);
+        return settlePromise(newCapablePromise(this), $rejected, reason);
     };
 
     /**
@@ -182,13 +182,24 @@
      * ```
      */
     Yaku.race = function race (iterable) {
-        var self = this;
+        var self = this
+        , p = newCapablePromise(self)
 
-        return new this(function (resolve, reject) {
-            each(iterable, function (v) {
-                self.resolve(v).then(resolve, reject);
-            });
+        , resolve = function (val) {
+            settlePromise(p, $resolved, val);
+        }
+
+        , reject = function (val) {
+            settlePromise(p, $rejected, val);
+        }
+
+        , ret = genTryCatcher(each)(iterable, function (v) {
+            self.resolve(v).then(resolve, reject);
         });
+
+        if (ret === $tryErr) return self.reject(ret.e);
+
+        return p;
     };
 
     /**
@@ -228,7 +239,7 @@
      */
     Yaku.all = function all (iterable) {
         var self = this
-        , p1 = newEmptyPromise(self)
+        , p1 = newCapablePromise(self)
         , res = []
         , ret
         ;
@@ -270,7 +281,11 @@
      * @param {Any} O The current this object.
      * @param {Function} defaultConstructor
      */
-    Yaku.speciesConstructor = function (O, D) { return O.constructor || D; };
+    Yaku.speciesConstructor = function (O, D) {
+        var C = O.constructor;
+
+        return C ? (C[Yaku[$Symbol].species] || C) : D;
+    };
 
     /**
      * Catch all possibly unhandled rejections. If you want to use specific
@@ -378,6 +393,10 @@
 
     function isError (obj) {
         return isInstanceOf(obj, Err);
+    }
+
+    function ensureType (obj, fn, msg) {
+        if (!fn(obj)) throw genTypeError(msg);
     }
 
     /**
@@ -557,10 +576,21 @@
 
     function isYaku (val) { return val && val._Yaku; }
 
-    function newEmptyPromise (Self) {
-        if (!isYaku(Self)) throw genTypeError($invalidThis);
+    function newCapablePromise (Constructor) {
+        if (isYaku(Constructor)) return new Constructor($noop);
 
-        return new Self($noop);
+        var p, r, j;
+        p = new Constructor(function (resolve, reject) {
+            if (p) throw genTypeError();
+
+            r = resolve;
+            j = reject;
+        });
+
+        ensureType(r, isFunction);
+        ensureType(j, isFunction);
+
+        return p;
     }
 
     /**
