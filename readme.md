@@ -1022,6 +1022,12 @@ Use `npm run no -- test` to run the unit test against yaku.
 
 ## Test other libs
 
+### basic test
+
+To test `bluebird`: `npm run no -- test-basic --shim bluebird`
+
+The `bluebird` can be replaced with other lib, see the `test/getPromise.js` for which libs are supported.
+
 ### aplus test
 
 To test `bluebird`: `npm run no -- test-aplus --shim bluebird`
