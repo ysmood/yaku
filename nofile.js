@@ -117,6 +117,20 @@ module.exports = function (task, option) {
         } });
     });
 
+    task("benchmark-asyncWrapper", function () {
+        process.env.NODE_ENV = "production";
+
+        var names = _.keys(require("./benchmark/asyncWrapper/getWrapper").map);
+
+        return kit.async(1, { next: function () {
+            var name = names.shift();
+            return {
+                done: !name,
+                value: name && kit.spawn("node", ["benchmark/asyncWrapper/index.js", name])
+            };
+        } });
+    });
+
     task("clean", "Clean temp files", function () {
         return kit.remove("lib");
     });

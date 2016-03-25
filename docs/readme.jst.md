@@ -208,7 +208,18 @@ The `bluebird` can be replaced with other lib, see the `test/getPromise.js` for 
 
 Use `npm run no -- benchmark` to run the benchmark.
 
+## async/await generator wrapper
 
+```
+Node v5.6.0
+OS   darwin
+Arch x64
+CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
+
+yaku: 117ms
+co: 283ms
+bluebird: 643ms
+```
 
 # Contribute
 
