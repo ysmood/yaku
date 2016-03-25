@@ -1,10 +1,10 @@
-var _ = require("./_");
+var Promise = require("./_").Promise;
 
 var tryErr = {};
 
-function tryCatch (gen, key, val) {
+function tryCatch (step, key) {
     try {
-        return gen[key](val);
+        return step(key);
     } catch (err) {
         tryErr.err = err;
         return tryErr;
@@ -15,29 +15,29 @@ module.exports = function (generator) {
     return function () {
         var gen = generator.apply(this, arguments);
 
-        return new _.Promise(function (resolve, reject) {
-            function genNext (val) {
-                return step("next", val);
+        function genNext (val) {
+            return step("next", val);
+        }
+
+        function genThrow (val) {
+            return step("throw", val);
+        }
+
+        function step (key, val) {
+            var info = gen[key](val);
+
+            if (info.done) {
+                return Promise.resolve(info.value);
+            } else {
+                return Promise.resolve(info.value).then(genNext, genThrow);
             }
+        }
 
-            function genThrow (val) {
-                return step("throw", val);
-            }
+        var ret = tryCatch(step, "next");
 
-            function step (key, val) {
-                var info = tryCatch(gen, key, val);
-
-                if (info === tryErr)
-                    return reject(info.err);
-
-                if (info.done) {
-                    resolve(info.value);
-                } else {
-                    return _.Promise.resolve(info.value).then(genNext, genThrow);
-                }
-            }
-
-            return step("next");
-        });
+        if (ret === tryErr)
+            return Promise.reject(ret.err);
+        else
+            return ret;
     };
 };
