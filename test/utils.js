@@ -83,6 +83,67 @@ module.exports = testSuit("basic", function (it) {
         return utils.async(gen)();
     });
 
+    it("async error", "err", function () {
+        function gen () {
+            return {
+                next: function () {
+                    return {
+                        done: false,
+                        value: Yaku.reject("err")
+                    };
+                },
+                "throw": function (err) {
+                    return {
+                        done: true,
+                        value: err
+                    };
+                }
+            };
+        }
+
+        return utils.async(gen)();
+    });
+
+    it("async throw", "err", function () {
+        function gen () {
+            return {
+                next: function () {
+                    throw "err";
+                },
+                "throw": function (err) {
+                    return {
+                        done: true,
+                        value: err
+                    };
+                }
+            };
+        }
+
+        return utils.async(gen)().catch(function (v) { return v; });
+    });
+
+    it("async reject", "err", function () {
+        function gen () {
+            return {
+                next: function () {
+                    return {
+                        done: false,
+                        value: Yaku.reject("err")
+                    };
+                },
+                "throw": function (err) {
+                    return {
+                        done: true,
+                        value: Yaku.reject(err)
+                    };
+                }
+
+            };
+        }
+
+        return utils.async(gen)().catch(function (v) { return v; });
+    });
+
     it("flow array", "bc", function () {
         return (utils.flow([
             "a", Yaku.resolve("b"), function (v) {

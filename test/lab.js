@@ -3,39 +3,21 @@
 var Promise = Yaku = require("../src/yaku");
 var utils = require("../src/utils")
 
-        // function * gen () {
-        //     yield Promise.reject(10);
-        // }
+        var gen = utils.async(function gen () {
+            return {
+                next: function () {
+                    return {
+                        done: false,
+                        value: Yaku.reject("err")
+                    };
+                },
+                "throw": function (err) {
+                    return {
+                        done: true,
+                        value: Yaku.reject(err)
+                    };
+                }
+            };
+        })
 
-        function gen () {
-            return { i: 0, next: function () {
-                var done = this.i++ >= 10;
-                return {
-                    done: done,
-                    value: !done && new Yaku(function (r, rr) {
-                        return setTimeout((function () {
-                            return rr(1);
-                        }), 1);
-                    })
-                };
-            }, "throw": function (err) {
-                throw err;
-            } };
-        }
-
-        return utils.async(gen)().catch(function (v) {
-            console.log(v)
-        });
-
-// function * gen () {
-//     try {
-//         yield 1;
-//     } catch (err) {
-//         return 0
-//     }
-// }
-
-// var g = gen();
-
-// g.next();
-// console.log(g.throw(1));
+return gen().catch(function (v) { return console.log(v); });
