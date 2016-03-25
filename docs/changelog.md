@@ -1,3 +1,8 @@
+- v0.14
+
+  - **API CHANGE** `async` renamed to `all`
+  - add: ES7 `async/await` wrapper for generator, the helper is named `async`
+
 - v0.13
 
   - **API CHANGE** rename `onUnhandledRejection` to `unhandledRejection`

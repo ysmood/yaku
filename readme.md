@@ -156,8 +156,9 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [Yaku.nextTick](#yakunexttick)
 
 - #### require('yaku/lib/utils')
+  - [all(limit, list, saveResults, progress)](#alllimit-list-saveresults-progress)
   - [any(iterable)](#anyiterable)
-  - [async(limit, list, saveResults, progress)](#asynclimit-list-saveresults-progress)
+  - [async(gen)](#asyncgen)
   - [callbackify(fn, self)](#callbackifyfn-self)
   - [Deferred](#deferred)
   - [flow(list)](#flowlist)
@@ -483,31 +484,7 @@ var source = require("yaku/lib/source");
 // now "source" use bluebird instead of yaku.
 ```
 
-- ### **[any(iterable)](src/utils.js?source#L22)**
-
-    Similar with the `Promise.race`, but only rejects when every entry rejects.
-
-    - **<u>param</u>**: `iterable` { _iterable_ }
-
-        An iterable object, such as an Array.
-
-    - **<u>return</u>**: { _Yaku_ }
-
-    - **<u>example</u>**:
-
-        ```js
-        var any = require('yaku/lib/any');
-        any([
-            123,
-            Promise.resolve(0),
-            Promise.reject(new Error("ERR"))
-        ])
-        .then((value) => {
-            console.log(value); // => 123
-        });
-        ```
-
-- ### **[async(limit, list, saveResults, progress)](src/utils.js?source#L69)**
+- ### **[all(limit, list, saveResults, progress)](src/utils.js?source#L50)**
 
     A function that helps run functions under a concurrent limitation.
     To run functions sequentially, use `yaku/lib/flow`.
@@ -538,7 +515,7 @@ var source = require("yaku/lib/source");
 
         ```js
         var kit = require('nokit');
-        var async = require('yaku/lib/async');
+        var all = require('yaku/lib/all');
 
         var urls = [
             'http://a.com',
@@ -554,11 +531,11 @@ var source = require("yaku/lib/source");
             yield kit.request(url[i++]);
         }();
 
-        async(tasks).then(() => kit.log('all done!'));
+        all(tasks).then(() => kit.log('all done!'));
 
-        async(2, tasks).then(() => kit.log('max concurrent limit is 2'));
+        all(2, tasks).then(() => kit.log('max concurrent limit is 2'));
 
-        async(3, { next: () => {
+        all(3, { next: () => {
             var url = urls.pop();
             return {
                  done: !url,
@@ -568,7 +545,56 @@ var source = require("yaku/lib/source");
         .then(() => kit.log('all done!'));
         ```
 
-- ### **[callbackify(fn, self)](src/utils.js?source#L78)**
+- ### **[any(iterable)](src/utils.js?source#L69)**
+
+    Similar with the `Promise.race`, but only rejects when every entry rejects.
+
+    - **<u>param</u>**: `iterable` { _iterable_ }
+
+        An iterable object, such as an Array.
+
+    - **<u>return</u>**: { _Yaku_ }
+
+    - **<u>example</u>**:
+
+        ```js
+        var any = require('yaku/lib/any');
+        any([
+            123,
+            Promise.resolve(0),
+            Promise.reject(new Error("ERR"))
+        ])
+        .then((value) => {
+            console.log(value); // => 123
+        });
+        ```
+
+- ### **[async(gen)](src/utils.js?source#L89)**
+
+    Generator based async/await wrapper.
+
+    - **<u>param</u>**: `gen` { _Generator_ }
+
+        A generator function
+
+    - **<u>return</u>**: { _Yaku_ }
+
+    - **<u>example</u>**:
+
+        ```js
+        var async = require('yaku/lib/async');
+        var sleep = require('yaku/lib/sleep');
+
+        var fn = async(function * () {
+            return yield sleep(1000, 'ok');
+        });
+
+        fn().then(function (v) {
+            console.log(v);
+        });
+        ```
+
+- ### **[callbackify(fn, self)](src/utils.js?source#L98)**
 
     If a function returns promise, convert it to
     node callback style function.
@@ -581,12 +607,12 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Function_ }
 
-- ### **[Deferred](src/utils.js?source#L84)**
+- ### **[Deferred](src/utils.js?source#L104)**
 
     **deprecate** Create a `jQuery.Deferred` like object.
     It will cause some buggy problems, please don't use it.
 
-- ### **[flow(list)](src/utils.js?source#L142)**
+- ### **[flow(list)](src/utils.js?source#L162)**
 
     Creates a function that is the composition of the provided functions.
     See `yaku/lib/async`, if you need concurrent support.
@@ -653,7 +679,7 @@ var source = require("yaku/lib/source");
         walker('test.com');
         ```
 
-- ### **[guard(type, onRejected)](src/utils.js?source#L171)**
+- ### **[guard(type, onRejected)](src/utils.js?source#L191)**
 
     Enable a helper to catch specific error type.
     It will be directly attach to the prototype of the promise.
@@ -685,7 +711,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[if(cond, trueFn, falseFn)](src/utils.js?source#L191)**
+- ### **[if(cond, trueFn, falseFn)](src/utils.js?source#L211)**
 
     if-else helper
 
@@ -710,7 +736,7 @@ var source = require("yaku/lib/source");
         })
         ```
 
-- ### **[isPromise(obj)](src/utils.js?source#L199)**
+- ### **[isPromise(obj)](src/utils.js?source#L219)**
 
     **deprecate** Check if an object is a promise-like object.
     Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
@@ -719,7 +745,7 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[never()](src/utils.js?source#L205)**
+- ### **[never()](src/utils.js?source#L225)**
 
     Create a promise that never ends.
 
@@ -727,7 +753,7 @@ var source = require("yaku/lib/source");
 
         A promise that will end the current pipeline.
 
-- ### **[promisify(fn, self)](src/utils.js?source#L234)**
+- ### **[promisify(fn, self)](src/utils.js?source#L254)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -762,7 +788,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L247)**
+- ### **[sleep(time, val)](src/utils.js?source#L267)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -783,13 +809,13 @@ var source = require("yaku/lib/source");
         sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[Observable](src/utils.js?source#L253)**
+- ### **[Observable](src/utils.js?source#L273)**
 
     Read the `Observable` section.
 
     - **<u>type</u>**: { _Function_ }
 
-- ### **[retry(countdown, fn, this)](src/utils.js?source#L302)**
+- ### **[retry(countdown, fn, this)](src/utils.js?source#L322)**
 
     Retry a function until it resolves before a mount of times, or reject with all
     the error states.
@@ -856,7 +882,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L316)**
+- ### **[throw(err)](src/utils.js?source#L336)**
 
     Throw an error to break the program.
 
