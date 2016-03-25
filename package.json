@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "A light-weight ES6 Promises/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "typings": "lib/yaku.d.ts",
@@ -39,6 +39,7 @@
   ],
   "devDependencies": {
     "bluebird": "3.3.4",
+    "co": "^4.6.0",
     "core-js": "2.2.1",
     "es6-promise": "3.1.2",
     "es6-shim": "0.35.0",
@@ -57,7 +58,8 @@
   "eslintConfig": {
     "env": {
       "browser": true,
-      "node": true
+      "node": true,
+      "es6": true
     },
     "extends": "eslint:recommended",
     "rules": {
