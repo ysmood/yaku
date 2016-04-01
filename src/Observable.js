@@ -1,5 +1,6 @@
 var _ = require("./_");
 var genIterator = require("./genIterator");
+var Promise = _.Promise;
 
 /**
  * Create a composable observable object.
@@ -7,7 +8,7 @@ var genIterator = require("./genIterator");
  * that you can easily map, filter and even back pressure events in a promise way.
  * For real world example: [Double Click Demo](https://jsbin.com/niwuti/edit?html,js,output).
  * @version_added v0.7.2
- * @param {Function} executor `(emit) ->` It's optional.
+ * @param {Function} executor `(next) ->` It's optional.
  * @return {Observable}
  * @example
  * ```js
@@ -15,9 +16,9 @@ var genIterator = require("./genIterator");
  * var linear = new Observable();
  *
  * var x = 0;
- * setInterval(linear.emit, 1000, x++);
+ * setInterval(linear.next, 1000, x++);
  *
- * // Wait for a moment then emit the value.
+ * // Wait for a moment then next the value.
  * var quad = linear.subscribe(async x => {
  *     await sleep(2000);
  *     return x * x;
@@ -31,7 +32,7 @@ var genIterator = require("./genIterator");
  * );
  *
  * // Emit error
- * linear.emit(Promise.reject(new Error("reason")));
+ * linear.error(new Error("reason"));
  *
  * // Unsubscribe a observable.
  * quad.unsubscribe();
@@ -44,8 +45,8 @@ var genIterator = require("./genIterator");
  * ```js
  * var filter = fn => v => fn(v) ? v : new Promise(() => {});
  *
- * var keyup = new Observable((emit) => {
- *     document.querySelector('input').onkeyup = emit;
+ * var keyup = new Observable((next) => {
+ *     document.querySelector('input').onkeyup = next;
  * });
  *
  * var keyupText = keyup.subscribe(e => e.target.value);
@@ -59,22 +60,27 @@ var genIterator = require("./genIterator");
 var Observable = module.exports = function Observable (executor) {
     var self = this;
 
-    genEmit(self);
+    genHandler(self);
 
     self.subscribers = [];
 
-    executor && executor(self.emit);
+    executor && executor(self.next, self.error);
 };
 
 _.extendPrototype(Observable, {
 
     /**
      * Emit a value.
-     * @param  {Any} value If you want to emit a plain error, you should
-     * emit a rejected promise, such as `emit(Promise.reject(new Error('my error')))`,
+     * @param  {Any} value
      * so that the event will go to `onError` callback.
      */
-    emit: null,
+    next: null,
+
+    /**
+     * Emit an error.
+     * @param  {Any} value
+     */
+    error: null,
 
     /**
      * The publisher observable of this.
@@ -90,15 +96,15 @@ _.extendPrototype(Observable, {
 
     /**
      * It will create a new Observable, like promise.
-     * @param  {Function} onEmit
+     * @param  {Function} onNext
      * @param  {Function} onError
      * @return {Observable}
      */
-    subscribe: function (onEmit, onError) {
+    subscribe: function (onNext, onError) {
         var self = this, subscriber = new Observable();
-        subscriber._onEmit = onEmit;
+        subscriber._onNext = onNext;
         subscriber._onError = onError;
-        subscriber._nextErr = genNextErr(subscriber.emit);
+        subscriber._nextErr = genNextErr(subscriber.next);
 
         subscriber.publisher = self;
         self.subscribers.push(subscriber);
@@ -116,25 +122,34 @@ _.extendPrototype(Observable, {
 
 });
 
-function genEmit (self) {
-    return self.emit = function (val) {
+function genHandler (self) {
+    self.next = function (val) {
         var i = 0, len = self.subscribers.length, subscriber;
         while (i < len) {
             subscriber = self.subscribers[i++];
-            _.Promise.resolve(val).then(
-                subscriber._onEmit,
+            Promise.resolve(val).then(
+                subscriber._onNext,
                 subscriber._onError
             ).then(
-                subscriber.emit,
+                subscriber.next,
                 subscriber._nextErr
             );
         }
     };
+
+    self.error = function (err) {
+        self.next(Promise.reject(err));
+    };
+
+    self.emit = function () {
+        console.trace("Observable[[emit]] is deprecated, use [[next]] instead."); // eslint-disable-line
+        self.next.apply(0, arguments);
+    };
 }
 
-function genNextErr (emit) {
+function genNextErr (next) {
     return function (reason) {
-        emit(_.Promise.reject(reason));
+        next(Promise.reject(reason));
     };
 }
 
@@ -148,7 +163,7 @@ function genNextErr (emit) {
  * var Observable = require("yaku/lib/Observable");
  * var sleep = require("yaku/lib/sleep");
  *
- * var src = new Observable(emit => setInterval(emit, 1000, 0));
+ * var src = new Observable(next => setInterval(next, 1000, 0));
  *
  * var a = src.subscribe(v => v + 1; });
  * var b = src.subscribe((v) => sleep(10, v + 2));
@@ -162,15 +177,15 @@ function genNextErr (emit) {
  */
 Observable.merge = function merge (iterable) {
     var iter = genIterator(iterable);
-    return new Observable(function (emit) {
+    return new Observable(function (next) {
         var item;
 
         function onError (e) {
-            emit(_.Promise.reject(e));
+            next(Promise.reject(e));
         }
 
         while (!(item = iter.next()).done) {
-            item.value.subscribe(emit, onError);
+            item.value.subscribe(next, onError);
         }
     });
 };

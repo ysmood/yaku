@@ -267,7 +267,7 @@ module.exports = testSuit("basic", function (it) {
         x = 1;
 
         tmr = setInterval(function () {
-            return one.emit(x++);
+            return one.next(x++);
         }, 0);
 
         two = one.subscribe(function (v) {
@@ -295,9 +295,9 @@ module.exports = testSuit("basic", function (it) {
         one = new utils.Observable();
         x = 1;
         tmr = setInterval(function () {
-            one.emit(x++);
+            one.next(x++);
             if (x === 2) {
-                return one.emit(Yaku.reject("error"));
+                return one.error("error");
             }
         }, 0);
 
@@ -317,12 +317,23 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("Observable error within clousure", "error", function () {
+        var one = new utils.Observable(function (next, error) {
+            setTimeout(error, 10, "error");
+        });
+        return new Yaku(function (r) {
+            return one.subscribe((function () {}), function (err) {
+                return r(err);
+            });
+        });
+    });
+
     it("Observable subscribers", "ok", function () {
         var one, tmr;
         tmr = null;
-        one = new utils.Observable(function (emit) {
+        one = new utils.Observable(function (next) {
             return tmr = setInterval(function () {
-                return emit("err");
+                return next("err");
             }, 0);
         });
         return new Yaku(function (r) {
@@ -345,8 +356,8 @@ module.exports = testSuit("basic", function (it) {
 
     it("Observable unsubscribe", "ok", function () {
         return new Yaku(function (r) {
-            var one = new utils.Observable(function (emit) {
-                setTimeout(emit, 1);
+            var one = new utils.Observable(function (next) {
+                setTimeout(next, 1);
             });
 
             var two = one.subscribe(function () {
@@ -365,11 +376,11 @@ module.exports = testSuit("basic", function (it) {
         return new Yaku(function (r) {
             var flag = false;
 
-            var one = new utils.Observable(function (emit) { setTimeout(emit, 0, "one"); });
-            var two = new utils.Observable(function (emit) {
+            var one = new utils.Observable(function (next) { setTimeout(next, 0, "one"); });
+            var two = new utils.Observable(function (next) {
                 setTimeout(function () {
                     flag = true;
-                    emit("two");
+                    next("two");
                 }, 0);
             });
 
@@ -384,8 +395,8 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("Observable merge error", 0, function () {
-        var src = new utils.Observable(function (emit) {
-            setTimeout(emit, 10, 0);
+        var src = new utils.Observable(function (next) {
+            setTimeout(next, 10, 0);
         });
 
         var a = src.subscribe(function (v) { return Yaku.reject(v); });

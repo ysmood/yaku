@@ -174,10 +174,11 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
 - #### require('yaku/lib/Observable')
   - [Observable(executor)](#observableexecutor)
-  - [emit(value)](#emitvalue)
+  - [next(value)](#nextvalue)
+  - [error(value)](#errorvalue)
   - [publisher](#publisher)
   - [subscribers](#subscribers)
-  - [subscribe(onEmit, onError)](#subscribeonemit-onerror)
+  - [subscribe(onNext, onError)](#subscribeonnext-onerror)
   - [unsubscribe](#unsubscribe)
   - [Observable.merge(iterable)](#observablemergeiterable)
 
@@ -903,7 +904,7 @@ var source = require("yaku/lib/source");
 
 # Observable
 
-- ### **[Observable(executor)](src/Observable.js?source#L59)**
+- ### **[Observable(executor)](src/Observable.js?source#L60)**
 
     Create a composable observable object.
     Promise can't resolve multiple times, this function makes it possible, so
@@ -916,7 +917,7 @@ var source = require("yaku/lib/source");
 
     - **<u>param</u>**: `executor` { _Function_ }
 
-        `(emit) ->` It's optional.
+        `(next) ->` It's optional.
 
     - **<u>return</u>**: { _Observable_ }
 
@@ -927,9 +928,9 @@ var source = require("yaku/lib/source");
         var linear = new Observable();
 
         var x = 0;
-        setInterval(linear.emit, 1000, x++);
+        setInterval(linear.next, 1000, x++);
 
-        // Wait for a moment then emit the value.
+        // Wait for a moment then next the value.
         var quad = linear.subscribe(async x => {
             await sleep(2000);
             return x * x;
@@ -943,7 +944,7 @@ var source = require("yaku/lib/source");
         );
 
         // Emit error
-        linear.emit(Promise.reject(new Error("reason")));
+        linear.error(new Error("reason"));
 
         // Unsubscribe a observable.
         quad.unsubscribe();
@@ -958,8 +959,8 @@ var source = require("yaku/lib/source");
         ```js
         var filter = fn => v => fn(v) ? v : new Promise(() => {});
 
-        var keyup = new Observable((emit) => {
-            document.querySelector('input').onkeyup = emit;
+        var keyup = new Observable((next) => {
+            document.querySelector('input').onkeyup = next;
         });
 
         var keyupText = keyup.subscribe(e => e.target.value);
@@ -970,43 +971,47 @@ var source = require("yaku/lib/source");
         keyupTextGT3.subscribe(v => console.log(v));
         ```
 
-- ### **[emit(value)](src/Observable.js?source#L77)**
+- ### **[next(value)](src/Observable.js?source#L77)**
 
     Emit a value.
 
     - **<u>param</u>**: `value` { _Any_ }
 
-        If you want to emit a plain error, you should
-        emit a rejected promise, such as `emit(Promise.reject(new Error('my error')))`,
         so that the event will go to `onError` callback.
 
-- ### **[publisher](src/Observable.js?source#L83)**
+- ### **[error(value)](src/Observable.js?source#L83)**
+
+    Emit an error.
+
+    - **<u>param</u>**: `value` { _Any_ }
+
+- ### **[publisher](src/Observable.js?source#L89)**
 
     The publisher observable of this.
 
     - **<u>type</u>**: { _Observable_ }
 
-- ### **[subscribers](src/Observable.js?source#L89)**
+- ### **[subscribers](src/Observable.js?source#L95)**
 
     All the subscribers subscribed this observable.
 
     - **<u>type</u>**: { _Array_ }
 
-- ### **[subscribe(onEmit, onError)](src/Observable.js?source#L97)**
+- ### **[subscribe(onNext, onError)](src/Observable.js?source#L103)**
 
     It will create a new Observable, like promise.
 
-    - **<u>param</u>**: `onEmit` { _Function_ }
+    - **<u>param</u>**: `onNext` { _Function_ }
 
     - **<u>param</u>**: `onError` { _Function_ }
 
     - **<u>return</u>**: { _Observable_ }
 
-- ### **[unsubscribe](src/Observable.js?source#L112)**
+- ### **[unsubscribe](src/Observable.js?source#L118)**
 
     Unsubscribe this.
 
-- ### **[Observable.merge(iterable)](src/Observable.js?source#L163)**
+- ### **[Observable.merge(iterable)](src/Observable.js?source#L178)**
 
     Merge multiple observables into one.
 
@@ -1024,7 +1029,7 @@ var source = require("yaku/lib/source");
         var Observable = require("yaku/lib/Observable");
         var sleep = require("yaku/lib/sleep");
 
-        var src = new Observable(emit => setInterval(emit, 1000, 0));
+        var src = new Observable(next => setInterval(next, 1000, 0));
 
         var a = src.subscribe(v => v + 1; });
         var b = src.subscribe((v) => sleep(10, v + 2));
