@@ -9,7 +9,7 @@ Yaku is full compatible with ES6's native [Promise][native], but much faster, an
 If you want to learn how Promise works, read the minimum implementation [docs/minPromiseAplus.js][]. Without comments, it is only 80 lines of code (gzipped size is 0.5KB).
 It only implements the `constructor` and `then`.
 
-Yaku passed all the tests of [promises-aplus-tests][] and [promises-es6-tests][].
+Yaku passed all the tests of [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
 Premature optimization is the root of all evil. I write this lib to research one of my data structure
@@ -21,11 +21,11 @@ ideas: [docs/lazyTree.md][].
 
 # Features
 
-- The minified file is only <%= doc.size %>KB (2KB gzipped)
-- [Better "possibly unhandled rejection" and "long stack trace"][docs/debugHelperComparison.md] than [Bluebird][]
-- Much better performance than the native Promise
-- 100% compliant with Promises/A+ specs and nearly 100% compliant with ES6 specs
+- The minified file is only <%= doc.size %>KB (1.8KB gzipped)
+- Supports "uncaught rejection" and "long stack trace", [Comparison][docs/debugHelperComparison.md]
+- The only lib that passed all major Promise Spec tests, even the v8 native Promise doesn't
 - Designed to work on IE5+ and other major browsers
+- Much better performance than the native Promise
 - Well commented source code with every Promises/A+ spec
 
 
@@ -107,24 +107,19 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 
   > In ECMA-262 spec, `catch` cannot be used as method name. You have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
 
-- Will Yaku implement `done`, `finally`, `promisify`, etc?
+- Will Yaku implement `done`, `finally`, etc?
 
   > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
-  > should work well with ES6 native promise. If you need fancy and magic, go for [Bluebird][].
+  > should work well with ES6 native promise.
 
 - When using with Babel and Regenerator, the unhandled rejection doesn't work.
 
   > Because Regenerator use global Promise directly and don't have an api to set the Promise lib.
   > You have to import Yaku globally to make it use Yaku: `require("yaku/lib/global");`.
 
-- Better long stack trace support?
-
-  > Latest Node.js and browsers are already support it. If you enabled it, Yaku will take advantage of it
-  > without much overhead. Such as this library [longjohn][] for Node.js, or this article for [Chrome][crhome-lst].
-
 - The name Yaku is weird?
 
-  > The name `yaku` comes from the word `約束(yakusoku)` which means promise.
+  > The name `yaku` comes from the word `約束(yaku soku)` which means promise.
 
 
 # Unhandled Rejection
@@ -232,6 +227,7 @@ If you installed `nokit` globally, you can just run `no -h` without `npm run` an
 [docs/debugHelperComparison.md]: docs/debugHelperComparison.md
 [Bluebird]: https://github.com/petkaantonov/bluebird
 [ES6-promise]: https://github.com/jakearchibald/es6-promise
+[core-js tests]: https://github.com/ysmood/core-js/tree/promise-yaku
 [native]: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects
 [q]: https://github.com/kriskowal/q
 [core-js]: https://github.com/zloirock/core-js
