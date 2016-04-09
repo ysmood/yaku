@@ -417,6 +417,14 @@ module.exports = testSuit("basic", function (it) {
         return utils.retry(3, fn)("ok");
     });
 
+    it("retry with span", "ok", function () {
+        var fn;
+        fn = function (val) {
+            return val;
+        };
+        return utils.retry(3, 30, fn)("ok");
+    });
+
     it("retry 2 times", "ok", function () {
         var count, fn;
         count = 0;

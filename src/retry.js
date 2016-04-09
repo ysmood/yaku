@@ -1,10 +1,18 @@
 var _ = require("./_");
+var sleep = require("./sleep");
 var $retryError = {};
 
-module.exports = function (retries, fn, self) {
+module.exports = function (retries, span, fn, self) {
     var errs = [], args;
+
+    if (_.isFunction(span)) {
+        self = fn;
+        fn = span;
+        span = 0;
+    }
+
     var countdown = _.isFunction(retries) ?
-        retries : function () { return retries--; };
+        retries : function () { return sleep(span, retries--); };
 
     function tryFn (isContinue) {
         return isContinue ? fn.apply(self, args) : _.Promise.reject($retryError);

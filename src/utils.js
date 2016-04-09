@@ -277,6 +277,7 @@ module.exports = {
      * the error states.
      * @version_added v0.7.10
      * @param  {Number | Function} countdown How many times to retry before rejection.
+     * @param  {Number} span Optional. How long to wait before each retry in millisecond.
      * When it's a function `(errs) => Boolean | Promise.resolve(Boolean)`,
      * you can use it to create complex countdown logic,
      * it can even return a promise to create async countdown logic.
@@ -285,12 +286,12 @@ module.exports = {
      * @return {Function} The wrapped function. The function will reject an array
      * of reasons that throwed by each try.
      * @example
-     * Retry 3 times before rejection.
+     * Retry 3 times before rejection, wait 1 second before each retry.
      * ```js
      * var retry = require('yaku/lib/retry');
      * var { request } = require('nokit');
      *
-     * retry(3, request)('http://test.com').then(
+     * retry(3, 1000, request)('http://test.com').then(
      *    (body) => console.log(body),
      *    (errs) => console.error(errs)
      * );

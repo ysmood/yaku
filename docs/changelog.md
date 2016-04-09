@@ -1,3 +1,9 @@
+- v0.15
+
+  - add: `span` option to `retry`
+  - **API CHANGE** `Observable`'s `emit` now renamed to `next`
+  - add: `error` method to `Observable`
+
 - v0.14
 
   - **API CHANGE** `async` renamed to `all`

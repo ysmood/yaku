@@ -164,7 +164,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [promisify(fn, self)](#promisifyfn-self)
   - [sleep(time, val)](#sleeptime-val)
   - [Observable](#observable)
-  - [retry(countdown, fn, this)](#retrycountdown-fn-this)
+  - [retry(countdown, span, fn, this)](#retrycountdown-span-fn-this)
   - [throw(err)](#throwerr)
 
 - #### require('yaku/lib/Observable')
@@ -811,7 +811,7 @@ var source = require("yaku/lib/source");
 
     - **<u>type</u>**: { _Function_ }
 
-- ### **[retry(countdown, fn, this)](src/utils.js?source#L322)**
+- ### **[retry(countdown, span, fn, this)](src/utils.js?source#L323)**
 
     Retry a function until it resolves before a mount of times, or reject with all
     the error states.
@@ -823,6 +823,10 @@ var source = require("yaku/lib/source");
     - **<u>param</u>**: `countdown` { _Number | Function_ }
 
         How many times to retry before rejection.
+
+    - **<u>param</u>**: `span` { _Number_ }
+
+        Optional. How long to wait before each retry in millisecond.
         When it's a function `(errs) => Boolean | Promise.resolve(Boolean)`,
         you can use it to create complex countdown logic,
         it can even return a promise to create async countdown logic.
@@ -842,12 +846,12 @@ var source = require("yaku/lib/source");
 
     - **<u>example</u>**:
 
-        Retry 3 times before rejection.
+        Retry 3 times before rejection, wait 1 second before each retry.
         ```js
         var retry = require('yaku/lib/retry');
         var { request } = require('nokit');
 
-        retry(3, request)('http://test.com').then(
+        retry(3, 1000, request)('http://test.com').then(
            (body) => console.log(body),
            (errs) => console.error(errs)
         );
@@ -878,7 +882,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L336)**
+- ### **[throw(err)](src/utils.js?source#L337)**
 
     Throw an error to break the program.
 
