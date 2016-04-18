@@ -308,10 +308,9 @@
      * ```
      */
     Yaku.unhandledRejection = function (reason, p) {
-        var con = root.console;
-        if (con) {
-            con.error($unhandledRejectionMsg, genStackInfo(reason, p));
-        }
+        try {
+            root.console.error($unhandledRejectionMsg, genStackInfo(reason, p));
+        } catch (e) {} // eslint-disable-line
     };
 
     /**

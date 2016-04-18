@@ -411,7 +411,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.reject('v').catch(() => {});
         ```
 
-- ### **[Yaku.rejectionHandled(reason, p)](src/yaku.js?source#L323)**
+- ### **[Yaku.rejectionHandled(reason, p)](src/yaku.js?source#L322)**
 
     Emitted whenever a Promise was rejected and an error handler was
     attached to it (for example with .catch()) later than after an event loop turn.
@@ -424,7 +424,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
         The promise that was rejected.
 
-- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L337)**
+- ### **[Yaku.enableLongStackTrace](src/yaku.js?source#L336)**
 
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
@@ -439,7 +439,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
         Promise.enableLongStackTrace();
         ```
 
-- ### **[Yaku.nextTick](src/yaku.js?source#L360)**
+- ### **[Yaku.nextTick](src/yaku.js?source#L359)**
 
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
