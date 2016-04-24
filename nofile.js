@@ -108,11 +108,13 @@ module.exports = function (task, option) {
 
         var names = _.keys(require("./test/getPromise").map);
 
-        return kit.async(function * () {
-            for (name of names) {
-                yield kit.spawn("node", ["benchmark/index.js", name]);
-            }
-        })();
+        return kit.all(1, { next: function () {
+            var name = names.shift();
+            return {
+                done: !name,
+                value: name && kit.spawn("node", ["benchmark/index.js", name])
+            };
+        } });
     });
 
     task("benchmark-asyncWrapper", function () {
@@ -120,11 +122,13 @@ module.exports = function (task, option) {
 
         var names = _.keys(require("./benchmark/asyncWrapper/getWrapper").map);
 
-        return kit.async(function * () {
-            for (name of names) {
-                yield kit.spawn("node", ["benchmark/asyncWrapper/index.js", name]);
-            }
-        })();
+        return kit.all(1, { next: function () {
+            var name = names.shift();
+            return {
+                done: !name,
+                value: name && kit.spawn("node", ["benchmark/asyncWrapper/index.js", name])
+            };
+        } });
     });
 
     task("clean", "Clean temp files", function () {
