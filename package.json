@@ -46,6 +46,7 @@
     "eslint": "2.4.0",
     "junit": "1.2.2",
     "mocha": "2.4.5",
+    "my-promise": "^1.0.1",
     "nokit": "0.19.1",
     "phantomjs-prebuilt": "2.1.6",
     "promises-aplus-tests": "*",

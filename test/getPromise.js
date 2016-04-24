@@ -71,6 +71,21 @@ var map = {
         setSize("q", "node_modules/q/q.min.js");
 
         return Promise;
+    },
+
+    "my-promise": function () {
+        var Promise = require("my-promise").Promise;
+
+        map["my-promise"].optionalHelper = "x";
+        map["my-promise"].helper = propSize(Promise) + propSize(Promise.prototype);
+
+        spawnSync("webpack");
+        spawnSync("node_modules/.bin/uglifyjs", [
+            "-mc", "-o", "dist/my-promise.min.js", "dist/my-promise.js"
+        ]);
+        setSize("my-promise", "dist/my-promise.min.js");
+
+        return Promise;
     }
 };
 
