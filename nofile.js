@@ -78,7 +78,7 @@ module.exports = function (task, option) {
     });
 
     task("test-basic", "test basic specs tests", function (opts) {
-        var junitOpts = ["-g", opts.grep];
+        var junitOpts = ["-g", opts.grep, "-b", "off"];
 
         process.env.shim = opts.shim;
 
@@ -108,13 +108,11 @@ module.exports = function (task, option) {
 
         var names = _.keys(require("./test/getPromise").map);
 
-        return kit.async(1, { next: function () {
-            var name = names.shift();
-            return {
-                done: !name,
-                value: name && kit.spawn("node", ["benchmark/index.js", name])
-            };
-        } });
+        return kit.async(function * () {
+            for (name of names) {
+                yield kit.spawn("node", ["benchmark/index.js", name]);
+            }
+        })();
     });
 
     task("benchmark-asyncWrapper", function () {
@@ -122,13 +120,11 @@ module.exports = function (task, option) {
 
         var names = _.keys(require("./benchmark/asyncWrapper/getWrapper").map);
 
-        return kit.async(1, { next: function () {
-            var name = names.shift();
-            return {
-                done: !name,
-                value: name && kit.spawn("node", ["benchmark/asyncWrapper/index.js", name])
-            };
-        } });
+        return kit.async(function * () {
+            for (name of names) {
+                yield kit.spawn("node", ["benchmark/asyncWrapper/index.js", name]);
+            }
+        })();
     });
 
     task("clean", "Clean temp files", function () {

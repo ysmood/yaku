@@ -38,23 +38,23 @@
     "lib"
   ],
   "devDependencies": {
-    "bluebird": "3.3.4",
-    "co": "^4.6.0",
-    "core-js": "2.2.1",
+    "bluebird": "3.3.5",
+    "co": "4.6.0",
+    "core-js": "2.3.0",
     "es6-promise": "3.1.2",
     "es6-shim": "0.35.0",
-    "eslint": "2.4.0",
-    "junit": "1.2.2",
+    "eslint": "2.8.0",
+    "junit": "1.4.0",
     "mocha": "2.4.5",
-    "my-promise": "^1.0.1",
-    "nokit": "0.19.1",
-    "phantomjs-prebuilt": "2.1.6",
+    "my-promise": "1.0.1",
+    "nokit": "0.20.8",
+    "phantomjs-prebuilt": "2.1.7",
     "promises-aplus-tests": "*",
     "promises-es6-tests": "*",
     "q": "1.4.1",
     "setprototypeof": "1.0.1",
     "uglify-js": "2.6.2",
-    "webpack": "1.12.14"
+    "webpack": "1.13.0"
   },
   "eslintConfig": {
     "env": {

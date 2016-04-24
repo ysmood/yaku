@@ -72,21 +72,22 @@ These comparisons only reflect some limited truth, no one is better than all oth
 For more details see the [benchmark/readme.md](benchmark/readme.md). There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
 ```
-Node v5.6.0
+Node v5.11.0
 OS   darwin
 Arch x64
-CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
+CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GH
 ```
 
 | name | unit tests | 1ms async task | optional helpers | helpers | min js |
 | ---- | ---------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.13.7 | ✓ | 341ms / 108MB | ✓ | 31 | 3.9KB |
-| [bluebird][]@3.3.4 | x (28 failing) | 291ms / 89MB | partial | 100 | 52.2KB |
-| [es6-promise][]@3.1.2 | x (27 failing) | 509ms / 113MB | x | 10 | 6.3KB |
-| [native][]@0.13.7 | x (9 failing) | 681ms / 168MB | x | 13 | 0KB |
-| [core-js][]@2.2.1 | x (4 failing) | 910ms / 195MB | x | 11 | 12.2KB |
-| [es6-shim][]@0.35.0 | x (2 failing) | 1055ms / 145MB | x | 12 | 131.5KB |
-| [q][]@1.4.1 | x (68 failing) | 1594ms / 425MB | x | 74 | 15.4KB |
+| [yaku][]@0.15.2 | ✓ | 345ms / 109MB | ✓ | 32 | 3.9KB |
+| [bluebird][]@3.3.5 | x (28 failing) | 257ms / 87MB | partial | 100 | 52.7KB |
+| [es6-promise][]@3.1.2 | x (29 failing) | 468ms / 114MB | x | 10 | 6.3KB |
+| [native][]@0.15.2 | x (9 failing) | 624ms / 174MB | x | 13 | 0KB |
+| [core-js][]@2.3.0 | x (4 failing) | 863ms / 196MB | x | 11 | 12.3KB |
+| [es6-shim][]@0.35.0 | x (2 failing) | 934ms / 147MB | x | 12 | 131.5KB |
+| [q][]@1.4.1 | x (70 failing) | 1800ms / 427MB | x | 74 | 15.4KB |
+| [my-promise][]@1.0.1 | x (13 failing) | 915ms / 221MB | x | 12 | 8KB |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
@@ -230,6 +231,7 @@ If you installed `nokit` globally, you can just run `no -h` without `npm run` an
 [core-js tests]: https://github.com/ysmood/core-js/tree/promise-yaku
 [native]: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects
 [q]: https://github.com/kriskowal/q
+[my-promise]: https://github.com/hax/my-promise
 [core-js]: https://github.com/zloirock/core-js
 [yaku]: https://github.com/ysmood/yaku
 [es6-shim]: https://github.com/paulmillr/es6-shim
