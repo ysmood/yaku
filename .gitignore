@@ -2,5 +2,3 @@ lib
 dist
 node_modules
 *.sublime-*
-.nokit
-.nobone
