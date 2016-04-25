@@ -381,33 +381,35 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("subclass PromiseCapability promise.then", true, function () {
-        var promise, FakePromise1, FakePromise2;
-        promise = new Promise(function (it){ it(42); });
+    if (Symbol.species) {
+        it("subclass PromiseCapability promise.then", true, function () {
+            var promise, FakePromise1, FakePromise2;
+            promise = new Promise(function (it){ it(42); });
 
-        promise.constructor = FakePromise1 = function a (it){
-            it(function () {}, function () {});
-        };
+            promise.constructor = FakePromise1 = function a (it){
+                it(function () {}, function () {});
+            };
 
-        FakePromise1[Symbol.species] = FakePromise2 = function b (it){
-            it(function () {}, function () {});
-        };
-        setPrototypeOf(FakePromise2, Promise);
+            FakePromise1[Symbol.species] = FakePromise2 = function b (it){
+                it(function () {}, function () {});
+            };
+            setPrototypeOf(FakePromise2, Promise);
 
-        return promise.then(function () {}) instanceof FakePromise2;
-    });
+            return promise.then(function () {}) instanceof FakePromise2;
+        });
 
-    it("subclass PromiseCapability promise.then TypeError", true, function () {
-        var promise = new Promise(function (it){ it(42); });
+        it("subclass PromiseCapability promise.then TypeError", true, function () {
+            var promise = new Promise(function (it){ it(42); });
 
-        promise.constructor = function () { };
+            promise.constructor = function () { };
 
-        try {
-            promise.then(function () {});
-        } catch (err) {
-            return err instanceof TypeError;
-        }
-    });
+            try {
+                promise.then(function () {});
+            } catch (err) {
+                return err instanceof TypeError;
+            }
+        });
+    }
 
     it("any one resolved", 0, function () {
         return utils.any([
