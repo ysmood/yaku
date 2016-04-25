@@ -54,7 +54,7 @@ var map = {
         var Promise = global.Promise;
         map["es6-shim"].optionalHelper = "x";
         map["es6-shim"].helper = propSize(Promise) + propSize(Promise.prototype);
-        setSize("es6-shim", "node_modules/es6-shim/es6-shim.js");
+        setSize("es6-shim", "node_modules/es6-shim/es6-shim.min.js");
 
         return Promise;
     },

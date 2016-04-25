@@ -23,7 +23,6 @@ ideas: [docs/lazyTree.md][].
 
 - The minified file is only <%= doc.size %>KB (1.8KB gzipped)
 - Supports "uncaught rejection" and "long stack trace", [Comparison][docs/debugHelperComparison.md]
-- The only lib that passed all major Promise Spec tests, even the v8 native Promise doesn't
 - Designed to work on IE5+ and other major browsers
 - Much better performance than the native Promise
 - Well commented source code with every Promises/A+ spec
@@ -80,14 +79,14 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GH
 
 | name | unit tests | 1ms async task | optional helpers | helpers | min js |
 | ---- | ---------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.15.2 | ✓ | 345ms / 109MB | ✓ | 32 | 3.9KB |
-| [bluebird][]@3.3.5 | x (28 failing) | 257ms / 87MB | partial | 100 | 52.7KB |
-| [es6-promise][]@3.1.2 | x (29 failing) | 468ms / 114MB | x | 10 | 6.3KB |
-| [native][]@0.15.2 | x (9 failing) | 624ms / 174MB | x | 13 | 0KB |
-| [core-js][]@2.3.0 | x (4 failing) | 863ms / 196MB | x | 11 | 12.3KB |
-| [es6-shim][]@0.35.0 | x (2 failing) | 934ms / 147MB | x | 12 | 131.5KB |
-| [q][]@1.4.1 | x (70 failing) | 1800ms / 427MB | x | 74 | 15.4KB |
-| [my-promise][]@1.0.1 | x (13 failing) | 915ms / 221MB | x | 12 | 8KB |
+| [yaku][]@0.15.2 | ✓ | 357ms / 108MB | ✓ | 32 | 3.9KB |
+| [bluebird][]@3.3.5 | x (26 failing) | 283ms / 89MB | partial | 100 | 52.7KB |
+| [es6-promise][]@3.1.2 | x (39 failing) | 403ms / 113MB | x | 10 | 6.3KB |
+| [native][]@0.15.3 | x (7 failing) | 572ms / 168MB | x | 13 | 0KB |
+| [core-js][]@2.3.0 | x (2 failing) | 826ms / 197MB | x | 11 | 12.3KB |
+| [es6-shim][]@0.35.0 | ✓ | 993ms / 85MB | x | 12 | 55KB |
+| [q][]@1.4.1 | x (68 failing) | 1555ms / 425MB | x | 74 | 15.4KB |
+| [my-promise][]@1.1.0 | ✓ | 922ms / 223MB | x | 10 | 8.4KB |
 
 - **Helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].

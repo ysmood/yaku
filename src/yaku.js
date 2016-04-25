@@ -662,20 +662,18 @@
     function genStackInfo (reason, p) {
         var stackInfo = [];
 
-        function trim (str) { return str.replace(/^\s+|\s+$/g, ""); }
-
         function push (trace) {
-            return stackInfo.push(trim(trace));
+            return stackInfo.push(trace.replace(/^\s+|\s+$/g, ""));
         }
 
-        if (isLongStackTrace && p[$promiseTrace]) {
+        if (isLongStackTrace) {
             if (p[$settlerTrace])
                 push(p[$settlerTrace]);
 
             // Hope you guys could understand how the back trace works.
             // We only have to iterate through the tree from the bottom to root.
             (function iter (node) {
-                if (node) {
+                if (node && $promiseTrace in node) {
                     iter(node._next);
                     push(node[$promiseTrace]);
                     iter(node._pre);

@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.15.2",
+  "version": "0.15.7",
   "description": "A light-weight ES6 Promises/A+ implementation that doesn't hurt.",
   "main": "lib/yaku.js",
   "typings": "lib/yaku.d.ts",
@@ -46,7 +46,7 @@
     "eslint": "2.8.0",
     "junit": "1.4.0",
     "mocha": "2.4.5",
-    "my-promise": "1.0.1",
+    "my-promise": "1.1.0",
     "nokit": "0.20.8",
     "phantomjs-prebuilt": "2.1.7",
     "promises-aplus-tests": "*",
