@@ -68,7 +68,7 @@ Raw usage without:
 # Compare to Other Promise Libs
 
 These comparisons only reflect some limited truth, no one is better than all others on all aspects.
-For more details see the [benchmark/readme.md](benchmark/readme.md). There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
+There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
 ```
 Node v5.11.0
