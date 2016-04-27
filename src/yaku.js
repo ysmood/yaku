@@ -15,6 +15,8 @@
 
     , $Symbol = "Symbol"
     , $iterator = "iterator"
+    , $species = "species"
+    , $speciesKey = $Symbol + "(" + $species + ")"
     , $return = "return"
 
     , $unhandled = "_uh"
@@ -92,6 +94,8 @@
          * ```
          */
         then: function then (onFulfilled, onRejected) {
+            if (this._s === undefined) throw genTypeError();
+
             return addHandler(
                 this,
                 newCapablePromise(Yaku.speciesConstructor(this, Yaku)),
@@ -275,6 +279,13 @@
      */
     Yaku.Symbol = root[$Symbol] || {};
 
+    // To support browsers that don't support `Object.defineProperty`.
+    genTryCatcher(function () {
+        Object.defineProperty(Yaku, getSpecies(), {
+            get: function () { return this; }
+        });
+    })();
+
     /**
      * Use this api to custom the species behavior.
      * https://tc39.github.io/ecma262/#sec-speciesconstructor
@@ -284,7 +295,7 @@
     Yaku.speciesConstructor = function (O, D) {
         var C = O.constructor;
 
-        return C ? (C[Yaku[$Symbol].species] || C) : D;
+        return C ? (C[getSpecies()] || D) : D;
     };
 
     /**
@@ -370,6 +381,10 @@
      */
 
     // ******************************* Utils ********************************
+
+    function getSpecies () {
+        return Yaku[$Symbol][$species] || $speciesKey;
+    }
 
     function extendPrototype (src, target) {
         for (var k in target) {
