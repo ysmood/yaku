@@ -44,6 +44,22 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("any one resolved", 0, function () {
+        return utils.any([
+            Yaku.reject(1),
+            Yaku.resolve(0)
+        ]);
+    });
+
+    it("any all rejected", [0, 1], function () {
+        return utils.any([
+            Yaku.reject(0),
+            Yaku.reject(1)
+        ]).catch(function (v) {
+            return v;
+        });
+    });
+
     it("all iter progress", 10, function () {
         var iter = { i: 0, next: function () {
             var done = iter.i++ >= 10;

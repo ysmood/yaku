@@ -1,7 +1,6 @@
 var name = process.env.shim;
 var getPromise = require("../test/getPromise");
 var Promise = getPromise(name);
-var utils = require("../src/utils");
 var testSuit = require("./testSuit");
 var setPrototypeOf = require("setprototypeof");
 var Symbol = global.Symbol || {};
@@ -9,6 +8,12 @@ var Symbol = global.Symbol || {};
 var $val = {
     val: "ok"
 };
+
+function sleep (time) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, time);
+    });
+}
 
 module.exports = testSuit("basic", function (it) {
 
@@ -237,7 +242,7 @@ module.exports = testSuit("basic", function (it) {
                 resolve("err");
             });
 
-            utils.sleep(30).then(function () {
+            sleep(30).then(function () {
                 resolve("ok");
             });
         });
@@ -374,7 +379,7 @@ module.exports = testSuit("basic", function (it) {
         result.push(p3 instanceof Promise);
         result.push(p3 instanceof SubPromise);
 
-        return p3.then(utils.sleep(50), function (it) {
+        return p3.then(sleep(50), function (it) {
             return result.push(it);
         }).then(function () {
             return result;
@@ -398,32 +403,15 @@ module.exports = testSuit("basic", function (it) {
             return promise.then(function () {}) instanceof FakePromise2;
         });
 
-        it("subclass PromiseCapability promise.then TypeError", true, function () {
-            var promise = new Promise(function (it){ it(42); });
-
-            promise.constructor = function () { };
-
-            try {
-                promise.then(function () {});
-            } catch (err) {
-                return err instanceof TypeError;
-            }
-        });
     }
 
-    it("any one resolved", 0, function () {
-        return utils.any([
-            Promise.reject(1),
-            Promise.resolve(0)
-        ]);
-    });
+    it("subclass PromiseCapability promise.then TypeError", "ok", function () {
+        var promise = new Promise(function (it){ it(42); });
 
-    it("any all rejected", [0, 1], function () {
-        return utils.any([
-            Promise.reject(0),
-            Promise.reject(1)
-        ]).catch(function (v) {
-            return v;
+        promise.constructor = function () { };
+
+        return promise.then(function () {
+            return "ok";
         });
     });
 
