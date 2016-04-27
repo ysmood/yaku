@@ -3,7 +3,10 @@ var getPromise = require("../test/getPromise");
 var Promise = getPromise(name);
 var testSuit = require("./testSuit");
 var setPrototypeOf = require("setprototypeof");
+
 var Symbol = global.Symbol || {};
+if (!Symbol.species)
+    Symbol.species = "Symbol(species)";
 
 var $val = {
     val: "ok"
@@ -386,26 +389,23 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    if (Symbol.species) {
-        it("subclass PromiseCapability promise.then", true, function () {
-            var promise, FakePromise1, FakePromise2;
-            promise = new Promise(function (it){ it(42); });
+    it("subclass PromiseCapability promise.then", true, function () {
+        var promise, FakePromise1, FakePromise2;
+        promise = new Promise(function (it){ it(42); });
 
-            promise.constructor = FakePromise1 = function a (it){
-                it(function () {}, function () {});
-            };
+        promise.constructor = FakePromise1 = function a (it){
+            it(function () {}, function () {});
+        };
 
-            FakePromise1[Symbol.species] = FakePromise2 = function b (it){
-                it(function () {}, function () {});
-            };
-            setPrototypeOf(FakePromise2, Promise);
+        FakePromise1[Symbol.species] = FakePromise2 = function b (it){
+            it(function () {}, function () {});
+        };
+        setPrototypeOf(FakePromise2, Promise);
 
-            return promise.then(function () {}) instanceof FakePromise2;
-        });
+        return promise.then(function () {}) instanceof FakePromise2;
+    });
 
-    }
-
-    it("subclass PromiseCapability promise.then TypeError", "ok", function () {
+    it("subclass PromiseCapability fake constructor promise.then", "ok", function () {
         var promise = new Promise(function (it){ it(42); });
 
         promise.constructor = function () { };
