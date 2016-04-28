@@ -465,6 +465,13 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("retry multiple call", [1, 2, 3, 4, 5], function () {
+        var fn = utils.retry(2, 10, function (v) {
+            return v;
+        });
+        return Yaku.all([fn(1), fn(2), fn(3), fn(4), fn(5)]);
+    });
+
     it("guard basic", "err", function () {
         return Yaku.reject(new TypeError("err"))
         .then(function () {
