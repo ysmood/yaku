@@ -4,6 +4,7 @@
   - **API CHANGE** `Observable`'s `emit` now renamed to `next`
   - add: `error` method to `Observable`
   - fix: a long stack trace undefined bug
+  - fix: a retry bug
 
 - v0.14
 
