@@ -4,9 +4,9 @@ var Promise = _.Promise;
 
 /**
  * Create a composable observable object.
- * Promise can't resolve multiple times, this function makes it possible, so
+ * Promise can't resolve multiple times, this class makes it possible, so
  * that you can easily map, filter and even back pressure events in a promise way.
- * For real world example: [Double Click Demo](https://jsbin.com/niwuti/edit?html,js,output).
+ * For live example: [Double Click Demo](https://jsbin.com/niwuti/edit?html,js,output).
  * @version_added v0.7.2
  * @param {Function} executor `(next) ->` It's optional.
  * @return {Observable}
@@ -18,7 +18,7 @@ var Promise = _.Promise;
  * var x = 0;
  * setInterval(linear.next, 1000, x++);
  *
- * // Wait for a moment then next the value.
+ * // Wait for 2 sec then emit the next value.
  * var quad = linear.subscribe(async x => {
  *     await sleep(2000);
  *     return x * x;
@@ -34,7 +34,7 @@ var Promise = _.Promise;
  * // Emit error
  * linear.error(new Error("reason"));
  *
- * // Unsubscribe a observable.
+ * // Unsubscribe an observable.
  * quad.unsubscribe();
  *
  * // Unsubscribe all subscribers.
@@ -189,3 +189,4 @@ Observable.merge = function merge (iterable) {
         }
     });
 };
+
