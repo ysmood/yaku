@@ -19,7 +19,7 @@ module.exports = testSuit("basic", function (it) {
             utils.sleep(10, 2),
             utils.sleep(10, 3)
         ];
-        return utils.all(2, list);
+        return utils.all(2, list, true);
     });
 
     it("all error", $val, function () {
@@ -57,27 +57,6 @@ module.exports = testSuit("basic", function (it) {
             Yaku.reject(1)
         ]).catch(function (v) {
             return v;
-        });
-    });
-
-    it("all iter progress", 10, function () {
-        var iter = { i: 0, next: function () {
-            var done = iter.i++ >= 10;
-            return {
-                done: done,
-                value: !done && new Yaku(function (r) {
-                    return setTimeout((function () {
-                        return r(1);
-                    }), 1);
-                })
-            };
-        } };
-
-        var count = 0;
-        return utils.all(3, iter, false, function (ret) {
-            return count += ret;
-        }).then(function () {
-            return count;
         });
     });
 

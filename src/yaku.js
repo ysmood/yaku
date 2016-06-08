@@ -690,7 +690,7 @@
             (function iter (node) {
                 if (node && $promiseTrace in node) {
                     iter(node._next);
-                    push(node[$promiseTrace]);
+                    push(node[$promiseTrace] || "");
                     iter(node._pre);
                 }
             })(p);
