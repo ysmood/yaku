@@ -3,11 +3,19 @@
 var Promise = Yaku = require("../src/yaku");
 var utils = require("../src/utils")
 
+var i = 0;
+function task () {
+    return utils.sleep(100, i++)
+}
 
-        var fn = utils.retry(2, 10, function (v) {
-            return v;
-        });
+function * test () {
+    yield task();
+    yield task();
+    yield task();
+}
 
-        fn(1)
-        fn(2)
-        fn(3)
+utils.all(2, [
+    0,
+], true).then(function (val) {
+    console.log('done')
+});

@@ -8,10 +8,6 @@ var Symbol = global.Symbol || {};
 if (!Symbol.species)
     Symbol.species = "Symbol(species)";
 
-var $val = {
-    val: "ok"
-};
-
 function sleep (time) {
     return new Promise(function (resolve) {
         setTimeout(resolve, time);
@@ -72,47 +68,47 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("resolve", $val, function () {
+    it("resolve", "val", function () {
         return new Promise(function (resolve) {
-            return resolve($val);
+            return resolve("val");
         });
     });
 
-    it("resolve promise like value", $val, function () {
+    it("resolve promise like value", "val", function () {
         return new Promise(function (resolve) {
             return resolve({
                 then: function (fulfil) {
-                    return fulfil($val);
+                    return fulfil("val");
                 }
             });
         });
     });
 
-    it("constructor throw", $val, function () {
+    it("constructor throw", "val", function () {
         return new Promise(function () {
-            throw $val;
+            throw "val";
         })["catch"](function (e) {
             return e;
         });
     });
 
-    it("resolve static", $val, function () {
-        return Promise.resolve($val);
+    it("resolve static", "val", function () {
+        return Promise.resolve("val");
     });
 
-    it("resolve promise", $val, function () {
-        return Promise.resolve(Promise.resolve($val));
+    it("resolve promise", "val", function () {
+        return Promise.resolve(Promise.resolve("val"));
     });
 
-    it("reject", $val, function () {
-        return Promise.reject($val)["catch"](function (val) {
+    it("reject", "val", function () {
+        return Promise.reject("val")["catch"](function (val) {
             return val;
         });
     });
 
-    it("catch", $val, function () {
+    it("catch", "val", function () {
         return new Promise(function (nil, reject) {
-            return reject($val);
+            return reject("val");
         })["catch"](function (val) {
             return val;
         });

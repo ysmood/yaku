@@ -3,15 +3,10 @@ var Yaku = require("../src/yaku");
 var utils = require("../src/utils");
 var testSuit = require("./testSuit");
 
-var $val = {
-    val: "ok"
-};
-
 module.exports = testSuit("basic", function (it) {
 
-    it("all array", [0, null, void 0, 1, 2, 3], function () {
-        var list;
-        list = [
+    it("all", void 0, function () {
+        var list = [
             0,
             null,
             void 0,
@@ -22,7 +17,7 @@ module.exports = testSuit("basic", function (it) {
         return utils.all(2, list);
     });
 
-    it("all error", $val, function () {
+    it("all error", "err", function () {
         var iter = {
             i: 0,
             next: function () {
@@ -30,7 +25,7 @@ module.exports = testSuit("basic", function (it) {
                     function () {
                         return utils.sleep(10, 1);
                     }, function () {
-                        throw $val;
+                        throw "err";
                     }, function () {
                         return utils.sleep(10, 3);
                     }
@@ -57,27 +52,6 @@ module.exports = testSuit("basic", function (it) {
             Yaku.reject(1)
         ]).catch(function (v) {
             return v;
-        });
-    });
-
-    it("all iter progress", 10, function () {
-        var iter = { i: 0, next: function () {
-            var done = iter.i++ >= 10;
-            return {
-                done: done,
-                value: !done && new Yaku(function (r) {
-                    return setTimeout((function () {
-                        return r(1);
-                    }), 1);
-                })
-            };
-        } };
-
-        var count = 0;
-        return utils.all(3, iter, false, function (ret) {
-            return count += ret;
-        }).then(function () {
-            return count;
         });
     });
 
@@ -168,10 +142,10 @@ module.exports = testSuit("basic", function (it) {
         ]))(0);
     });
 
-    it("flow error", $val, function () {
+    it("flow error", "err", function () {
         return (utils.flow([
             "a", Yaku.resolve("b"), function () {
-                throw $val;
+                throw "err";
             }
         ]))(0)["catch"](function (err) {
             return err;

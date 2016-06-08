@@ -9,10 +9,6 @@ module.exports = {
      * Default is `Infinity`.
      * @param  {Iterable} list Any [iterable](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) object. It should be a lazy iteralbe object,
      * don't pass in a normal Array with promises.
-     * @param {Boolean} saveResults Whether to save each promise's result or
-     * not. Default is true.
-     * @param {Function} progress If a task ends, the resolved value will be
-     * passed to this function.
      * @return {Promise}
      * @example
      * ```js
