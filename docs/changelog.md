@@ -1,3 +1,7 @@
+- v0.16
+
+  - **API CHANGE** `utils.all`'s params `saveResults` and `progress` are removed
+
 - v0.15
 
   - add: `span` option to `retry`
