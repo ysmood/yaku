@@ -24,17 +24,17 @@ module.exports = function (limit, list) {
         var gen = genIterator(list);
         var done = false;
 
-        function genNext (val) {
+        function genNext () {
             running--;
-            return step("next", val);
+            return step("next");
         }
 
-        function genThrow (val) {
+        function genThrow () {
             running--;
-            return step("throw", val);
+            return step("throw");
         }
 
-        function step (key, val) {
+        function step (key) {
             if (done) {
                 if (running === 0)
                     resolve();
@@ -42,7 +42,7 @@ module.exports = function (limit, list) {
             }
 
             while (running < limit) {
-                var info = gen[key](val);
+                var info = gen[key]();
 
                 if (info.done) {
                     return done = true;
