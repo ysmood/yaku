@@ -41,6 +41,7 @@
     "bluebird": "3.3.5",
     "co": "4.6.0",
     "core-js": "2.3.0",
+    "coveralls": "^2.11.9",
     "es6-promise": "3.1.2",
     "es6-shim": "0.35.0",
     "eslint": "2.8.0",
