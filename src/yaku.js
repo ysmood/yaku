@@ -53,7 +53,7 @@
         // "this._s" is the internal state of: pending, resolved or rejected
         // "this._v" is the internal value
 
-        if (!self || self._s !== $undefined)
+        if (!isObject(self) || self._s !== $undefined)
             throw genTypeError($invalidThis);
 
         self._s = $pending;
@@ -399,6 +399,10 @@
             src.prototype[k] = target[k];
         }
         return src;
+    }
+
+    function isObject (obj) {
+        return obj && typeof obj === "object";
     }
 
     function isFunction (obj) {
@@ -760,7 +764,7 @@
 
         // 2.3.2
         // 2.3.3
-        if (x !== $null && (isFunction(x) || typeof x === "object")) {
+        if (x !== $null && (isFunction(x) || isObject(x))) {
             // 2.3.2.1
             var xthen = genTryCatcher(getThen)(x);
 
