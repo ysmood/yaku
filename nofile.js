@@ -66,41 +66,62 @@ module.exports = function (task, option) {
         });
     });
 
-    task("test", "run Promises/A+ tests", ["test-basic", "test-yaku", "test-browser", "test-aplus", "test-es6"], true);
+    task("test", "run Promises/A+ tests", [
+        "test-basic", "test-yaku", "test-browser", "test-aplus", "test-es6",
+        "coverage"
+    ], true);
 
     task("test-yaku", "test yaku specs", function (opts) {
-        var junitOpts = ["-g", opts.grep];
+        var junitOpts = ["cover", "junit",
+            "--print", "none",
+            "--dir", "coverage/yaku", "--", "-g", opts.grep];
 
-        return kit.spawn("junit", junitOpts.concat([
+        return kit.spawn("istanbul", junitOpts.concat([
             "test/utils.js",
             "test/unhandledRejection.js"])
         );
     });
 
     task("test-basic", "test basic specs tests", function (opts) {
-        var junitOpts = ["-g", opts.grep, "-b", "off"];
+        var junitOpts = ["cover", "junit",
+            "--print", "none",
+            "--dir", "coverage/basic", "--", "-g", opts.grep, "-b", "off"];
 
         process.env.shim = opts.shim;
 
-        return kit.spawn("junit", junitOpts.concat(["test/basic.js"]));
+        return kit.spawn("istanbul", junitOpts.concat(["test/basic.js"]));
     });
 
-    task("test-aplus", "test aplus tests", require("./test/promises-aplus-tests.js"));
+    task("test-aplus", "test aplus tests", function (opts) {
+        kit.spawn("istanbul", [
+            "cover",
+            "--print", "none",
+            "test/promises-aplus-tests.js",
+            "--dir", "coverage/aplus",
+            "--",
+            JSON.stringify(opts)
+        ]);
+    });
 
-    task("test-es6", "test es6 tests", require("./test/promises-es6-tests.js"));
+    task("test-es6", "test es6 tests", function (opts) {
+        kit.spawn("istanbul", [
+            "cover",
+            "--print", "none",
+            "test/promises-es6-tests.js",
+            "--dir", "coverage/aplus",
+            "--",
+            JSON.stringify(opts)
+        ]);
+    });
 
     task("test-browser", ["browser"], "use phantomjs to test", function () {
         return kit.spawn("phantomjs", ["test/phantom.js"]);
     });
 
-    task("coverage", "test the coverage of the code", function (opts) {
-        process.env.shim = opts.shim;
-
+    task("coverage", "combine the coverage reports", function () {
         return kit.spawn("istanbul", [
-            "cover", "junit", "--",
-            "test/basic.js",
-            "test/utils.js",
-            "test/unhandledRejection.js"
+            "report", "--include",
+            "coverage/*/coverage.json"
         ]);
     });
 
@@ -114,7 +135,6 @@ module.exports = function (task, option) {
             + "\nCPU  " + (os.cpus()[0].model) + "\n\n"
             + "| name | unit tests | 1ms async task | optional helpers | helpers | min js |\n"
             + "| ---- | ---------- | -------------- | ---------------- | ------- | ------ |"
-
         );
 
         var names = _.keys(require("./test/getPromise").map);

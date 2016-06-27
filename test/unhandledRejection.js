@@ -1,5 +1,6 @@
 var Promise = require("../src/yaku");
 var testSuit = require("./testSuit");
+var sleep = require("../src/sleep");
 
 
 var root = typeof global === "object" ? global : window;
@@ -12,6 +13,13 @@ module.exports = testSuit("unhandledRejection", function (it) {
     // Node or Browser
     if (process) {
         return Promise.resolve()
+        .then(function () {
+            return it("unhandled rejection, no handler", undefined, function () {
+                Promise.reject("err");
+
+                return sleep(300);
+            });
+        })
         .then(function () {
 
             return it("unhandled rejection", { reason: $val, promise: true }, function () {

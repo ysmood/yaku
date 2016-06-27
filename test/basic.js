@@ -124,8 +124,55 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("when context is null", "Invalid this", function () {
+        try {
+            Promise.call(null);
+        } catch (err) {
+            return err.message;
+        }
+    });
+
+    it("when executor is null", "Invalid argument", function () {
+        try {
+            new Promise(null);
+        } catch (err) {
+            return err.message;
+        }
+    });
+
+    it("when yaku.prototype.then's context is not yaku", TypeError, function () {
+        try {
+            var p = new Promise(function () {});
+            p.then.call({});
+        } catch (err) {
+            return err.constructor;
+        }
+    });
+
     it("all with empty", [], function () {
         return Promise.all([]);
+    });
+
+    it("all with es5 array", [1, 2, 3], function () {
+        function es5Array () {
+            var arr = [];
+            arr.push.apply(arr, arguments);
+            arr.__proto__ = es5Array.prototype;
+            return arr;
+        }
+        es5Array.prototype = new Array;
+
+        var a = new es5Array(1, 2, 3);
+
+        a[Symbol.iterator] = null;
+
+        return Promise.all(a);
+    });
+
+    it("all reject", "err", function () {
+        return Promise.all([
+            Promise.reject("err")
+        ]).catch(function (err) { return err; });
     });
 
     it("all with null", true, function () {
@@ -268,6 +315,19 @@ module.exports = testSuit("basic", function (it) {
         ]);
     });
 
+    it("race reject", "err", function () {
+        return Promise.race([
+            new Promise(function (r) {
+                return setTimeout(function () {
+                    return r(0);
+                });
+            }),
+            new Promise(function (r, rr) {
+                return rr("err");
+            })
+        ]).catch(function (err) { return err; });
+    });
+
     it("race with custom Symbol.iterator", 1, function () {
         var arr = [];
 
@@ -383,6 +443,28 @@ module.exports = testSuit("basic", function (it) {
         }).then(function () {
             return result;
         });
+    });
+
+    it("subclass with forged constructor", "ok", function () {
+        Symbol.species = "Symbol(species)";
+
+        var SubPromise = function () {};
+        var ret;
+
+        SubPromise.prototype = Promise;
+        SubPromise[Symbol.species] = function (executor) {
+            executor(function () {}, function () {});
+
+            ret = "ok";
+        };
+
+        var p = Promise.resolve();
+
+        p.constructor = SubPromise;
+
+        p.then(function () {});
+
+        return ret;
     });
 
     it("subclass PromiseCapability promise.then", true, function () {
