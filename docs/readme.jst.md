@@ -26,6 +26,7 @@ ideas: [docs/lazyTree.md][].
 - Designed to work on IE5+ and other major browsers
 - Much better performance than the native Promise
 - Well commented source code with every Promises/A+ spec
+- 100% code coverage
 
 
 
