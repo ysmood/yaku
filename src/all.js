@@ -29,9 +29,9 @@ module.exports = function (limit, list) {
             return step("next");
         }
 
-        function genThrow () {
+        function genThrow (reason) {
             running--;
-            return step("throw");
+            return reject(reason);
         }
 
         function step (key) {

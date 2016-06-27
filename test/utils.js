@@ -29,7 +29,7 @@ module.exports = testSuit("basic", function (it) {
         return utils.all(2, list);
     });
 
-    it("all error", "err", function () {
+    it("all throw error", "err", function () {
         var iter = {
             i: 0,
             next: function () {
@@ -38,6 +38,28 @@ module.exports = testSuit("basic", function (it) {
                         return utils.sleep(10, 1);
                     }, function () {
                         throw "err";
+                    }, function () {
+                        return utils.sleep(10, 3);
+                    }
+                ][iter.i++];
+
+                return { done: !fn, value: fn && fn() };
+            }
+        };
+        return utils.all(2, iter)["catch"](function (err) {
+            return err;
+        });
+    });
+
+    it("all reject error", "err", function () {
+        var iter = {
+            i: 0,
+            next: function () {
+                var fn = [
+                    function () {
+                        return utils.sleep(10, 1);
+                    }, function () {
+                        return Yaku.reject("err");
                     }, function () {
                         return utils.sleep(10, 3);
                     }
