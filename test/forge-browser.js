@@ -2,6 +2,7 @@ window = Object.assign({}, global);
 window.process = null;
 window.Symbol = null;
 var Yaku = require("../src/yaku");
+var yakuThrow = require("../src/throw");
 
 var testSuit = require("./testSuit");
 
@@ -22,13 +23,29 @@ module.exports = testSuit("long stack trace", function (it) {
             });
         });
     }).then(function () {
-        return it("uncaught rejection", "err", function () {
+        return it("uncaught rejection", true, function () {
             return new Yaku(function (r) {
                 window.onunhandledrejection = function (err) {
-                    r(err.reason.message);
+                    r(
+                        /Error: err/.test(err.reason.longStack) &&
+                        /From previous Error/.test(err.reason.longStack)
+                    );
                 };
 
                 Yaku.reject(new Error("err"));
+            });
+        });
+    }).then(function () {
+
+        return it("throw", "err", function () {
+            return new Yaku(function (resolve) {
+                var err = function () {
+                    resolve("err");
+                    process.removeListener("uncaughtException", err);
+                };
+
+                process.on("uncaughtException", err);
+                yakuThrow("err");
             });
         });
     });

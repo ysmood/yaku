@@ -3,6 +3,14 @@ var Yaku = require("../src/yaku");
 var utils = require("../src/utils");
 var testSuit = require("./testSuit");
 
+function es5Array () {
+    var arr = [];
+    arr.push.apply(arr, arguments);
+    arr.__proto__ = es5Array.prototype;
+    return arr;
+}
+es5Array.prototype = new Array;
+
 module.exports = testSuit("basic", function (it) {
 
     it("all", void 0, function () {
@@ -18,15 +26,26 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("all limit 2", void 0, function () {
-        var list = [
+        var list = es5Array(
             0,
             null,
             void 0,
             utils.sleep(20, 1),
             utils.sleep(10, 2),
             utils.sleep(10, 3)
-        ];
+        );
+        try {
+            list[Symbol.iterator] = null;
+        } catch (err) {
+            //
+        }
         return utils.all(2, list);
+    });
+
+    it("all limit null", TypeError, function () {
+        return utils.all(2, null).catch(function (err) {
+            return err.constructor;
+        });
     });
 
     it("all throw error", "err", function () {
@@ -233,24 +252,72 @@ module.exports = testSuit("basic", function (it) {
         return utils.promisify(obj.foo, obj)(0);
     });
 
-    it("promisify promise", 1, function () {
-        var fn;
-        fn = utils.promisify(function (val, cb) {
-            return setTimeout(function () {
-                return cb(null, val + 1);
-            });
-        });
-        return fn(0);
+    it("promisify promise arguments with callback", [void 0, 1, 3, 6, 10, 15, 21], function () {
+        return Yaku.all([
+            utils.promisify(function (cb) {
+                return cb(null);
+            })(),
+            utils.promisify(function (a, cb) {
+                return cb(null, a);
+            })(1),
+            utils.promisify(function (a, b, cb) {
+                return cb(null, a + b);
+            })(1, 2),
+            utils.promisify(function (a, b, c, cb) {
+                return cb(null, a + b + c);
+            })(1, 2, 3),
+            utils.promisify(function (a, b, c, d, cb) {
+                return cb(null, a + b + c + d);
+            })(1, 2, 3, 4),
+            utils.promisify(function (a, b, c, d, e, cb) {
+                return cb(null, a + b + c + d + e);
+            })(1, 2, 3, 4, 5),
+            utils.promisify(function (a, b, c, d, e, f, cb) {
+                return cb(null, a + b + c + d + e + f);
+            })(1, 2, 3, 4, 5, 6)
+        ]);
     });
 
-    it("promisify promise 2", 3, function () {
-        var fn;
-        fn = utils.promisify(function (a, b, cb) {
-            return setTimeout(function () {
-                return cb(null, a + b);
-            });
+    it("promisify promise arguments", [void 0, 1, 3, 6, 10, 15, 21], function () {
+        return new Yaku(function (resolve, reject) {
+            var ret = [];
+
+            function push (err, val) {
+                if (err)
+                    reject(err);
+                else
+                    ret.push(val);
+            }
+
+            utils.promisify(function (cb) {
+                cb(null);
+            })(push);
+
+            utils.promisify(function (a, cb) {
+                cb(null, a);
+            })(1, push);
+
+            utils.promisify(function (a, b, cb) {
+                cb(null, a + b);
+            })(1, 2, push);
+
+            utils.promisify(function (a, b, c, cb) {
+                cb(null, a + b + c);
+            })(1, 2, 3, push);
+
+            utils.promisify(function (a, b, c, d, cb) {
+                cb(null, a + b + c + d);
+            })(1, 2, 3, 4, push);
+
+            utils.promisify(function (a, b, c, d, e, cb) {
+                cb(null, a + b + c + d + e);
+            })(1, 2, 3, 4, 5, push);
+
+            utils.promisify(function (a, b, c, d, e, f, cb) {
+                cb(null, a + b + c + d + e + f);
+                resolve(ret);
+            })(1, 2, 3, 4, 5, 6, push);
         });
-        return fn(1, 2);
     });
 
     it("promisify promise err", "err", function () {
@@ -288,6 +355,13 @@ module.exports = testSuit("basic", function (it) {
                 resolve(val);
             });
         });
+    });
+
+    it("callbackify callback none fn", "ok", function () {
+        var fn = utils.callbackify(function (v) {
+            return Yaku.resolve(v);
+        });
+        return fn("ok");
     });
 
     it("callbackify callback only", "ok", function () {
@@ -498,6 +572,16 @@ module.exports = testSuit("basic", function (it) {
         return Yaku.all([fn(1), fn(2), fn(3), fn(4), fn(5)]);
     });
 
+    it("retry with function", ["err2", "err1", "err0"], function () {
+        var retry = 3;
+        var fn = utils.retry(function () {
+            return retry--;
+        }, function () {
+            throw "err" + retry;
+        });
+        return fn(1).catch(function (ret) { return ret; });
+    });
+
     it("guard basic", "err", function () {
         return Yaku.reject(new TypeError("err"))
         .then(function () {
@@ -505,6 +589,15 @@ module.exports = testSuit("basic", function (it) {
         })
         .guard(TypeError, function (err) {
             return err.message;
+        });
+    });
+
+    it("guard basic", TypeError, function () {
+        return Yaku.reject(new TypeError("err"))
+        .guard(SyntaxError, function (err) {
+            return err.message;
+        }).catch(function (err) {
+            return err.constructor;
         });
     });
 
@@ -538,6 +631,10 @@ module.exports = testSuit("basic", function (it) {
         return utils.if(utils.sleep(100, true), function () {
             return "true";
         });
+    });
+
+    it("never", void 0, function () {
+        utils.never();
     });
 
 });

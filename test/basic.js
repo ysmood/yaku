@@ -114,6 +114,16 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("circular chain", TypeError, function () {
+        var p = Promise.resolve().then(function () {
+            return p;
+        });
+
+        return p.catch(function (err) {
+            return err.constructor;
+        });
+    });
+
     it("chain", "ok", function () {
         return Promise.resolve().then(function () {
             return new Promise(function (r) {

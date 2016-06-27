@@ -3,11 +3,8 @@ var _ = kit._;
 kit.require("drives");
 
 module.exports = function (task, option) {
-    option("--debug", "run with remote debug server");
-    option("--port <8219>", "remote debug server port", 8219);
     option("-g, --grep <pattern>", "run test that match the pattern", ".");
     option("--noAplus", "don't run the promises-aplus-tests");
-    option("--browserPort <8227>", "browser test port", 8227);
     option("-w, --watch", "webpack watch");
     option("-s, --shim <name>", "the promise shim to require, check the test/getPromise.js file for details", "yaku");
 
@@ -53,13 +50,9 @@ module.exports = function (task, option) {
         return kit.spawn("webpack");
     });
 
-    task("lab l", "run and monitor \"test/lab.js\"", function (opts) {
+    task("lab l", "run and monitor \"test/lab.js\"", function () {
         var args;
         args = ["test/lab.js"];
-        if (opts.debug) {
-            kit.log(opts.debug);
-            args.splice(0, 0, "--nodejs", "--debug-brk=" + opts.port);
-        }
         return kit.monitorApp({
             args: args,
             watchList: ["src/*.js", "test/**"]
@@ -103,7 +96,7 @@ module.exports = function (task, option) {
     });
 
     task("test-aplus", "test aplus tests", function (opts) {
-        kit.spawn("istanbul", [
+        return kit.spawn("istanbul", [
             "cover",
             "--print", "none",
             "test/promises-aplus-tests.js",
@@ -114,7 +107,7 @@ module.exports = function (task, option) {
     });
 
     task("test-es6", "test es6 tests", function (opts) {
-        kit.spawn("istanbul", [
+        return kit.spawn("istanbul", [
             "cover",
             "--print", "none",
             "test/promises-es6-tests.js",

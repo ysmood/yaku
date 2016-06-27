@@ -14,19 +14,8 @@ module.exports = function (fn, self) {
             return fn.apply(self, args);
         }
 
-        if (!isFn && arguments.length === 1) {
-            args = [cb];
-            cb = null;
-        }
-
         return fn.apply(self, args).then(function (val) {
-            return isFn ? cb(null, val) : void 0;
-        })["catch"](function (err) {
-            if (cb) {
-                return cb(err);
-            } else {
-                return _.Promise.reject(err);
-            }
-        });
+            cb(null, val);
+        })["catch"](cb);
     };
 };

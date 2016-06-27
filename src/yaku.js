@@ -321,7 +321,10 @@
      */
     Yaku.unhandledRejection = function (reason, p) {
         try {
-            root.console.error($unhandledRejectionMsg, p.longStack);
+            root.console.error(
+                $unhandledRejectionMsg,
+                isLongStackTrace ? p.longStack : genStackInfo(reason, p)
+            );
         } catch (e) {} // eslint-disable-line
     };
 
@@ -514,7 +517,7 @@
         while (!(item = iter.next()).done) {
             ret = genTryCatcher(fn)(item.value, i++);
             if (ret === $tryErr) {
-                if (isFunction(iter[$return])) iter[$return]();
+                isFunction(iter[$return]) && iter[$return]();
                 throw ret.e;
             }
         }
@@ -698,7 +701,7 @@
             })(p);
         }
 
-        reason.longStack = reason.stack +
+        return reason.stack +
             ("\n" + stackInfo.join("\n")).replace($cleanStackReg, "");
     }
 
@@ -727,7 +730,7 @@
 
             if (state === $rejected) {
                 if (isLongStackTrace && isError(value)) {
-                    genStackInfo(value, p);
+                    value.longStack = genStackInfo(value, p);
                 }
 
                 scheduleUnhandledRejection(p);

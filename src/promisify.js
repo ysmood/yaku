@@ -15,6 +15,7 @@ module.exports = function (fn, self) {
             err == null ? resolve(val) : reject(err);
         }
 
+        // For the sake of performance.
         switch (len) {
         case 0: fn.call(self, cb); break;
         case 1: isFn(a) ? fn.call(self, a) : fn.call(self, a, cb); break;
