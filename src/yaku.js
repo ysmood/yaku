@@ -35,6 +35,7 @@
     , $tryCatchThis
     , $tryErr = { e: $null }
     , $noop = function () {}
+    , $cleanStackReg = /^.+\/node_modules\/yaku\/.+\n?/mg
     ;
 
     /**
@@ -697,8 +698,8 @@
             })(p);
         }
 
-        return (isError(reason) ? reason.stack : reason)
-            + ("\n" + stackInfo.join("\n")).replace(/^.+\/node_modules\/yaku\/.+\n?/mg, "");
+        reason.longStack = reason.stack +
+            ("\n" + stackInfo.join("\n")).replace($cleanStackReg, "");
     }
 
     function callHanler (handler, value) {
@@ -715,8 +716,7 @@
      */
     function settlePromise (p, state, value) {
         var i = 0
-        , len = p._pCount
-        , p2;
+        , len = p._pCount;
 
         // 2.1.2
         // 2.1.3
@@ -726,8 +726,8 @@
             p._v = value;
 
             if (state === $rejected) {
-                if (isLongStackTrace) {
-                    value.longStack = genStackInfo(value, p);
+                if (isLongStackTrace && isError(value)) {
+                    genStackInfo(value, p);
                 }
 
                 scheduleUnhandledRejection(p);
@@ -735,11 +735,7 @@
 
             // 2.2.4
             while (i < len) {
-                p2 = p[i++];
-
-                if (p2._s !== $pending) continue;
-
-                scheduleHandler(p, p2);
+                scheduleHandler(p, p[i++]);
             }
         }
 
