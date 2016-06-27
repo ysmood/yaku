@@ -1,4 +1,9 @@
-window = Object.assign({}, global);
+var k;
+global.window = {};
+for (k in global) {
+    window[k] = global[k];
+}
+
 window.process = null;
 window.Symbol = null;
 var Yaku = require("../src/yaku");
