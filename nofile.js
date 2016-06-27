@@ -93,6 +93,17 @@ module.exports = function (task, option) {
         return kit.spawn("phantomjs", ["test/phantom.js"]);
     });
 
+    task("coverage", "test the coverage of the code", function (opts) {
+        process.env.shim = opts.shim;
+
+        return kit.spawn("istanbul", [
+            "cover", "junit", "--",
+            "test/basic.js",
+            "test/utils.js",
+            "test/unhandledRejection.js"
+        ]);
+    });
+
     task("benchmark", "compare performance between different libraries", function () {
         process.env.NODE_ENV = "production";
 
