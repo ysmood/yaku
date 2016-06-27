@@ -467,6 +467,17 @@ module.exports = testSuit("basic", function (it) {
         return ret;
     });
 
+    it("subclass with null constructor", "ok", function () {
+        Symbol.species = "Symbol(species)";
+        var p = Promise.resolve();
+
+        p.constructor = null;
+
+        return p.then(function () {
+            return "ok";
+        });
+    });
+
     it("subclass PromiseCapability promise.then", true, function () {
         var promise, FakePromise1, FakePromise2;
         promise = new Promise(function (it){ it(42); });
