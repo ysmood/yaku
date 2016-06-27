@@ -67,7 +67,9 @@ module.exports = function (task, option) {
     });
 
     task("test", "run Promises/A+ tests", [
-        "test-basic", "test-yaku", "test-browser", "test-aplus", "test-es6",
+        "test-basic", "test-yaku", "test-browser",
+        "test-forge-browser",
+        "test-aplus", "test-es6",
         "coverage"
     ], true);
 
@@ -90,6 +92,14 @@ module.exports = function (task, option) {
         process.env.shim = opts.shim;
 
         return kit.spawn("istanbul", junitOpts.concat(["test/basic.js"]));
+    });
+
+    task("test-forge-browser", "forge browser env and test", function (opts) {
+        var junitOpts = ["cover", "junit",
+            "--print", "none",
+            "--dir", "coverage/forge-browser", "--", "-g", opts.grep, "-b", "off"];
+
+        return kit.spawn("istanbul", junitOpts.concat(["test/forge-browser.js"]));
     });
 
     task("test-aplus", "test aplus tests", function (opts) {

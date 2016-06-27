@@ -251,6 +251,19 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("all with iterator like, iteration", ["ok", "ok", "ok"], function () {
+        var iter = {
+            count: 3,
+            next: function () {
+                return {
+                    value: "ok",
+                    done: !this.count--
+                };
+            }
+        };
+        return Promise.all(iter);
+    });
+
     it("all with iterator like, resolve error", "clean", function () {
         function SubPromise (it) {
             var self = new Promise(it);
@@ -465,6 +478,32 @@ module.exports = testSuit("basic", function (it) {
         p.then(function () {});
 
         return ret;
+    });
+
+    it("subclass with forged constructor error", TypeError, function () {
+        Symbol.species = "Symbol(species)";
+
+        var SubPromise = function () {};
+
+        return new Promise(function (r) {
+            SubPromise.prototype = Promise;
+            SubPromise[Symbol.species] = function (executor) {
+                executor(function () {}, function () {});
+                setTimeout(function () {
+                    try {
+                        executor(function () {}, function () {});
+                    } catch (err) {
+                        r(err.constructor);
+                    }
+                });
+            };
+
+            var p = Promise.resolve();
+
+            p.constructor = SubPromise;
+
+            p.then(function () {});
+        });
     });
 
     it("subclass with forged constructor executor without handler", TypeError, function () {

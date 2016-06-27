@@ -3,7 +3,7 @@
 
     var $undefined
     , $null = null
-    , root = typeof global === "object" ? global : window
+    , root = typeof window === "object" ? window : global
     , isLongStackTrace = false
     , process = root.process
     , Arr = Array
@@ -320,7 +320,7 @@
      */
     Yaku.unhandledRejection = function (reason, p) {
         try {
-            root.console.error($unhandledRejectionMsg, genStackInfo(reason, p));
+            root.console.error($unhandledRejectionMsg, p.longStack);
         } catch (e) {} // eslint-disable-line
     };
 
@@ -338,10 +338,14 @@
      * While it is very helpful in development and testing environments,
      * it is not recommended to use it in production. It will slow down your
      * application and waste your memory.
+     * It will add an extra property `longStack` to the Error object.
      * @example
      * ```js
      * var Promise = require('yaku');
      * Promise.enableLongStackTrace();
+     * Promise.reject(new Error("err")).catch((err) => {
+     *     console.log(err.longStack);
+     * });
      * ```
      */
     Yaku.enableLongStackTrace = function () {
@@ -494,8 +498,9 @@
         var gen = iterable[Yaku[$Symbol][$iterator]];
         if (isFunction(gen))
             iter = gen.call(iterable);
-        else if (isFunction(iterable.next))
+        else if (isFunction(iterable.next)) {
             iter = iterable;
+        }
         else if (isInstanceOf(iterable, Arr)) {
             len = iterable.length;
             while (i < len) {
@@ -527,7 +532,7 @@
     }
 
     function genTraceInfo (noTitle) {
-        return (noTitle ? "" : $fromPrevious) + (new Err().stack || "");
+        return (noTitle ? "" : $fromPrevious) + new Err().stack;
     }
 
 
@@ -721,7 +726,7 @@
             p._v = value;
 
             if (state === $rejected) {
-                if (isLongStackTrace && isError(value)) {
+                if (isLongStackTrace) {
                     value.longStack = genStackInfo(value, p);
                 }
 
