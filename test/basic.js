@@ -467,6 +467,27 @@ module.exports = testSuit("basic", function (it) {
         return ret;
     });
 
+    it("subclass with forged constructor executor without handler", TypeError, function () {
+        Symbol.species = "Symbol(species)";
+
+        var SubPromise = function () {};
+
+        SubPromise.prototype = Promise;
+        SubPromise[Symbol.species] = function (executor) {
+            executor();
+        };
+
+        var p = Promise.resolve();
+
+        p.constructor = SubPromise;
+
+        try {
+            p.then(function () {});
+        } catch (err) {
+            return err.constructor;
+        }
+    });
+
     it("subclass with null constructor", "ok", function () {
         Symbol.species = "Symbol(species)";
         var p = Promise.resolve();
