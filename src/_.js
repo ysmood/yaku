@@ -9,10 +9,6 @@ module.exports = {
         return src;
     },
 
-    isArray: function (obj) {
-        return obj instanceof Array;
-    },
-
     isFunction: function (obj) {
         return typeof obj === "function";
     },

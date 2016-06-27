@@ -14,6 +14,18 @@ module.exports = testSuit("basic", function (it) {
             utils.sleep(10, 2),
             utils.sleep(10, 3)
         ];
+        return utils.all(list);
+    });
+
+    it("all limit 2", void 0, function () {
+        var list = [
+            0,
+            null,
+            void 0,
+            utils.sleep(20, 1),
+            utils.sleep(10, 2),
+            utils.sleep(10, 3)
+        ];
         return utils.all(2, list);
     });
 
@@ -132,6 +144,24 @@ module.exports = testSuit("basic", function (it) {
         }
 
         return utils.async(gen)().catch(function (v) { return v; });
+    });
+
+    it("Deferred resolve", "ok", function () {
+        var defer = utils.Deferred();
+
+        defer.resolve("ok");
+
+        return defer.promise;
+    });
+
+    it("Deferred reject", "err", function () {
+        var defer = utils.Deferred();
+
+        defer.reject("err");
+
+        return defer.promise.catch(function (err) {
+            return err;
+        });
     });
 
     it("flow array", "bc", function () {
@@ -257,7 +287,7 @@ module.exports = testSuit("basic", function (it) {
         x = 1;
 
         tmr = setInterval(function () {
-            return one.next(x++);
+            return one.emit(x++);
         }, 0);
 
         two = one.subscribe(function (v) {
