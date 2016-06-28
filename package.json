@@ -1,7 +1,7 @@
 {
   "name": "yaku",
-  "version": "0.16.1",
-  "description": "A light-weight ES6 Promises/A+ implementation that doesn't hurt.",
+  "version": "0.16.2",
+  "description": "A lightweight promise library",
   "main": "lib/yaku.js",
   "typings": "lib/yaku.d.ts",
   "scripts": {
@@ -38,25 +38,25 @@
     "lib"
   ],
   "devDependencies": {
-    "bluebird": "3.3.5",
+    "bluebird": "3.4.1",
     "co": "4.6.0",
-    "core-js": "2.3.0",
-    "coveralls": "^2.11.9",
-    "es6-promise": "3.1.2",
-    "es6-shim": "0.35.0",
-    "eslint": "2.8.0",
+    "core-js": "2.4.0",
+    "coveralls": "2.11.9",
+    "es6-promise": "3.2.1",
+    "es6-shim": "0.35.1",
+    "eslint": "2.13.1",
     "istanbul": "0.4.4",
-    "junit": "1.4.0",
-    "mocha": "2.4.5",
+    "junit": "1.4.4",
+    "mocha": "2.5.3",
     "my-promise": "1.1.0",
-    "nokit": "0.20.8",
+    "nokit": "0.21.0",
     "phantomjs-prebuilt": "2.1.7",
     "promises-aplus-tests": "*",
     "promises-es6-tests": "*",
     "q": "1.4.1",
     "setprototypeof": "1.0.1",
-    "uglify-js": "2.6.2",
-    "webpack": "1.13.0"
+    "uglify-js": "2.6.4",
+    "webpack": "1.13.1"
   },
   "eslintConfig": {
     "env": {

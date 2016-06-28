@@ -34,6 +34,7 @@ function logResult () {
     return console.log( // eslint-disable-line
         "| [" + name + "][]@" + ver
         + " | " + testCount(name)
+        + " | " + getPromise.map[name].coverage
         + " | " + (initTime + resolutionTime) + "ms"
         + " / " + (Math.floor(mem.rss / 1024 / 1024)) + "MB"
         + " | " + getPromise.map[name].optionalHelper

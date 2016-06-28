@@ -12,8 +12,7 @@ It only implements the `constructor` and `then`.
 Yaku passed all the tests of [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
 
 I am not an optimization freak, I try to keep the source code readable and maintainable.
-Premature optimization is the root of all evil. I write this lib to research one of my data structure
-ideas: [docs/lazyTree.md][].
+I write this lib to research one of my data structure ideas: [docs/lazyTree.md][].
 
 [![NPM version](https://badge.fury.io/js/yaku.svg)](http://badge.fury.io/js/yaku) [![Build Status](https://travis-ci.org/ysmood/yaku.svg)](https://travis-ci.org/ysmood/yaku) [![Deps Up to Date](https://david-dm.org/ysmood/yaku.svg?style=flat)](https://david-dm.org/ysmood/yaku) [![Coverage Status](https://coveralls.io/repos/ysmood/yaku/badge.svg?branch=master&service=github)](https://coveralls.io/github/ysmood/yaku?branch=master)
 
@@ -23,8 +22,8 @@ ideas: [docs/lazyTree.md][].
 
 - The minified file is only 4.1KB (1.8KB gzipped)
 - Supports "uncaught rejection" and "long stack trace", [Comparison][docs/debugHelperComparison.md]
-- 100% statements and branches test coverage
 - Designed to work on IE5+ and other major browsers
+- 100% statement and branch test coverage
 - Much better performance than the native Promise
 - Well commented source code with every Promises/A+ spec
 
@@ -72,24 +71,29 @@ These comparisons only reflect some limited truth, no one is better than all oth
 There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
 ```
-Node v5.11.0
+Date: Tue Jun 28 2016 14:12:35 GMT+0800 (CST)
+Node v6.2.2
 OS   darwin
 Arch x64
-CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GH
+CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
 ```
 
-| name | unit tests | 1ms async task | optional helpers | helpers | min js |
-| ---- | ---------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.15.2 | ✓ | 357ms / 108MB | ✓ | 32 | 3.9KB |
-| [bluebird][]@3.3.5 | x (27 failing) | 283ms / 89MB | partial | 100 | 52.7KB |
-| [es6-promise][]@3.1.2 | x (27 failing) | 403ms / 113MB | x | 10 | 6.3KB |
-| [native][]@0.15.3 | x (9 failing) | 572ms / 168MB | x | 13 | 0KB |
-| [core-js][]@2.3.0 | x (3 failing) | 826ms / 197MB | x | 11 | 12.3KB |
-| [es6-shim][]@0.35.0 | x (1 failing) | 993ms / 85MB | x | 12 | 55KB |
-| [q][]@1.4.1 | x (67 failing) | 1555ms / 425MB | x | 74 | 15.4KB |
-| [my-promise][]@1.1.0 | x (1 failing) | 922ms / 223MB | x | 10 | 8.4KB |
+| name | unit tests | coverage | 1ms async task | optional helpers | helpers | min js |
+| ---- | ---------- | -------- | -------------- | ---------------- | ------- | ------ |
+| [yaku][]@0.15.9 | ✓ | 100% 100% | 327ms / 108MB | ✓ | 33 | 4.1KB |
+| [bluebird][]@3.4.1 | x (33 failing) | 99% 96% | 212ms / 91MB | partial | 102 | 52.8KB |
+| [es6-promise][]@3.2.1 | x (48 failing) | ? ? | 473ms / 107MB | x | 10 | 6.4KB |
+| [native][]@0.16.1 | x (12 failing) | ? ? | 682ms / 164MB | x | 13 | 0KB |
+| [core-js][]@2.4.0 | x (10 failing) | ? ? | 600ms / 185MB | x | 11 | 12.3KB |
+| [es6-shim][]@0.35.1 | x (12 failing) | ? ? | 684ms / 165MB | x | 11 | 54.7KB |
+| [q][]@1.4.1 | x (47 failing) | ? ? | 1341ms / 389MB | x | 74 | 15.4KB |
+| [my-promise][]@1.1.0 | x (7 failing) | ? ? | 864ms / 226MB | x | 10 | 8.4KB |
 
-- **Helpers**: extra methods that help with your promise programming, such as
+- **unit test**: [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
+
+- **coverage**: statement coverage and branch coverage.
+
+- **helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
 
 - **1ms async task**: `npm run no -- benchmark`, the smaller the better (total time / memory rss).

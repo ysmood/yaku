@@ -5,6 +5,7 @@ var map = {
     yaku: function () {
         var Promise = require("../src/yaku");
         map.yaku.optionalHelper = "✓";
+        map.yaku.coverage = "100% 100%";
         map.yaku.helper = propSize(Promise) + propSize(Promise.prototype) + propSize(require("../src/utils"));
         setSize("yaku", "dist/yaku.min.js");
         return Promise;
@@ -13,6 +14,7 @@ var map = {
     bluebird: function () {
         var Promise = require("bluebird");
         map.bluebird.optionalHelper = "partial";
+        map.bluebird.coverage = "99% 96%";
         map.bluebird.helper = propSize(Promise) + propSize(Promise.prototype);
         setSize("bluebird", "node_modules/bluebird/js/browser/bluebird.core.min.js");
         return Promise;
@@ -21,6 +23,7 @@ var map = {
     "es6-promise": function () {
         var Promise = require("es6-promise").Promise;
         map["es6-promise"].optionalHelper = "x";
+        map["es6-promise"].coverage = "? ?";
         map["es6-promise"].helper = propSize(Promise) + propSize(Promise.prototype);
         setSize("es6-promise", "node_modules/es6-promise/dist/es6-promise.min.js");
         return Promise;
@@ -29,6 +32,7 @@ var map = {
     native: function () {
         var Promise = global.Promise;
         map.native.optionalHelper = "x";
+        map.native.coverage = "? ?";
         map.native.helper = propSize(Promise) + propSize(Promise.prototype);
         map.native.size = 0;
         return Promise;
@@ -37,6 +41,7 @@ var map = {
     "core-js": function () {
         var Promise = require("core-js/fn/promise");
         map["core-js"].optionalHelper = "x";
+        map["core-js"].coverage = "? ?";
         map["core-js"].helper = propSize(Promise) + propSize(Promise.prototype);
 
         spawnSync("webpack");
@@ -53,6 +58,7 @@ var map = {
 
         var Promise = global.Promise;
         map["es6-shim"].optionalHelper = "x";
+        map["es6-shim"].coverage = "? ?";
         map["es6-shim"].helper = propSize(Promise) + propSize(Promise.prototype);
         setSize("es6-shim", "node_modules/es6-shim/es6-shim.min.js");
 
@@ -63,6 +69,7 @@ var map = {
         var Promise = require("q");
 
         map.q.optionalHelper = "x";
+        map.q.coverage = "? ?";
         map.q.helper = propSize(Promise) + propSize(Promise.prototype);
 
         spawnSync("node_modules/.bin/uglifyjs", [
@@ -77,6 +84,7 @@ var map = {
         var Promise = require("my-promise").Promise;
 
         map["my-promise"].optionalHelper = "x";
+        map["my-promise"].coverage = "? ?";
         map["my-promise"].helper = propSize(Promise) + propSize(Promise.prototype);
 
         spawnSync("webpack");

@@ -132,12 +132,13 @@ module.exports = function (task, option) {
         process.env.NODE_ENV = "production";
 
         var os = require("os");
-        console.log("Node " + process.version // eslint-disable-line
+        global.console.log("Date: " + (new Date)
+            + "\nNode " + process.version // eslint-disable-line
             + "\nOS   " + (os.platform())
             + "\nArch " + (os.arch())
             + "\nCPU  " + (os.cpus()[0].model) + "\n\n"
-            + "| name | unit tests | 1ms async task | optional helpers | helpers | min js |\n"
-            + "| ---- | ---------- | -------------- | ---------------- | ------- | ------ |"
+            + "| name | unit tests | coverage | 1ms async task | optional helpers | helpers | min js |\n"
+            + "| ---- | ---------- | -------- | -------------- | ---------------- | ------- | ------ |"
         );
 
         var names = _.keys(require("./test/getPromise").map);
