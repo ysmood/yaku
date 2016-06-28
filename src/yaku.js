@@ -330,7 +330,7 @@
 
     /**
      * Emitted whenever a Promise was rejected and an error handler was
-     * attached to it (for example with .catch()) later than after an event loop turn.
+     * attached to it (for example with `.catch()`) later than after an event loop turn.
      * @param {Any} reason The rejection reason.
      * @param {Yaku} p The promise that was rejected.
      */
@@ -340,8 +340,8 @@
      * It is used to enable the long stack trace.
      * Once it is enabled, it can't be reverted.
      * While it is very helpful in development and testing environments,
-     * it is not recommended to use it in production. It will slow down your
-     * application and waste your memory.
+     * it is not recommended to use it in production. It will slow down
+     * application and eat up memory.
      * It will add an extra property `longStack` to the Error object.
      * @example
      * ```js

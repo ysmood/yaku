@@ -419,7 +419,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 - ### **[Yaku.rejectionHandled(reason, p)](src/yaku.js?source#L337)**
 
     Emitted whenever a Promise was rejected and an error handler was
-    attached to it (for example with .catch()) later than after an event loop turn.
+    attached to it (for example with `.catch()`) later than after an event loop turn.
 
     - **<u>param</u>**: `reason` { _Any_ }
 
@@ -434,8 +434,8 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
     It is used to enable the long stack trace.
     Once it is enabled, it can't be reverted.
     While it is very helpful in development and testing environments,
-    it is not recommended to use it in production. It will slow down your
-    application and waste your memory.
+    it is not recommended to use it in production. It will slow down
+    application and eat up memory.
     It will add an extra property `longStack` to the Error object.
 
     - **<u>example</u>**:
