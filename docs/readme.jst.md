@@ -23,10 +23,10 @@ ideas: [docs/lazyTree.md][].
 
 - The minified file is only <%= doc.size %>KB (1.8KB gzipped)
 - Supports "uncaught rejection" and "long stack trace", [Comparison][docs/debugHelperComparison.md]
+- 100% statements and branches test coverage
 - Designed to work on IE5+ and other major browsers
 - Much better performance than the native Promise
 - Well commented source code with every Promises/A+ spec
-- 100% code coverage
 
 
 

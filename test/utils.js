@@ -3,13 +3,6 @@ var Yaku = require("../src/yaku");
 var utils = require("../src/utils");
 var testSuit = require("./testSuit");
 
-function es5Array () {
-    var arr = [];
-    arr.push.apply(arr, arguments);
-    arr.__proto__ = es5Array.prototype;
-    return arr;
-}
-es5Array.prototype = new Array;
 
 module.exports = testSuit("basic", function (it) {
 
@@ -25,7 +18,33 @@ module.exports = testSuit("basic", function (it) {
         return utils.all(list);
     });
 
+    it("all fake iterator", void 0, function () {
+        var obj = {
+            next: function () {
+                return {
+                    done: true
+                };
+            }
+        };
+        return utils.all(obj);
+    });
+
+    it("all no iterator err", TypeError, function () {
+        var obj = {};
+        return utils.all(obj).catch(function (err) {
+            return err.constructor;
+        });
+    });
+
     it("all limit 2", void 0, function () {
+        function es5Array () {
+            var arr = [];
+            arr.push.apply(arr, arguments);
+            arr.__proto__ = es5Array.prototype;
+            return arr;
+        }
+        es5Array.prototype = new Array;
+
         var list = es5Array(
             0,
             null,

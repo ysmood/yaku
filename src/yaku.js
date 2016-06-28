@@ -814,20 +814,12 @@
         // 2.3.3.3
         var err = genTryCatcher(xthen, x)(function (y) {
             // 2.3.3.3.3
-            if (x) {
-                x = $null;
-
-                // 2.3.3.3.1
-                settleWithX(p, y);
-            }
+            // 2.3.3.3.1
+            x && (x = $null, settleWithX(p, y));
         }, function (r) {
             // 2.3.3.3.3
-            if (x) {
-                x = $null;
-
-                // 2.3.3.3.2
-                settlePromise(p, $rejected, r);
-            }
+            // 2.3.3.3.2
+            x && (x = $null, settlePromise(p, $rejected, r));
         });
 
         // 2.3.3.3.4.1

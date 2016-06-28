@@ -45,6 +45,7 @@ module.exports = function (limit, list) {
                 var info = gen[key]();
 
                 if (info.done) {
+                    if (running === 0) resolve();
                     return done = true;
                 } else {
                     running++;

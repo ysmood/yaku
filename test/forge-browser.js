@@ -8,6 +8,7 @@ window.process = null;
 window.Symbol = null;
 var Yaku = require("../src/yaku");
 var yakuThrow = require("../src/throw");
+var sleep = require("../src/sleep");
 
 var testSuit = require("./testSuit");
 
@@ -28,7 +29,13 @@ module.exports = testSuit("long stack trace", function (it) {
             });
         });
     }).then(function () {
-        return it("uncaught rejection", true, function () {
+        return it("default uncaught rejection", undefined, function () {
+            Yaku.reject(new Error("err"));
+
+            return sleep(10);
+        });
+    }).then(function () {
+        return it("window uncaught rejection", true, function () {
             return new Yaku(function (r) {
                 window.onunhandledrejection = function (err) {
                     r(
