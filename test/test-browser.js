@@ -1,4 +1,4 @@
-var junit = require("junit").default;
+var junit = require("junit");
 
 var it = junit({
     reporter: junit.reporter({ mode: "none" })
