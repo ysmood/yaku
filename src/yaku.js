@@ -36,6 +36,11 @@
     , $tryErr = { e: $null }
     , $noop = function () {}
     , $cleanStackReg = /^.+\/node_modules\/yaku\/.+\n?/mg
+
+    , MessageChannel = root.MessageChannel
+    , messageChannelTasks = {}
+    , messageChannelCount = 0
+    , messageChannel = MessageChannel && new MessageChannel
     ;
 
     /**
@@ -356,6 +361,12 @@
         isLongStackTrace = true;
     };
 
+    if (MessageChannel) messageChannel.port1.onmessage = function (e) {
+        var id = e.data;
+        messageChannelTasks[id]();
+        messageChannelTasks[id] = $undefined;
+    };
+
     /**
      * Only Node has `process.nextTick` function. For browser there are
      * so many ways to polyfill it. Yaku won't do it for you, instead you
@@ -376,7 +387,11 @@
      * ```
      */
     Yaku.nextTick = process ?
-        process.nextTick :
+        process.nextTick : MessageChannel ?
+        function (fn) {
+            messageChannelTasks[messageChannelCount] = fn;
+            messageChannel.port2.postMessage(messageChannelCount++);
+        } :
         function (fn) { setTimeout(fn); };
 
     // ********************** Private **********************

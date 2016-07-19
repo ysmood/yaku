@@ -2,6 +2,8 @@
 
 var Promise = Yaku = require("../src/yaku");
 
-p = Promise.resolve().then(function () {
-    return p
-});
+Promise.resolve(10).then(() => {
+    console.log('ok')
+    console.log('ssss')
+}).then(function () {
+})

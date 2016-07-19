@@ -170,7 +170,7 @@ module.exports = function (task, option) {
         return kit.remove("lib");
     });
 
-    task("browser", "Unit test on browser", function (opts) {
+    task("browser", "build browser test", function (opts) {
         return kit.spawn("webpack", ["--progress",  opts.watch ? "--watch" : ""]);
     });
 };

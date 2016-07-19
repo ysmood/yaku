@@ -1,7 +1,5 @@
 var page = require("webpage").create();
 
-page.open("test/browser.html", function () {});
-
 page.onConsoleMessage = function (msg) {
     window.console.log(msg);
 };
@@ -12,3 +10,6 @@ page.onCallback = function (data) {
     else
         window.phantom.exit();
 };
+
+page.open("test/browser.html", function () {});
+
