@@ -35,7 +35,8 @@
   },
   "homepage": "https://github.com/ysmood/yaku",
   "files": [
-    "lib"
+    "lib",
+    "dist/yaku.min.js"
   ],
   "devDependencies": {
     "bluebird": "3.4.1",
