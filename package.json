@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.16.2",
+  "version": "0.16.3",
   "description": "A lightweight promise library",
   "main": "lib/yaku.js",
   "typings": "lib/yaku.d.ts",
@@ -35,7 +35,8 @@
   },
   "homepage": "https://github.com/ysmood/yaku",
   "files": [
-    "lib"
+    "lib",
+    "dist/yaku.min.js"
   ],
   "devDependencies": {
     "bluebird": "3.4.1",
