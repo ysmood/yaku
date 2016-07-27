@@ -11,6 +11,15 @@ var map = {
         return Promise;
     },
 
+    "yaku.core": function () {
+        var Promise = require("../src/yaku.core");
+        map.yaku.optionalHelper = "✓";
+        map.yaku.coverage = "100% 100%";
+        map.yaku.helper = propSize(Promise) + propSize(Promise.prototype) + propSize(require("../src/utils"));
+        setSize("yaku", "dist/yaku.core.min.js");
+        return Promise;
+    },
+
     bluebird: function () {
         var Promise = require("bluebird");
         map.bluebird.optionalHelper = "partial";

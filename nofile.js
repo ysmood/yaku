@@ -1,5 +1,6 @@
 var kit = require("nokit");
 var _ = kit._;
+var Promise = kit.Promise;
 kit.require("drives");
 
 module.exports = function (task, option) {
@@ -37,7 +38,10 @@ module.exports = function (task, option) {
             }
         }).run("lib").then(function () {
             kit.mkdirsSync("dist");
-            return kit.spawn("uglifyjs", ["-mc", "-o", "dist/yaku.min.js", "lib/yaku.js"]);
+            return Promise.all([
+                kit.spawn("uglifyjs", ["-mc", "-o", "dist/yaku.min.js", "lib/yaku.js"]),
+                kit.spawn("uglifyjs", ["-mc", "-o", "dist/yaku.core.min.js", "lib/yaku.core.js"])
+            ]);
         });
     });
 
@@ -59,11 +63,16 @@ module.exports = function (task, option) {
         });
     });
 
-    task("test", "run Promises/A+ tests", [
+    task("test", "run all tests", [
         "test-basic", "test-yaku", "test-browser",
         "test-forge-browser",
         "test-aplus", "test-es6",
         "coverage"
+    ], true);
+
+    task("test-core", "run tests for yaku.core", [
+        "test-basic",
+        "test-aplus", "test-es6"
     ], true);
 
     task("test-yaku", "test yaku specs", function (opts) {
