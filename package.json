@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.16.4",
+  "version": "0.16.5",
   "description": "A lightweight promise library",
   "main": "lib/yaku.js",
   "typings": "lib/yaku.d.ts",
