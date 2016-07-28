@@ -9,7 +9,7 @@ module.exports = function (task, option) {
     option("-w, --watch", "webpack watch");
     option("-s, --shim <name>", "the promise shim to require, check the test/getPromise.js file for details", "yaku");
 
-    task("default build", "build the project", ["doc", "code", "browser"], true);
+    task("default build", "build the project", ["all", "doc", "code", "browser"], true);
 
     task("doc", ["code"], "build doc", function () {
         var size;
@@ -178,7 +178,7 @@ module.exports = function (task, option) {
     });
 
     task("clean", "clean temp files", function () {
-        return kit.remove("lib");
+        return kit.remove("{lib,dist}");
     });
 
     task("browser", "run test on browser", function (opts) {
