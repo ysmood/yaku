@@ -9,7 +9,7 @@ module.exports = function (task, option) {
     option("-w, --watch", "webpack watch");
     option("-s, --shim <name>", "the promise shim to require, check the test/getPromise.js file for details", "yaku");
 
-    task("default build", ["doc", "code", "browser"], true);
+    task("default build", "build the project", ["doc", "code", "browser"], true);
 
     task("doc", ["code"], "build doc", function () {
         var size;
@@ -77,7 +77,7 @@ module.exports = function (task, option) {
         ]);
     });
 
-    task("test-yaku", "test yaku specs", function (opts) {
+    task("test-yaku", "run yaku specs", function (opts) {
         var junitOpts = ["cover", "junit",
             "--print", "none",
             "--dir", "coverage/yaku", "--", "-g", opts.grep];
@@ -88,7 +88,7 @@ module.exports = function (task, option) {
         );
     });
 
-    task("test-basic", "test basic specs tests", function (opts) {
+    task("test-basic", "run basic specs tests", function (opts) {
         var junitOpts = ["cover", "junit",
             "--print", "none",
             "--dir", "coverage/basic", "--", "-g", opts.grep, "-b", "off"];
@@ -106,7 +106,7 @@ module.exports = function (task, option) {
         return kit.spawn("istanbul", junitOpts.concat(["test/forge-browser.js"]));
     });
 
-    task("test-aplus", "test aplus tests", function (opts) {
+    task("test-aplus", "run aplus tests", function (opts) {
         return kit.spawn("istanbul", [
             "cover",
             "--print", "none",
@@ -117,7 +117,7 @@ module.exports = function (task, option) {
         ]);
     });
 
-    task("test-es6", "test es6 tests", function (opts) {
+    task("test-es6", "run es6 tests", function (opts) {
         return kit.spawn("istanbul", [
             "cover",
             "--print", "none",
@@ -163,7 +163,7 @@ module.exports = function (task, option) {
         } });
     });
 
-    task("benchmark-asyncWrapper", function () {
+    task("benchmark-asyncWrapper", "run async benchmark", function () {
         process.env.NODE_ENV = "production";
 
         var names = _.keys(require("./benchmark/asyncWrapper/getWrapper").map);
@@ -177,11 +177,11 @@ module.exports = function (task, option) {
         } });
     });
 
-    task("clean", "Clean temp files", function () {
+    task("clean", "clean temp files", function () {
         return kit.remove("lib");
     });
 
-    task("browser", "Unit test on browser", function (opts) {
+    task("browser", "run test on browser", function (opts) {
         return kit.spawn("webpack", ["--progress",  opts.watch ? "--watch" : ""]);
     });
 };

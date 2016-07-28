@@ -1087,11 +1087,11 @@ co: 283ms
 bluebird: 643ms
 ```
 
-# Contribute
+# Contribution
 
 Other than use `gulp`, all my projects use [nokit][] to deal with automation.
-Run `npm run no -- -h` to print all the tasks that defined in the [nofile.js][].
-If you installed `nokit` globally, you can just run `no -h` without `npm run` and `--`.
+Run `npm run no -- -h` to print all the tasks that you can use.
+
 
 
 [docs/lazyTree.md]: docs/lazyTree.md
