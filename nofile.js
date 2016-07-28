@@ -70,10 +70,12 @@ module.exports = function (task, option) {
         "coverage"
     ], true);
 
-    task("test-core", "run tests for yaku.core", [
-        "test-basic",
-        "test-aplus", "test-es6"
-    ], true);
+    task("test-core", "run tests for yaku.core", true, function () {
+        return kit.spawn("no", [
+            "--shim", "yaku.core",
+            "test-basic", "test-aplus", "test-es6"
+        ]);
+    });
 
     task("test-yaku", "test yaku specs", function (opts) {
         var junitOpts = ["cover", "junit",

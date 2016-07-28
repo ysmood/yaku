@@ -1,3 +1,8 @@
+/**
+ * This is the minimal implementation of Yaku.
+ * No extra helper methods.
+ */
+
 (function () {
     "use strict";
 

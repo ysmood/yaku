@@ -6,7 +6,7 @@
   "typings": "lib/yaku.d.ts",
   "scripts": {
     "no": "no",
-    "test": "no test",
+    "test": "no test test-core",
     "prepublish": "no clean build"
   },
   "repository": {
