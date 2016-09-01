@@ -125,6 +125,18 @@
             return this.then($undefined, onRejected);
         },
 
+        "finally": function (onFinally) {
+            return this.then(function (value) {
+                return Promise.resolve(onFinally()).then(function () {
+                    return value;
+                });
+            }, function (reason) {
+                return Promise.reject(onFinally()).then(function () {
+                    return reason;
+                });
+            });
+        },
+
         // The number of current promises that attach to this Yaku instance.
         _pCount: 0,
 
