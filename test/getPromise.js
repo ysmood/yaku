@@ -13,10 +13,10 @@ var map = {
 
     "yaku.core": function () {
         var Promise = require("../src/yaku.core");
-        map.yaku.optionalHelper = "✓";
-        map.yaku.coverage = "100% 100%";
-        map.yaku.helper = propSize(Promise) + propSize(Promise.prototype) + propSize(require("../src/utils"));
-        setSize("yaku", "dist/yaku.core.min.js");
+        map["yaku.core"].optionalHelper = "✓";
+        map["yaku.core"].coverage = "100% 100%";
+        map["yaku.core"].helper = propSize(Promise) + propSize(Promise.prototype) + propSize(require("../src/utils"));
+        setSize("yaku.core", "dist/yaku.core.min.js");
         return Promise;
     },
 

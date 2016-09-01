@@ -1,5 +1,7 @@
 
 var name = process.argv[2];
+var isCountTest = process.argv[3];
+
 var getPromise = require("../test/getPromise");
 var Promise = getPromise(name);
 var testCount = require("./testCount");
@@ -11,11 +13,10 @@ var testCount = require("./testCount");
  */
 
 var ver = (function () {
-    try {
-        return require("../node_modules/" + name + "/package.json").version;
-    } catch (error) {
+    if (name.indexOf("yaku") > -1)
         return require("../package.json").version;
-    }
+    else
+        return require("../node_modules/" + name + "/package.json").version;
 })();
 
 var countDown = Math.pow(10, 5);
@@ -33,7 +34,7 @@ function logResult () {
 
     return console.log( // eslint-disable-line
         "| [" + name + "][]@" + ver
-        + " | " + testCount(name)
+        + " | " + (isCountTest === "on" ? testCount(name) : "disabled")
         + " | " + getPromise.map[name].coverage
         + " | " + (initTime + resolutionTime) + "ms"
         + " / " + (Math.floor(mem.rss / 1024 / 1024)) + "MB"

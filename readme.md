@@ -80,7 +80,8 @@ CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
 
 | name | unit tests | coverage | 1ms async task | optional helpers | helpers | min js |
 | ---- | ---------- | -------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.15.9 | ✓ | 100% 100% | 327ms / 108MB | ✓ | 33 | 4.1KB |
+| [yaku][]@0.16.6 | ✓ | 100% 100% | 327ms / 108MB | ✓ | 33 | 4.1KB |
+| [yaku.core][]@0.16.6 | ✓ | 100% 100% | 317ms / 108MB | ✓ | 27 | 3.3KB |
 | [bluebird][]@3.4.1 | x (33 failing) | 99% 96% | 212ms / 91MB | partial | 102 | 52.8KB |
 | [es6-promise][]@3.2.1 | x (48 failing) | ? ? | 473ms / 107MB | x | 10 | 6.4KB |
 | [native][]@0.16.1 | x (12 failing) | ? ? | 682ms / 164MB | x | 13 | 0KB |
@@ -103,7 +104,7 @@ CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
 
 - **optional helpers**: Whether the helpers can be imported separately or not,
   which means you can load the lib without helpers. Such as the `bluebird-core`, it will inevitably load
-  some nonstandard helpers: `spread`, `finally`, etc.
+  some nonstandard helpers: `spread`, `promisify`, etc.
 
 
 # FAQ
@@ -112,7 +113,7 @@ CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
 
   > In ECMA-262 spec, `catch` cannot be used as method name. You have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
 
-- Will Yaku implement `done`, `finally`, etc?
+- Will Yaku implement `done`, etc?
 
   > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
   > should work well with ES6 native promise.
@@ -1104,6 +1105,7 @@ Run `npm run no -- -h` to print all the tasks that you can use.
 [my-promise]: https://github.com/hax/my-promise
 [core-js]: https://github.com/zloirock/core-js
 [yaku]: https://github.com/ysmood/yaku
+[yaku.core]: https://github.com/ysmood/yaku
 [es6-shim]: https://github.com/paulmillr/es6-shim
 [release page]: https://github.com/ysmood/yaku/releases
 [docs/minPromiseAplus.js]: docs/minPromiseAplus.js

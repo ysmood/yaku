@@ -8,6 +8,7 @@ module.exports = function (task, option) {
     option("--noAplus", "don't run the promises-aplus-tests");
     option("-w, --watch", "webpack watch");
     option("-s, --shim <name>", "the promise shim to require, check the test/getPromise.js file for details", "yaku");
+    option("-n, --disableCountTest", "whether to count test when benchmarking", "yaku");
 
     task("default build", "build the project", ["all", "doc", "code", "browser"], true);
 
@@ -139,7 +140,7 @@ module.exports = function (task, option) {
         ]);
     });
 
-    task("benchmark", "compare performance between different libraries", function () {
+    task("benchmark", "compare performance between different libraries", function (opts) {
         process.env.NODE_ENV = "production";
 
         var os = require("os");
@@ -158,7 +159,11 @@ module.exports = function (task, option) {
             var name = names.shift();
             return {
                 done: !name,
-                value: name && kit.spawn("node", ["benchmark/index.js", name])
+                value: name && kit.spawn("node", [
+                    "benchmark/index.js",
+                    name,
+                    opts.disableCountTest ? "off" : "on"
+                ])
             };
         } });
     });
