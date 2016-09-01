@@ -85,6 +85,7 @@ module.exports = function (task, option) {
 
         return kit.spawn("istanbul", junitOpts.concat([
             "test/utils.js",
+            "test/finally.js",
             "test/unhandledRejection.js"])
         );
     });

@@ -125,6 +125,16 @@
             return this.then($undefined, onRejected);
         },
 
+        "finally": function (onFinally) {
+            function eventually (value) {
+                return Yaku.resolve(onFinally()).then(function () {
+                    return value;
+                });
+            }
+
+            return this.then(eventually, eventually);
+        },
+
         // The number of current promises that attach to this Yaku instance.
         _pCount: 0,
 
