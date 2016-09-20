@@ -38,11 +38,16 @@ npm install yaku
 ```
 
 Then:
+
 ```js
 var Promise = require('yaku');
 ```
 
+Or if you don't want any extra debug helper, ES6 only version is here:
 
+```js
+var Promise = require('yaku/lib/yaku.core');
+```
 
 ## Browser
 
