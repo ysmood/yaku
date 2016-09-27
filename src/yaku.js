@@ -705,7 +705,7 @@
             })(p);
         }
 
-        return reason.stack +
+        return (reason && reason.stack ? reason.stack : reason) +
             ("\n" + stackInfo.join("\n")).replace($cleanStackReg, "");
     }
 
