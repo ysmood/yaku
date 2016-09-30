@@ -44,6 +44,7 @@ There are some interesting constrains of this data structure:
 - Each individual promise can only have one callback to pass the settled value.
 - Each individual callback can only produce one promise.
 - The only way to link two promise is through the callback.
+- After a child is settled, its relation with its parent can be eliminated.
 
 The tree is dynamically modified on runtime. As the dynamic process goes on,
 the tree's any node can be extended to any shape, of course it's append only,
