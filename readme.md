@@ -411,7 +411,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
         ```js
         var Promise = require('yaku');
-        Promise.onUnhandledRejection = (reason) => {
+        Promise.unhandledRejection = (reason) => {
             console.error(reason);
         };
 
