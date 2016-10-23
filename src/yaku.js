@@ -308,7 +308,7 @@
      * @example
      * ```js
      * var Promise = require('yaku');
-     * Promise.onUnhandledRejection = (reason) => {
+     * Promise.unhandledRejection = (reason) => {
      *     console.error(reason);
      * };
      *
