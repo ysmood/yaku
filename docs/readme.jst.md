@@ -114,7 +114,7 @@ CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
 
 # FAQ
 
-- `catch` on old brwoser (IE7, IE8 etc)?
+- `catch` on old browsers (IE7, IE8 etc)?
 
   > In ECMA-262 spec, `catch` cannot be used as method name. You have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
 
