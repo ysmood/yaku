@@ -229,10 +229,15 @@ bluebird: 643ms
 
 # Contribution
 
+Make sure you have `npm` and `npm install` at the root of the project first.
+
 Other than use `gulp`, all my projects use [nokit][] to deal with automation.
 Run `npm run no -- -h` to print all the tasks that you can use.
 
+## Update `readme.md`
 
+Please don't alter the `readme.md` directly, it is compiled from the `docs/readme.jst.md`.
+Edit the `docs/readme.jst.md` and execute `npm run no` to rebuild the project.
 
 [docs/lazyTree.md]: docs/lazyTree.md
 [docs/debugHelperComparison.md]: docs/debugHelperComparison.md
