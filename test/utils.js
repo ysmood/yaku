@@ -402,7 +402,7 @@ module.exports = testSuit("basic", function (it) {
         x = 1;
 
         tmr = setInterval(function () {
-            return one.emit(x++);
+            return one.next(x++);
         }, 0);
 
         two = one.subscribe(function (v) {

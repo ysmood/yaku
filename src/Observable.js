@@ -140,11 +140,6 @@ function genHandler (self) {
     self.error = function (err) {
         self.next(Promise.reject(err));
     };
-
-    self.emit = function () {
-        console.trace("Observable[[emit]] is deprecated, use [[next]] instead."); // eslint-disable-line
-        self.next.apply(0, arguments);
-    };
 }
 
 function genNextErr (next) {
