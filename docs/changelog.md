@@ -1,3 +1,8 @@
+- v0.17
+
+  - **API CHANGE** add support for [finally](https://github.com/tc39/proposal-promise-finally)
+  - **API CHANGE** `Observable` removed `emit` api
+
 - v0.16
 
   - **API CHANGE** `utils.all`'s params `saveResults` and `progress` are removed
