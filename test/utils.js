@@ -127,6 +127,18 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("timeout", "time out", function () {
+        return utils.timeout(utils.sleep(50), 10).catch(function (err) {
+            return err.message;
+        });
+    });
+
+    it("timeout custom error", "error", function () {
+        return utils.timeout(utils.sleep(50), 10, "error").catch(function (err) {
+            return err;
+        });
+    });
+
     it("async basic", false, function () {
         function gen () {
             return { i: 0, next: function () {

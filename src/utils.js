@@ -330,5 +330,23 @@ module.exports = {
      * });
      * ```
      */
-    "throw": require("./throw")
+    "throw": require("./throw"),
+
+    /**
+     * Create a promise that will reject after a while if the passed in promise
+     * doesn't settle first.
+     * @param  {Promise} promise The passed promise to wait.
+     * @param  {Integer} time The unit is millisecond.
+     * @param  {Any} reason After time out, it will be the reject reason.
+     * @return {Promise}
+     * @example
+     * ```js
+     * var sleep = require('yaku/lib/sleep');
+     * var timeout = require('yaku/lib/timeout');
+     * timeout(sleep(500), 100).catch((err) => {
+     *     console.error(err);
+     * });
+     * ```
+     */
+    timeout: require("./timeout")
 };

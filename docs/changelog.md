@@ -2,6 +2,7 @@
 
   - **API CHANGE** add support for [finally](https://github.com/tc39/proposal-promise-finally)
   - **API CHANGE** `Observable` removed `emit` api
+  - add 'utils.timeout'
 
 - v0.16
 
