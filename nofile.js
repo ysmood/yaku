@@ -85,7 +85,6 @@ module.exports = function (task, option) {
 
         return kit.spawn("istanbul", junitOpts.concat([
             "test/utils.js",
-            "test/finally.js",
             "test/unhandledRejection.js"])
         );
     });
@@ -97,7 +96,10 @@ module.exports = function (task, option) {
 
         process.env.shim = opts.shim;
 
-        return kit.spawn("istanbul", junitOpts.concat(["test/basic.js"]));
+        return kit.spawn("istanbul", junitOpts.concat([
+            "test/basic.js",
+            "test/finally.js"
+        ]));
     });
 
     task("test-forge-browser", "forge browser env and test", function (opts) {

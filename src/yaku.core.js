@@ -131,6 +131,33 @@
             return this.then($undefined, onRejected);
         },
 
+        /**
+         * Register a callback to be invoked when a promise is settled (either fulfilled or rejected).
+         * Similar with the try-catch-finally, it's often used for cleanup.
+         * @param  {Function} onFinally A Function called when the Promise is settled.
+         * It will not receive any argument.
+         * @return {Yaku} A Promise that will reject if onFinally throws an error or returns a rejected promise.
+         * Else it will resolve previous promise's final state (either fulfilled or rejected).
+         * @example
+         * ```js
+         * var Promise = require('yaku');
+         * var p = Promise.reject(new Error("ERR"));
+         *
+         * p['catch']((v) => {
+         *     console.log(v);
+         * });
+         * ```
+         */
+        "finally": function (onFinally) {
+            function eventually (value) {
+                return Yaku.resolve(onFinally()).then(function () {
+                    return value;
+                });
+            }
+
+            return this.then(eventually, eventually);
+        },
+
         // The number of current promises that attach to this Yaku instance.
         _pCount: 0,
 

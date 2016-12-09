@@ -1,6 +1,5 @@
-var name = process.env.shim;
 var getPromise = require("../test/getPromise");
-var Promise = getPromise(name);
+var Promise = getPromise(process.env.shim);
 var testSuit = require("./testSuit");
 var setPrototypeOf = require("setprototypeof");
 

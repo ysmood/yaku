@@ -15,6 +15,8 @@ var testCount = require("./testCount");
 var ver = (function () {
     if (name.indexOf("yaku") > -1)
         return require("../package.json").version;
+    else if (name === "native")
+        return process.version.slice(1);
     else
         return require("../node_modules/" + name + "/package.json").version;
 })();
