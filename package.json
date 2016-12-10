@@ -63,6 +63,9 @@
     "webpack": "1.14.0"
   },
   "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 3
+    },
     "env": {
       "browser": true,
       "node": true,
