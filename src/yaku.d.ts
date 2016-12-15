@@ -37,6 +37,13 @@ export default class Promise<R> implements Thenable<R> {
     catch<U>(onRejected?: (error: any) => U | Thenable<U>): Promise<U>;
 
     /**
+     * Sugar for promise.then(fn, fn)
+     *
+     * @param onFinally called when "promise" is settled
+     */
+    finally<U>(onFinally?: (value: R) => U | Thenable<U>): Promise<U>;
+
+    /**
      * Make a new promise from the thenable.
      * A thenable is promise-like in as far as it has a "then" method.
      */
