@@ -76,24 +76,24 @@ These comparisons only reflect some limited truth, no one is better than all oth
 There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
 ```
-Date: Tue Jun 28 2016 14:12:35 GMT+0800 (CST)
-Node v6.2.2
+Date: Sat Dec 17 2016 22:15:40 GMT+0800 (CST)
+Node v7.2.1
 OS   darwin
 Arch x64
-CPU  Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
+CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 ```
 
 | name | unit tests | coverage | 1ms async task | optional helpers | helpers | min js |
 | ---- | ---------- | -------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.16.6 | ✓ | 100% 100% | 327ms / 108MB | ✓ | 33 | 4.1KB |
-| [yaku.core][]@0.16.6 | ✓ | 100% 100% | 317ms / 108MB | ✓ | 27 | 3.3KB |
-| [bluebird][]@3.4.1 | x (33 failing) | 99% 96% | 212ms / 91MB | partial | 102 | 52.8KB |
-| [es6-promise][]@3.2.1 | x (48 failing) | ? ? | 473ms / 107MB | x | 10 | 6.4KB |
-| [native][]@0.16.1 | x (12 failing) | ? ? | 682ms / 164MB | x | 13 | 0KB |
-| [core-js][]@2.4.0 | x (10 failing) | ? ? | 600ms / 185MB | x | 11 | 12.3KB |
-| [es6-shim][]@0.35.1 | x (12 failing) | ? ? | 684ms / 165MB | x | 11 | 54.7KB |
-| [q][]@1.4.1 | x (47 failing) | ? ? | 1341ms / 389MB | x | 74 | 15.4KB |
-| [my-promise][]@1.1.0 | x (7 failing) | ? ? | 864ms / 226MB | x | 10 | 8.4KB |
+| [yaku][]@0.17.4 | ✓ | 100% 100% | 233ms / 108MB | ✓ | 34 | 4.2KB |
+| [yaku.core][]@0.17.4 | ✓ | 100% 100% | 222ms / 107MB | ✓ | 28 | 3.4KB |
+| [bluebird][]@3.4.6 | x (34 failing) | 99% 96% | 206ms / 79MB | partial | 102 | 54.1KB |
+| [es6-promise][]@4.0.5 | x (52 failing) | ? ? | 412ms / 113MB | x | 12 | 6.2KB |
+| [native][]@7.2.1 | ✓ | ? ? | 377ms / 135MB | x | 10 | 0KB |
+| [core-js][]@2.4.1 | x (9 failing) | ? ? | 390ms / 141MB | x | 10 | 18.5KB |
+| [es6-shim][]@0.35.2 | ✓ | ? ? | 389ms / 136MB | x | 10 | 54.7KB |
+| [q][]@1.4.1 | x (42 failing) | ? ? | 1410ms / 369MB | x | 74 | 15.4KB |
+| [my-promise][]@1.1.0 | x (10 failing) | ? ? | 764ms / 232MB | x | 10 | 11.9KB |
 
 - **unit test**: [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
 
