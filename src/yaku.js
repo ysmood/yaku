@@ -135,10 +135,9 @@
          * @example
          * ```js
          * var Promise = require('yaku');
-         * var p = Promise.reject(new Error("ERR"));
-         *
-         * p['catch']((v) => {
-         *     console.log(v);
+         * var p = Math.random() > 0.5 ? Promise.resolve() : Promise.reject();
+         * p.finally(() => {
+         *     console.log('finally');
          * });
          * ```
          */
