@@ -20,7 +20,7 @@ I write this lib to research one of my data structure ideas: [docs/lazyTree.md][
 
 # Features
 
-- The minified file is only <%= doc.size %>KB (1.8KB gzipped)
+- The best for mobile, minified file is only <%= doc.size %>KB (1.8KB gzipped)
 - Supports "uncaught rejection" and "long stack trace", [Comparison][docs/debugHelperComparison.md]
 - Designed to work on IE5+ and other major browsers
 - 100% statement and branch test coverage
@@ -117,11 +117,6 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 - `catch` on old browsers (IE7, IE8 etc)?
 
   > In ECMA-262 spec, `catch` cannot be used as method name. You have to alias the method name or use something like `Promise.resolve()['catch'](function() {})` or `Promise.resolve().then(null, function() {})`.
-
-- Will Yaku implement `done`, etc?
-
-  > No. All non-ES6 APIs are only implemented for debugging and testing, which means when you remove Yaku, everything
-  > should work well with ES6 native promise.
 
 - When using with Babel and Regenerator, the unhandled rejection doesn't work.
 
