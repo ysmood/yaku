@@ -481,7 +481,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
     Only Node has `process.nextTick` function. For browser there are
     so many ways to polyfill it. Yaku won't do it for you, instead you
     can choose what you prefer. For example, this project
-    [setImmediate](https://github.com/YuzuJS/setImmediate).
+    [next-tick](https://github.com/medikoo/next-tick).
     By default, Yaku will use `process.nextTick` on Node, `setTimeout` on browser.
 
     - **<u>type</u>**: { _Function_ }
@@ -490,7 +490,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
 
         ```js
         var Promise = require('yaku');
-        Promise.nextTick = fn => window.setImmediate(fn);
+        Promise.nextTick = require('next-tick');
         ```
 
     - **<u>example</u>**:

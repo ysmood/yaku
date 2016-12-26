@@ -386,13 +386,13 @@
      * Only Node has `process.nextTick` function. For browser there are
      * so many ways to polyfill it. Yaku won't do it for you, instead you
      * can choose what you prefer. For example, this project
-     * [setImmediate](https://github.com/YuzuJS/setImmediate).
+     * [next-tick](https://github.com/medikoo/next-tick).
      * By default, Yaku will use `process.nextTick` on Node, `setTimeout` on browser.
      * @type {Function}
      * @example
      * ```js
      * var Promise = require('yaku');
-     * Promise.nextTick = fn => window.setImmediate(fn);
+     * Promise.nextTick = require('next-tick');
      * ```
      * @example
      * You can even use sync resolution if you really know what you are doing.
