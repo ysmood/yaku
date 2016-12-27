@@ -6,7 +6,7 @@
 # Overview
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
-If you want to learn how Promise works, read the minimum implementation [src/yaku.aplus.js][]. Without comments, it is only 80 lines of code (gzipped size is <%= doc.aplusSize %>KB).
+If you want to learn how Promise works, read the minimum implementation [yaku.aplus][]. Without comments, it is only 80 lines of code (gzipped size is <%= doc.aplusSize %>KB).
 It only implements the `constructor` and `then`.
 
 Yaku passed all the tests of [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
@@ -255,7 +255,8 @@ Edit the `docs/readme.jst.md` and execute `npm run no` to rebuild the project.
 [my-promise]: https://github.com/hax/my-promise
 [core-js]: https://github.com/zloirock/core-js
 [yaku]: https://github.com/ysmood/yaku
-[yaku.core]: https://github.com/ysmood/yaku
+[yaku.core]: src/yaku.core.js
+[yaku.aplus]: src/yaku.aplus.js
 [es6-shim]: https://github.com/paulmillr/es6-shim
 [release page]: https://github.com/ysmood/yaku/releases
 [docs/minPromiseAplus.js]: docs/minPromiseAplus.js
