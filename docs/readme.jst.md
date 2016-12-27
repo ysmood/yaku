@@ -6,7 +6,7 @@
 # Overview
 
 Yaku is full compatible with ES6's native [Promise][native], but much faster, and more error friendly.
-If you want to learn how Promise works, read the minimum implementation [docs/minPromiseAplus.js][]. Without comments, it is only 80 lines of code (gzipped size is 0.5KB).
+If you want to learn how Promise works, read the minimum implementation [src/yaku.aplus.js][]. Without comments, it is only 80 lines of code (gzipped size is <%= doc.aplusSize %>KB).
 It only implements the `constructor` and `then`.
 
 Yaku passed all the tests of [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
@@ -51,6 +51,12 @@ Or if you don't want any extra debug helper, ES6 only version is here:
 var Promise = require('yaku/lib/yaku.core');
 ```
 
+Or if you only want aplus support:
+
+```js
+var Promise = require('yaku/lib/yaku.aplus');
+```
+
 ## Browser
 
 Use something like [Browserify][] or [Webpack][], or download the `yaku.js` file from [release page][].
@@ -89,6 +95,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 | ---- | ---------- | -------- | -------------- | ---------------- | ------- | ---- |
 | [yaku][]@0.17.4 | ✓ | 100% 100% | 221ms / 108MB | ✓ | 34 | 1.9KB |
 | [yaku.core][]@0.17.4 | ✓ | 100% 100% | 217ms / 108MB | ✓ | 28 | 1.6KB |
+| [yaku.aplus][]@0.17.4 | x (90 failed) | 100% 100% | 262ms / 116MB | ✓ | 7 | 0.5KB |
 | [bluebird][]@3.4.6 | x (34 failed) | 99% 96% | 207ms / 81MB | partial | 102 | 15.9KB |
 | [es6-promise][]@4.0.5 | x (52 failed) | ? ? | 432ms / 114MB | x | 12 | 2.4KB |
 | [pinkie][]@2.0.4 | x (44 failed) | ? ? | 313ms / 135MB | ✓ | 10 | 1.2KB |

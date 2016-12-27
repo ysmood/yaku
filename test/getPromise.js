@@ -21,6 +21,15 @@ var map = {
         return Promise;
     },
 
+    "yaku.aplus": function () {
+        var Promise = require("../src/yaku.aplus");
+        map["yaku.aplus"].optionalHelper = "✓";
+        map["yaku.aplus"].coverage = "100% 100%";
+        map["yaku.aplus"].helper = propSize(Promise) + propSize(Promise.prototype);
+        setSize("yaku.aplus", "dist/yaku.aplus.min.js");
+        return Promise;
+    },
+
     bluebird: function () {
         var Promise = require("bluebird");
         map.bluebird.optionalHelper = "partial";
@@ -41,7 +50,7 @@ var map = {
 
     pinkie: function () {
         var Promise = require("pinkie");
-        map["pinkie"].optionalHelper = "x";
+        map["pinkie"].optionalHelper = "v";
         map["pinkie"].coverage = "? ?";
         map["pinkie"].helper = propSize(Promise) + propSize(Promise.prototype);
         spawnSync("node_modules/.bin/uglifyjs", [

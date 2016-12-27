@@ -9,9 +9,9 @@
     , Arr = Array
     , Err = Error
 
-    , $rejected = 0
-    , $resolved = 1
-    , $pending = 2
+    , $rejected = 1
+    , $resolved = 2
+    , $pending = 3
 
     , $Symbol = "Symbol"
     , $iterator = "iterator"
@@ -46,7 +46,7 @@
      * The first argument fulfills the promise, the second argument rejects it.
      * We can call these functions, once our operation is completed.
      */
-    var Yaku = module.exports = function Promise (executor) {
+    var Yaku = module.exports = function (executor) {
         var self = this,
             err;
 
@@ -94,7 +94,7 @@
          * });
          * ```
          */
-        then: function then (onFulfilled, onRejected) {
+        then: function (onFulfilled, onRejected) {
             if (this._s === undefined) throw genTypeError();
 
             return addHandler(
@@ -152,13 +152,10 @@
         },
 
         // The number of current promises that attach to this Yaku instance.
-        _pCount: 0,
+        _c: 0,
 
         // The parent Yaku.
-        _pre: $null,
-
-        // A unique type flag, it helps different versions of Yaku know each other.
-        _Yaku: 1
+        _p: $null
     });
 
     /**
@@ -174,7 +171,7 @@
      * var p = Promise.resolve(10);
      * ```
      */
-    Yaku.resolve = function resolve (val) {
+    Yaku.resolve = function (val) {
         return isYaku(val) ? val : settleWithX(newCapablePromise(this), val);
     };
 
@@ -188,7 +185,7 @@
      * var p = Promise.reject(new Error("ERR"));
      * ```
      */
-    Yaku.reject = function reject (reason) {
+    Yaku.reject = function (reason) {
         return settlePromise(newCapablePromise(this), $rejected, reason);
     };
 
@@ -212,7 +209,7 @@
      * });
      * ```
      */
-    Yaku.race = function race (iterable) {
+    Yaku.race = function (iterable) {
         var self = this
         , p = newCapablePromise(self)
 
@@ -268,7 +265,7 @@
      * });
      * ```
      */
-    Yaku.all = function all (iterable) {
+    Yaku.all = function (iterable) {
         var self = this
         , p1 = newCapablePromise(self)
         , res = []
@@ -407,7 +404,7 @@
 
     // ********************** Private **********************
 
-    Yaku._Yaku = 1;
+    Yaku._s = 1;
 
     /**
      * All static variable name will begin with `$`. Such as `$rejected`.
@@ -583,7 +580,7 @@
 
         // 2.2.2
         // 2.2.3
-        handler = p1._s ? p2._onFulfilled : p2._onRejected;
+        handler = p1._s !== $rejected ? p2._onFulfilled : p2._onRejected;
 
         // 2.2.7.3
         // 2.2.7.4
@@ -623,7 +620,7 @@
             Yaku[name](p._v, p);
     }
 
-    function isYaku (val) { return val && val._Yaku; }
+    function isYaku (val) { return val && val._s; }
 
     function newCapablePromise (Constructor) {
         if (isYaku(Constructor)) return new Constructor($noop);
@@ -680,8 +677,8 @@
             p2._onRejected = onRejected;
         }
 
-        if (isLongStackTrace) p2._pre = p1;
-        p1[p1._pCount++] = p2;
+        if (isLongStackTrace) p2._p = p1;
+        p1[p1._c++] = p2;
 
         // 2.2.6
         if (p1._s !== $pending)
@@ -700,7 +697,7 @@
             node._umark = true;
 
         var i = 0
-        , len = node._pCount
+        , len = node._c
         , child;
 
         while (i < len) {
@@ -726,7 +723,7 @@
                 if (node && $promiseTrace in node) {
                     iter(node._next);
                     push(node[$promiseTrace] + "");
-                    iter(node._pre);
+                    iter(node._p);
                 }
             })(p);
         }
@@ -749,7 +746,7 @@
      */
     function settlePromise (p, state, value) {
         var i = 0
-        , len = p._pCount;
+        , len = p._c;
 
         // 2.1.2
         // 2.1.3
