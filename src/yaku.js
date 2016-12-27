@@ -76,7 +76,7 @@
 
     Yaku["default"] = Yaku;
 
-    extendPrototype(Yaku, {
+    extend(Yaku.prototype, {
         /**
          * Appends fulfillment and rejection handlers to the promise,
          * and returns a new promise resolving to the return value of the called handler.
@@ -417,11 +417,10 @@
         return Yaku[$Symbol][$species] || $speciesKey;
     }
 
-    function extendPrototype (src, target) {
+    function extend (src, target) {
         for (var k in target) {
-            src.prototype[k] = target[k];
+            src[k] = target[k];
         }
-        return src;
     }
 
     function isObject (obj) {
