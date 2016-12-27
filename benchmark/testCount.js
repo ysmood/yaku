@@ -28,5 +28,5 @@ module.exports = function (name) {
     if (count === 0)
         return "✓";
     else
-        return "x (" + count + " failing)";
+        return "x (" + count + " failed)";
 };

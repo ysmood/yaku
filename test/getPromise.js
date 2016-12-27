@@ -1,5 +1,6 @@
 var kit = require("nokit");
 var spawnSync = require("child_process").spawnSync;
+var zlib = require("zlib");
 
 var map = {
     yaku: function () {
@@ -35,6 +36,18 @@ var map = {
         map["es6-promise"].coverage = "? ?";
         map["es6-promise"].helper = propSize(Promise) + propSize(Promise.prototype);
         setSize("es6-promise", "node_modules/es6-promise/dist/es6-promise.min.js");
+        return Promise;
+    },
+
+    pinkie: function () {
+        var Promise = require("pinkie");
+        map["pinkie"].optionalHelper = "x";
+        map["pinkie"].coverage = "? ?";
+        map["pinkie"].helper = propSize(Promise) + propSize(Promise.prototype);
+        spawnSync("node_modules/.bin/uglifyjs", [
+            "-mc", "-o", "dist/pinkie.js", "node_modules/pinkie/index.js"
+        ]);
+        setSize("pinkie", "dist/pinkie.js");
         return Promise;
     },
 
@@ -120,7 +133,7 @@ function propSize (obj) {
 }
 
 function setSize (shim, path) {
-    var s = kit.statSync(path).size / 1024;
+    var s = zlib.gzipSync(kit.readFileSync(path)).length / 1024;
     map[shim].size = Math.round(s * 10) / 10;
 }
 

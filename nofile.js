@@ -2,6 +2,7 @@ var kit = require("nokit");
 var _ = kit._;
 var Promise = kit.Promise;
 kit.require("drives");
+var zlib = require("zlib");
 
 module.exports = function (task, option) {
     option("-g, --grep <pattern>", "run test that match the pattern", ".");
@@ -14,7 +15,7 @@ module.exports = function (task, option) {
 
     task("doc", ["code"], "build doc", function () {
         var size;
-        size = kit.statSync("dist/yaku.min.js").size / 1024;
+        size = zlib.gzipSync(kit.readFileSync("dist/yaku.min.js")).length / 1024;
         return kit.warp("src/*.js")
         .load(kit.drives.comment2md({
             tpl: "docs/readme.jst.md",
@@ -152,8 +153,8 @@ module.exports = function (task, option) {
             + "\nOS   " + (os.platform())
             + "\nArch " + (os.arch())
             + "\nCPU  " + (os.cpus()[0].model) + "\n\n"
-            + "| name | unit tests | coverage | 1ms async task | optional helpers | helpers | min js |\n"
-            + "| ---- | ---------- | -------- | -------------- | ---------------- | ------- | ------ |"
+            + "| name | unit tests | coverage | 1ms async task | optional helpers | helpers | gzip |\n"
+            + "| ---- | ---------- | -------- | -------------- | ---------------- | ------- | ---- |"
         );
 
         var names = _.keys(require("./test/getPromise").map);

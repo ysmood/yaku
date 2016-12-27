@@ -20,12 +20,14 @@ I write this lib to research one of my data structure ideas: [docs/lazyTree.md][
 
 # Features
 
-- The best for mobile, minified file is only <%= doc.size %>KB (1.8KB gzipped)
+- The best for mobile, gzipped file is only <%= doc.size %>KB
 - Supports "uncaught rejection" and "long stack trace", [Comparison][docs/debugHelperComparison.md]
-- Designed to work on IE5+ and other major browsers
+- Works on IE5+ and other major browsers
 - 100% statement and branch test coverage
-- Much better performance than the native Promise
+- Better CPU and memory performance than the native Promise
 - Well commented source code with every Promises/A+ spec
+- Highly modularized extra helpers, no pollution to its pure ES6 implements
+- Supports ES7 `finally`
 
 
 
@@ -83,17 +85,18 @@ Arch x64
 CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 ```
 
-| name | unit tests | coverage | 1ms async task | optional helpers | helpers | min js |
-| ---- | ---------- | -------- | -------------- | ---------------- | ------- | ------ |
-| [yaku][]@0.17.4 | ✓ | 100% 100% | 233ms / 108MB | ✓ | 34 | 4.2KB |
-| [yaku.core][]@0.17.4 | ✓ | 100% 100% | 222ms / 107MB | ✓ | 28 | 3.4KB |
-| [bluebird][]@3.4.6 | x (34 failing) | 99% 96% | 206ms / 79MB | partial | 102 | 54.1KB |
-| [es6-promise][]@4.0.5 | x (52 failing) | ? ? | 412ms / 113MB | x | 12 | 6.2KB |
-| [native][]@7.2.1 | ✓ | ? ? | 377ms / 135MB | x | 10 | 0KB |
-| [core-js][]@2.4.1 | x (9 failing) | ? ? | 390ms / 141MB | x | 10 | 18.5KB |
-| [es6-shim][]@0.35.2 | ✓ | ? ? | 389ms / 136MB | x | 10 | 54.7KB |
-| [q][]@1.4.1 | x (42 failing) | ? ? | 1410ms / 369MB | x | 74 | 15.4KB |
-| [my-promise][]@1.1.0 | x (10 failing) | ? ? | 764ms / 232MB | x | 10 | 11.9KB |
+| name | unit tests | coverage | 1ms async task | optional helpers | helpers | gzip |
+| ---- | ---------- | -------- | -------------- | ---------------- | ------- | ---- |
+| [yaku][]@0.17.4 | ✓ | 100% 100% | 221ms / 108MB | ✓ | 34 | 1.9KB |
+| [yaku.core][]@0.17.4 | ✓ | 100% 100% | 217ms / 108MB | ✓ | 28 | 1.6KB |
+| [bluebird][]@3.4.6 | x (34 failed) | 99% 96% | 207ms / 81MB | partial | 102 | 15.9KB |
+| [es6-promise][]@4.0.5 | x (52 failed) | ? ? | 432ms / 114MB | x | 12 | 2.4KB |
+| [pinkie][]@2.0.4 | x (44 failed) | ? ? | 313ms / 135MB | ✓ | 10 | 1.2KB |
+| [native][]@7.2.1 | ✓ | ? ? | 376ms / 134MB | x | 10 | 0KB |
+| [core-js][]@2.4.1 | x (9 failed) | ? ? | 394ms / 142MB | x | 10 | 5KB |
+| [es6-shim][]@0.35.2 | ✓ | ? ? | 390ms / 136MB | x | 10 | 15.5KB |
+| [q][]@1.4.1 | x (42 failed) | ? ? | 1432ms / 370MB | x | 74 | 4.6KB |
+| [my-promise][]@1.1.0 | x (10 failed) | ? ? | 786ms / 232MB | x | 10 | 3.9KB |
 
 - **unit test**: [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
 
@@ -238,6 +241,7 @@ Edit the `docs/readme.jst.md` and execute `npm run no` to rebuild the project.
 [docs/debugHelperComparison.md]: docs/debugHelperComparison.md
 [Bluebird]: https://github.com/petkaantonov/bluebird
 [ES6-promise]: https://github.com/jakearchibald/es6-promise
+[pinkie]: https://github.com/floatdrop/pinkie
 [core-js tests]: https://github.com/ysmood/core-js/tree/promise-yaku
 [native]: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects
 [q]: https://github.com/kriskowal/q
