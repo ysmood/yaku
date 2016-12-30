@@ -30,5 +30,9 @@ var self = module.exports = {
 
 if (isProduction) {
     self.output.filename = "[name].min.js";
-    self.plugins = [new webpack.optimize.UglifyJsPlugin()];
+    self.plugins = [new webpack.optimize.UglifyJsPlugin({
+        compress: { screw_ie8: false },
+        mangle:   { screw_ie8: false },
+        output:   { screw_ie8: false, beautify: false }
+    })];
 }
