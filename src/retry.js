@@ -14,7 +14,7 @@ module.exports = function (initRetries, span, fn, self) {
         }
 
         var countdown = _.isFunction(retries) ?
-            retries : function () { return sleep(span, retries--); };
+            retries : function () { return sleep(span, --retries); };
 
         function tryFn (isContinue) {
             return isContinue ? fn.apply(self, args) : _.Promise.reject($retryError);
@@ -24,13 +24,13 @@ module.exports = function (initRetries, span, fn, self) {
             if (err === $retryError) return _.Promise.reject(errs);
 
             errs.push(err);
-            return attempt();
+            return attempt(countdown(errs));
         }
 
-        function attempt () {
-            return _.Promise.resolve(countdown(errs)).then(tryFn).catch(onError);
+        function attempt (c) {
+            return _.Promise.resolve(c).then(tryFn).catch(onError);
         }
 
-        return attempt();
+        return attempt(true);
     };
 };

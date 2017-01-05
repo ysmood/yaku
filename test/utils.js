@@ -603,10 +603,10 @@ module.exports = testSuit("basic", function (it) {
         return Yaku.all([fn(1), fn(2), fn(3), fn(4), fn(5)]);
     });
 
-    it("retry with function", ["err2", "err1", "err0"], function () {
+    it("retry with function", ["err3", "err2", "err1"], function () {
         var retry = 3;
         var fn = utils.retry(function () {
-            return retry--;
+            return --retry;
         }, function () {
             throw "err" + retry;
         });
