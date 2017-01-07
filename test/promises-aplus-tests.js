@@ -18,4 +18,4 @@ var adapter = {
     }
 };
 
-kit.promisify(promisesAplusTests)(adapter, opts).catch(kit.throw);
+kit.promisify(promisesAplusTests)(adapter, opts)["catch"](kit.throw);

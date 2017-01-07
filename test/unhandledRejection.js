@@ -69,7 +69,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
                 return new Promise(function (resolve) {
                     var promise;
                     process.once("unhandledRejection", function handler (reason, p) {
-                        p.catch(function () {});
+                        p["catch"](function () {});
                     });
                     process.once("rejectionHandled", function (p) {
                         resolve(p === promise);
@@ -170,7 +170,7 @@ module.exports = testSuit("unhandledRejection", function (it) {
                 return new Promise(function (resolve) {
                     var promise;
                     root.onunhandledrejection = function (e) {
-                        e.promise.catch(function () {});
+                        e.promise["catch"](function () {});
                     };
                     root.onrejectionhandled = function (e) {
                         resolve(e.promise === promise && e.reason === $val);

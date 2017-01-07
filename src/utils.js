@@ -343,7 +343,7 @@ module.exports = {
      * ```js
      * var sleep = require('yaku/lib/sleep');
      * var timeout = require('yaku/lib/timeout');
-     * timeout(sleep(500), 100).catch((err) => {
+     * timeout(sleep(500), 100)["catch"]((err) => {
      *     console.error(err);
      * });
      * ```

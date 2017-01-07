@@ -28,7 +28,7 @@ module.exports = function (initRetries, span, fn, self) {
         }
 
         function attempt (c) {
-            return _.Promise.resolve(c).then(tryFn).catch(onError);
+            return _.Promise.resolve(c).then(tryFn)["catch"](onError);
         }
 
         return attempt(true);

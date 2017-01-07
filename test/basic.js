@@ -32,10 +32,10 @@ module.exports = testSuit("basic", function (it) {
                 }
             });
 
-            p.catch(function () {
+            p["catch"](function () {
                 result += "B";
             });
-            p.catch(function () {
+            p["catch"](function () {
                 result += "C";
                 assertRes.push(result);
             });
@@ -50,10 +50,10 @@ module.exports = testSuit("basic", function (it) {
                 }
             }));
             result += "E";
-            p2.catch(function () {
+            p2["catch"](function () {
                 result += "F";
             });
-            p2.catch(function () {
+            p2["catch"](function () {
                 result += "G";
             });
             result += "H";
@@ -118,7 +118,7 @@ module.exports = testSuit("basic", function (it) {
             return p;
         });
 
-        return p.catch(function (err) {
+        return p["catch"](function (err) {
             return err.constructor;
         });
     });
@@ -181,11 +181,11 @@ module.exports = testSuit("basic", function (it) {
     it("all reject", "err", function () {
         return Promise.all([
             Promise.reject("err")
-        ]).catch(function (err) { return err; });
+        ])["catch"](function (err) { return err; });
     });
 
     it("all with null", true, function () {
-        return Promise.all(null).catch(function (err) {
+        return Promise.all(null)["catch"](function (err) {
             return err instanceof TypeError;
         });
     });
@@ -193,7 +193,7 @@ module.exports = testSuit("basic", function (it) {
     it("all with array like", true, function () {
         return Promise.all({
             "0": 1, "1": 2, "2": 3, length: 3
-        }).catch(function (err) {
+        })["catch"](function (err) {
             return err instanceof TypeError;
         });
     });
@@ -255,7 +255,7 @@ module.exports = testSuit("basic", function (it) {
         };
         arr[Symbol.iterator] = function () { return this; };
 
-        return Promise.all(arr).catch(function (err) {
+        return Promise.all(arr)["catch"](function (err) {
             return err;
         });
     });
@@ -300,7 +300,7 @@ module.exports = testSuit("basic", function (it) {
 
             SubPromise.resolve = function () { throw "err"; };
 
-            SubPromise.all(arr).catch(function () {});
+            SubPromise.all(arr)["catch"](function () {});
         });
     });
 
@@ -317,7 +317,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("race with null", true, function () {
-        return Promise.race(null).catch(function (err) {
+        return Promise.race(null)["catch"](function (err) {
             return err instanceof TypeError;
         });
     });
@@ -347,7 +347,7 @@ module.exports = testSuit("basic", function (it) {
             new Promise(function (r, rr) {
                 return rr("err");
             })
-        ]).catch(function (err) { return err; });
+        ])["catch"](function (err) { return err; });
     });
 
     it("race with custom Symbol.iterator", 1, function () {
@@ -387,7 +387,7 @@ module.exports = testSuit("basic", function (it) {
         };
         arr[Symbol.iterator] = function () { return this; };
 
-        return Promise.race(arr).catch(function (err) {
+        return Promise.race(arr)["catch"](function (err) {
             return err;
         });
     });
@@ -420,7 +420,7 @@ module.exports = testSuit("basic", function (it) {
 
             SubPromise.resolve = function () { throw "err"; };
 
-            SubPromise.race(arr).catch(function () {});
+            SubPromise.race(arr)["catch"](function () {});
         });
     });
 

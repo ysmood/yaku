@@ -339,7 +339,7 @@
      * Promise.reject('my reason');
      *
      * // The below won't log the unhandled rejection error message.
-     * Promise.reject('v').catch(() => {});
+     * Promise.reject('v')["catch"](() => {});
      * ```
      */
     Yaku.unhandledRejection = function (reason, p) {
@@ -353,7 +353,7 @@
 
     /**
      * Emitted whenever a Promise was rejected and an error handler was
-     * attached to it (for example with `.catch()`) later than after an event loop turn.
+     * attached to it (for example with `["catch"]()`) later than after an event loop turn.
      * @param {Any} reason The rejection reason.
      * @param {Yaku} p The promise that was rejected.
      */
@@ -370,7 +370,7 @@
      * ```js
      * var Promise = require('yaku');
      * Promise.enableLongStackTrace();
-     * Promise.reject(new Error("err")).catch((err) => {
+     * Promise.reject(new Error("err"))["catch"]((err) => {
      *     console.log(err.longStack);
      * });
      * ```

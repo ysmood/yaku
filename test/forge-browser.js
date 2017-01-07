@@ -24,7 +24,7 @@ module.exports = testSuit("long stack trace", function (it) {
         return it("long stack trace with constructor", "err", function () {
             return new Yaku(function (r, rr) {
                 rr(new Error("err"));
-            }).catch(function (err) {
+            })["catch"](function (err) {
                 return err.message;
             });
         });

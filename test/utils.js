@@ -31,7 +31,7 @@ module.exports = testSuit("basic", function (it) {
 
     it("all no iterator err", TypeError, function () {
         var obj = {};
-        return utils.all(obj).catch(function (err) {
+        return utils.all(obj)["catch"](function (err) {
             return err.constructor;
         });
     });
@@ -62,7 +62,7 @@ module.exports = testSuit("basic", function (it) {
     });
 
     it("all limit null", TypeError, function () {
-        return utils.all(2, null).catch(function (err) {
+        return utils.all(2, null)["catch"](function (err) {
             return err.constructor;
         });
     });
@@ -122,19 +122,19 @@ module.exports = testSuit("basic", function (it) {
         return utils.any([
             Yaku.reject(0),
             Yaku.reject(1)
-        ]).catch(function (v) {
+        ])["catch"](function (v) {
             return v;
         });
     });
 
     it("timeout", "time out", function () {
-        return utils.timeout(utils.sleep(50), 10).catch(function (err) {
+        return utils.timeout(utils.sleep(50), 10)["catch"](function (err) {
             return err.message;
         });
     });
 
     it("timeout custom error", "error", function () {
-        return utils.timeout(utils.sleep(50), 10, "error").catch(function (err) {
+        return utils.timeout(utils.sleep(50), 10, "error")["catch"](function (err) {
             return err;
         });
     });
@@ -193,7 +193,7 @@ module.exports = testSuit("basic", function (it) {
             };
         }
 
-        return utils.async(gen)().catch(function (v) { return v; });
+        return utils.async(gen)()["catch"](function (v) { return v; });
     });
 
     it("async reject", "err", function () {
@@ -215,7 +215,7 @@ module.exports = testSuit("basic", function (it) {
             };
         }
 
-        return utils.async(gen)().catch(function (v) { return v; });
+        return utils.async(gen)()["catch"](function (v) { return v; });
     });
 
     it("Deferred resolve", "ok", function () {
@@ -231,7 +231,7 @@ module.exports = testSuit("basic", function (it) {
 
         defer.reject("err");
 
-        return defer.promise.catch(function (err) {
+        return defer.promise["catch"](function (err) {
             return err;
         });
     });
@@ -358,7 +358,7 @@ module.exports = testSuit("basic", function (it) {
                 return cb(a);
             });
         });
-        return fn("err").catch(function (v) { return v; });
+        return fn("err")["catch"](function (v) { return v; });
     });
 
     it("promisify callback", 1, function () {
@@ -610,7 +610,7 @@ module.exports = testSuit("basic", function (it) {
         }, function () {
             throw "err" + retry;
         });
-        return fn(1).catch(function (ret) { return ret; });
+        return fn(1)["catch"](function (ret) { return ret; });
     });
 
     it("guard basic", "err", function () {
@@ -627,7 +627,7 @@ module.exports = testSuit("basic", function (it) {
         return Yaku.reject(new TypeError("err"))
         .guard(SyntaxError, function (err) {
             return err.message;
-        }).catch(function (err) {
+        })["catch"](function (err) {
             return err.constructor;
         });
     });

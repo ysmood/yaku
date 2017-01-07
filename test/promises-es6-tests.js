@@ -27,4 +27,4 @@ var adapter = {
     }
 };
 
-kit.promisify(promisesES6Tests)(adapter).catch(kit.throw);
+kit.promisify(promisesES6Tests)(adapter)["catch"](kit.throw);
