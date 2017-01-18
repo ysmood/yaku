@@ -1,5 +1,5 @@
-var _ = require("./_");
-var genIterator = require("./genIterator");
+import _ from "./_";
+import genIterator from "./genIterator";
 var Promise = _.Promise;
 
 /**
@@ -100,8 +100,9 @@ _.extendPrototype(Observable, {
      * @param  {Function} onError
      * @return {Observable}
      */
-    subscribe: function (onNext, onError) {
-        var self = this, subscriber = new Observable();
+    subscribe(onNext, onError) {
+        var self = this;
+        var subscriber = new Observable();
         subscriber._onNext = onNext;
         subscriber._onError = onError;
         subscriber._nextErr = genNextErr(subscriber.next);
@@ -115,7 +116,7 @@ _.extendPrototype(Observable, {
     /**
      * Unsubscribe this.
      */
-    unsubscribe: function () {
+    unsubscribe() {
         var publisher = this.publisher;
         publisher && publisher.subscribers.splice(publisher.subscribers.indexOf(this), 1);
     }
@@ -123,8 +124,10 @@ _.extendPrototype(Observable, {
 });
 
 function genHandler (self) {
-    self.next = function (val) {
-        var i = 0, len = self.subscribers.length, subscriber;
+    self.next = val => {
+        var i = 0;
+        var len = self.subscribers.length;
+        var subscriber;
         while (i < len) {
             subscriber = self.subscribers[i++];
             Promise.resolve(val).then(
@@ -137,13 +140,13 @@ function genHandler (self) {
         }
     };
 
-    self.error = function (err) {
+    self.error = err => {
         self.next(Promise.reject(err));
     };
 }
 
 function genNextErr (next) {
-    return function (reason) {
+    return reason => {
         next(Promise.reject(reason));
     };
 }
@@ -172,7 +175,7 @@ function genNextErr (next) {
  */
 Observable.merge = function merge (iterable) {
     var iter = genIterator(iterable);
-    return new Observable(function (next) {
+    return new Observable(next => {
         var item;
 
         function onError (e) {

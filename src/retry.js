@@ -1,36 +1,35 @@
-var _ = require("./_");
-var sleep = require("./sleep");
+import _ from "./_";
+import sleep from "./sleep";
 var $retryError = {};
 
-module.exports = function (initRetries, span, fn, self) {
-    return function () {
-        var retries = initRetries;
-        var errs = [], args = arguments;
+export default (initRetries, span, fn, self) => function () {
+    var retries = initRetries;
+    var errs = [];
+    var args = arguments;
 
-        if (_.isFunction(span)) {
-            self = fn;
-            fn = span;
-            span = 0;
-        }
+    if (_.isFunction(span)) {
+        self = fn;
+        fn = span;
+        span = 0;
+    }
 
-        var countdown = _.isFunction(retries) ?
-            retries : function () { return sleep(span, --retries); };
+    var countdown = _.isFunction(retries) ?
+        retries : () => sleep(span, --retries);
 
-        function tryFn (isContinue) {
-            return isContinue ? fn.apply(self, args) : _.Promise.reject($retryError);
-        }
+    function tryFn (isContinue) {
+        return isContinue ? fn.apply(self, args) : _.Promise.reject($retryError);
+    }
 
-        function onError (err) {
-            if (err === $retryError) return _.Promise.reject(errs);
+    function onError (err) {
+        if (err === $retryError) return _.Promise.reject(errs);
 
-            errs.push(err);
-            return attempt(countdown(errs));
-        }
+        errs.push(err);
+        return attempt(countdown(errs));
+    }
 
-        function attempt (c) {
-            return _.Promise.resolve(c).then(tryFn)["catch"](onError);
-        }
+    function attempt (c) {
+        return _.Promise.resolve(c).then(tryFn)["catch"](onError);
+    }
 
-        return attempt(true);
-    };
+    return attempt(true);
 };

@@ -1,7 +1,5 @@
-var _ = require("./_");
+import _ from "./_";
 
-module.exports = function (time, val) {
-    return new _.Promise(function (r) {
-        setTimeout(r, time, val);
-    });
-};
+export default (time, val) => new _.Promise(r => {
+    setTimeout(r, time, val);
+});

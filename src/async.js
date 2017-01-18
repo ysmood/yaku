@@ -1,4 +1,4 @@
-var Promise = require("./_").Promise;
+import {Promise} from "./_";
 
 var tryErr = {};
 
@@ -11,33 +11,31 @@ function tryCatch (step, key) {
     }
 }
 
-module.exports = function (generator) {
-    return function () {
-        var gen = generator.apply(this, arguments);
+export default generator => function(...args) {
+    var gen = generator.apply(this, args);
 
-        function genNext (val) {
-            return step("next", val);
+    function genNext (val) {
+        return step("next", val);
+    }
+
+    function genThrow (val) {
+        return step("throw", val);
+    }
+
+    function step (key, val) {
+        var info = gen[key](val);
+
+        if (info.done) {
+            return Promise.resolve(info.value);
+        } else {
+            return Promise.resolve(info.value).then(genNext, genThrow);
         }
+    }
 
-        function genThrow (val) {
-            return step("throw", val);
-        }
+    var ret = tryCatch(step, "next");
 
-        function step (key, val) {
-            var info = gen[key](val);
-
-            if (info.done) {
-                return Promise.resolve(info.value);
-            } else {
-                return Promise.resolve(info.value).then(genNext, genThrow);
-            }
-        }
-
-        var ret = tryCatch(step, "next");
-
-        if (ret === tryErr)
-            return Promise.reject(ret.err);
-        else
-            return ret;
-    };
+    if (ret === tryErr)
+        return Promise.reject(ret.err);
+    else
+        return ret;
 };

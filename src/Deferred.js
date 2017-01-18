@@ -1,9 +1,9 @@
-var _ = require("./_");
+import _ from "./_";
 
-module.exports = function () {
+export default () => {
     var defer;
     defer = {};
-    defer.promise = new _.Promise(function (resolve, reject) {
+    defer.promise = new _.Promise((resolve, reject) => {
         defer.resolve = resolve;
         return defer.reject = reject;
     });

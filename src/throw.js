@@ -1,5 +1,5 @@
-module.exports = function (err) {
-    setTimeout(function () {
+export default err => {
+    setTimeout(() => {
         throw err;
     });
 };

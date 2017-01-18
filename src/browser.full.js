@@ -1,11 +1,11 @@
 // This file is intended for browser only.
 
-var Yaku = require("./yaku");
+import Yaku from "./yaku";
 
-var utils = require("./utils");
+import utils from "./utils";
 
 for (var key in utils) {
     Yaku[key] = utils[key];
 }
 
-module.exports = window.Yaku = Yaku;
+export default window.Yaku = Yaku;

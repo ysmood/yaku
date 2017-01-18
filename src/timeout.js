@@ -1,10 +1,10 @@
-var _ = require("./_");
+import _ from "./_";
 
-module.exports = function (promise, time, error) {
+export default (promise, time, error) => {
     if (error === void 0)
         error = new Error("time out");
 
-    return new _.Promise(function (resolve, reject) {
+    return new _.Promise((resolve, reject) => {
         setTimeout(reject, time, error);
         _.Promise.resolve(promise).then(resolve, reject);
     });

@@ -1,5 +1,2 @@
-var _ = require("./_");
-
-module.exports = function () {
-    return new _.Promise(function () {});
-};
+import _ from "./_";
+export default () => new _.Promise(() => {});

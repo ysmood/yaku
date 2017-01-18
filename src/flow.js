@@ -1,13 +1,13 @@
-var _ = require("./_");
-var genIterator = require("./genIterator");
-var isPromise = require("./isPromise");
+import _ from "./_";
+import genIterator from "./genIterator";
+import isPromise from "./isPromise";
 
-module.exports = function (iterable) {
+export default iterable => {
     var iter = genIterator(iterable);
 
-    return function (val) {
+    return val => {
         function run (pre) {
-            return pre.then(function (val) {
+            return pre.then(val => {
                 var task = iter.next(val);
 
                 if (task.done) {

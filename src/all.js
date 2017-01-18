@@ -1,6 +1,6 @@
-var _ = require("./_");
+import _ from "./_";
 var Promise = _.Promise;
-var genIterator = require("./genIterator");
+import genIterator from "./genIterator";
 
 var tryErr = {};
 
@@ -13,13 +13,13 @@ function tryCatch (step, key) {
     }
 }
 
-module.exports = function (limit, list) {
+export default (limit, list) => {
     if (!_.isNumber(limit)) {
         list = limit;
         limit = Infinity;
     }
 
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         var running = 0;
         var gen = genIterator(list);
         var done = false;

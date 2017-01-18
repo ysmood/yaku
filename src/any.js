@@ -1,13 +1,13 @@
-var _ = require("./_");
-var genIterator = require("./genIterator");
+import _ from "./_";
+import genIterator from "./genIterator";
 
-module.exports = function (iterable) {
+export default iterable => {
     var iter = genIterator(iterable);
 
-    return new _.Promise(function (resolve, reject) {
-        var countDown = 0
-        , reasons = []
-        , item;
+    return new _.Promise((resolve, reject) => {
+        var countDown = 0;
+        var reasons = [];
+        var item;
 
         function onError (reason) {
             reasons.push(reason);

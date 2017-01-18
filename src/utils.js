@@ -1,6 +1,6 @@
 // This file contains all the non-ES6-standard helpers based on promise.
 
-module.exports = {
+export default {
 
     /**
      * A function that helps run functions under a concurrent limitation.

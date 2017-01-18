@@ -1,4 +1,4 @@
-var Yaku = require("./yaku");
+import Yaku from "./yaku";
 
 try {
     global.Promise = Yaku;

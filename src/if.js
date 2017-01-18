@@ -1,9 +1,5 @@
-var _ = require("./_");
+import _ from "./_";
 
-module.exports = function (cond, trueFn, falseFn) {
-    return _.Promise.resolve(cond).then(function (val) {
-        return val ?
-            trueFn() :
-            (_.isFunction(falseFn) && falseFn());
-    });
-};
+export default (cond, trueFn, falseFn) => _.Promise.resolve(cond).then(val => val ?
+    trueFn() :
+    (_.isFunction(falseFn) && falseFn()));
