@@ -57,42 +57,41 @@ var Promise = _.Promise;
  * keyupTextGT3.subscribe(v => console.log(v));
  * ```
  */
-var Observable = module.exports = function Observable (executor) {
-    var self = this;
+export default class Observable {
+    constructor (executor?: Function) {
+        var self = this;
 
-    genHandler(self);
+        genHandler(self);
 
-    self.subscribers = [];
+        self.subscribers = [];
 
-    executor && executor(self.next, self.error);
-};
-
-_.extendPrototype(Observable, {
+        executor && executor(self.next, self.error);
+    };
 
     /**
      * Emit a value.
      * @param  {Any} value
      * so that the event will go to `onError` callback.
      */
-    next: null,
+    next: any = null
 
     /**
      * Emit an error.
      * @param  {Any} value
      */
-    error: null,
+    error: any = null
 
     /**
      * The publisher observable of this.
      * @type {Observable}
      */
-    publisher: null,
+    publisher: Observable = null
 
     /**
      * All the subscribers subscribed this observable.
      * @type {Array}
      */
-    subscribers: null,
+    subscribers: Observable[] = null
 
     /**
      * It will create a new Observable, like promise.
@@ -111,7 +110,7 @@ _.extendPrototype(Observable, {
         self.subscribers.push(subscriber);
 
         return subscriber;
-    },
+    }
 
     /**
      * Unsubscribe this.
@@ -121,7 +120,47 @@ _.extendPrototype(Observable, {
         publisher && publisher.subscribers.splice(publisher.subscribers.indexOf(this), 1);
     }
 
-});
+    private _onNext: Function
+    private _onError: Function
+    private _nextErr: Function
+
+    /**
+     * Merge multiple observables into one.
+     * @version_added 0.9.6
+     * @param  {Iterable} iterable
+     * @return {Observable}
+     * @example
+     * ```js
+     * var Observable = require("yaku/lib/Observable");
+     * var sleep = require("yaku/lib/sleep");
+     *
+     * var src = new Observable(next => setInterval(next, 1000, 0));
+     *
+     * var a = src.subscribe(v => v + 1; });
+     * var b = src.subscribe((v) => sleep(10, v + 2));
+     *
+     * var out = Observable.merge([a, b]);
+     *
+     * out.subscribe((v) => {
+     *     console.log(v);
+     * })
+     * ```
+     */
+    static merge<T> (iterable: Iterable<T>) {
+        var iter = genIterator(iterable);
+        return new Observable(next => {
+            var item;
+
+            function onError (e) {
+                next(Promise.reject(e));
+            }
+
+            while (!(item = iter.next()).done) {
+                item.value.subscribe(next, onError);
+            }
+        });
+    }
+}
 
 function genHandler (self) {
     self.next = val => {
@@ -150,41 +189,4 @@ function genNextErr (next) {
         next(Promise.reject(reason));
     };
 }
-
-/**
- * Merge multiple observables into one.
- * @version_added 0.9.6
- * @param  {Iterable} iterable
- * @return {Observable}
- * @example
- * ```js
- * var Observable = require("yaku/lib/Observable");
- * var sleep = require("yaku/lib/sleep");
- *
- * var src = new Observable(next => setInterval(next, 1000, 0));
- *
- * var a = src.subscribe(v => v + 1; });
- * var b = src.subscribe((v) => sleep(10, v + 2));
- *
- * var out = Observable.merge([a, b]);
- *
- * out.subscribe((v) => {
- *     console.log(v);
- * })
- * ```
- */
-Observable.merge = function merge (iterable) {
-    var iter = genIterator(iterable);
-    return new Observable(next => {
-        var item;
-
-        function onError (e) {
-            next(Promise.reject(e));
-        }
-
-        while (!(item = iter.next()).done) {
-            item.value.subscribe(next, onError);
-        }
-    });
-};
 

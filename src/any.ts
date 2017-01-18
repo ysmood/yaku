@@ -1,7 +1,7 @@
 import _ from "./_";
 import genIterator from "./genIterator";
 
-export default iterable => {
+export default (iterable: Iterable<any>) => {
     var iter = genIterator(iterable);
 
     return new _.Promise((resolve, reject) => {

@@ -1,14 +1,13 @@
 import _ from "./_";
 var isFn = _.isFunction;
 
-export default (fn, self) => function (a, b, c, d, e) {
+export default (fn: Function, self) => function (a, b, c, d, e) {
     var len = arguments.length;
     var args;
-    var promise;
     var resolve;
     var reject;
 
-    promise = new _.Promise((r, rj) => {
+    var promise = new _.Promise((r, rj) => {
         resolve = r;
         reject = rj;
     });

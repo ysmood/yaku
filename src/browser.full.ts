@@ -8,4 +8,6 @@ for (var key in utils) {
     Yaku[key] = utils[key];
 }
 
-export default window.Yaku = Yaku;
+window['Yaku'] = Yaku;
+
+export default Yaku

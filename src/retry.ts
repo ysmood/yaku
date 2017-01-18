@@ -2,7 +2,7 @@ import _ from "./_";
 import sleep from "./sleep";
 var $retryError = {};
 
-export default (initRetries, span, fn, self) => function () {
+export default (initRetries, span, fn, self?) => function () {
     var retries = initRetries;
     var errs = [];
     var args = arguments;

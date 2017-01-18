@@ -1,6 +1,8 @@
 import _ from "./_";
 
-export default (promise, time, error) => {
+let { Promise } = _
+
+export default <T>(promise: Promise<T>, time: number, error?) => {
     if (error === void 0)
         error = new Error("time out");
 

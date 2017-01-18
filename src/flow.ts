@@ -13,7 +13,7 @@ export default iterable => {
                 if (task.done) {
                     return val;
                 }
-                var curr = task.value;
+                var curr = task.value as Function;
                 return run(
                     isPromise(curr) ? curr :
                         _.isFunction(curr) ? _.Promise.resolve(curr(val)) :

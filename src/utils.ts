@@ -1,5 +1,22 @@
 // This file contains all the non-ES6-standard helpers based on promise.
 
+import all from './all'
+import any from './any'
+import async from './async'
+import callbackify from './callbackify'
+import Deferred from './Deferred'
+import flow from './flow'
+import guard from './guard'
+import $if from './if'
+import isPromise from './isPromise'
+import never from './never'
+import promisify from './promisify'
+import sleep from './sleep'
+import Observable from './Observable'
+import retry from './retry'
+import $throw from './throw'
+import timeout from './timeout'
+
 export default {
 
     /**
@@ -43,7 +60,7 @@ export default {
      * .then(() => kit.log('all done!'));
      * ```
      */
-    all: require("./all"),
+    all: all,
 
     /**
      * Similar with the `Promise.race`, but only rejects when every entry rejects.
@@ -62,7 +79,7 @@ export default {
      * });
      * ```
      */
-    any: require("./any"),
+    any: any,
 
     /**
      * Generator based async/await wrapper.
@@ -82,7 +99,7 @@ export default {
      * });
      * ```
      */
-    async: require("./async"),
+    async: async,
 
     /**
      * If a function returns promise, convert it to
@@ -91,13 +108,13 @@ export default {
      * @param  {Any} self The `this` to bind to the fn.
      * @return {Function}
      */
-    callbackify: require("./callbackify"),
+    callbackify: callbackify,
 
     /**
      * **deprecate** Create a `jQuery.Deferred` like object.
      * It will cause some buggy problems, please don't use it.
      */
-    Deferred: require("./Deferred"),
+    Deferred: Deferred,
 
     /**
      * Creates a function that is the composition of the provided functions.
@@ -155,7 +172,7 @@ export default {
      * walker('test.com');
      * ```
      */
-    flow: require("./flow"),
+    flow: flow,
 
     /**
      * Enable a helper to catch specific error type.
@@ -184,7 +201,7 @@ export default {
      * });
      * ```
      */
-    guard: require("./guard"),
+    guard: guard,
 
     /**
      * if-else helper
@@ -204,7 +221,7 @@ export default {
       * })
      * ```
      */
-    "if": require("./if"),
+    "if": $if,
 
     /**
      * **deprecate** Check if an object is a promise-like object.
@@ -212,13 +229,13 @@ export default {
      * @param  {Any}  obj
      * @return {Boolean}
      */
-    isPromise: require("./isPromise"),
+    isPromise: isPromise,
 
     /**
      * Create a promise that never ends.
      * @return {Promise} A promise that will end the current pipeline.
      */
-    never: require("./never"),
+    never: never,
 
     /**
      * Convert a node callback style function to a function that returns
@@ -247,7 +264,7 @@ export default {
      * });
      * ```
      */
-    promisify: require("./promisify"),
+    promisify: promisify,
 
     /**
      * Create a promise that will wait for a while before resolution.
@@ -260,13 +277,13 @@ export default {
      * sleep(1000).then(() => console.log('after one second'));
      * ```
      */
-    sleep: require("./sleep"),
+    sleep: sleep,
 
     /**
      * Read the `Observable` section.
      * @type {Function}
      */
-    Observable: require("./Observable"),
+    Observable: Observable,
 
     /**
      * Retry a function until it resolves before a mount of times, or reject with all
@@ -316,7 +333,7 @@ export default {
      * );
      * ```
      */
-    retry: require("./retry"),
+    retry: retry,
 
     /**
      * Throw an error to break the program.
@@ -330,7 +347,7 @@ export default {
      * });
      * ```
      */
-    "throw": require("./throw"),
+    throw: $throw,
 
     /**
      * Create a promise that will reject after a while if the passed in promise
@@ -348,5 +365,5 @@ export default {
      * });
      * ```
      */
-    timeout: require("./timeout")
+    timeout: timeout
 };

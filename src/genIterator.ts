@@ -1,7 +1,10 @@
 import _ from "./_";
 
 // Hack: we don't create new object to pass the newly iterated object.
-var $ArrIterContainer = {};
+var $ArrIterContainer = {
+    value: null,
+    done: false
+};
 
 var ArrIter = _.extendPrototype(function (arr) {
     this.arr = arr;
@@ -21,7 +24,7 @@ var ArrIter = _.extendPrototype(function (arr) {
  * @param  {Any} obj
  * @return {Function}
  */
-function genIterator (obj) {
+function genIterator<T> (obj): IterableIterator<T> {
     if (obj) {
         var gen = obj[_.Promise.Symbol.iterator];
         if (_.isFunction(gen)) {

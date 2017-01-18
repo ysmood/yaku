@@ -65,4 +65,6 @@ export default class Promise<R> implements Thenable<R> {
      * Make a Promise that fulfills when any item fulfills, and rejects if any item rejects.
      */
     static race<R>(promises: (R | Thenable<R>)[]): Promise<R>;
+
+    static Symbol: typeof Symbol
 }

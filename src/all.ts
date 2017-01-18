@@ -2,7 +2,9 @@ import _ from "./_";
 var Promise = _.Promise;
 import genIterator from "./genIterator";
 
-var tryErr = {};
+var tryErr = {
+    err: null
+};
 
 function tryCatch (step, key) {
     try {
@@ -34,7 +36,7 @@ export default (limit, list) => {
             return reject(reason);
         }
 
-        function step (key) {
+        function step (key): any {
             if (done) {
                 if (running === 0)
                     resolve();

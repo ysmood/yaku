@@ -1,6 +1,10 @@
-import {Promise} from "./_";
+import _ from "./_";
 
-var tryErr = {};
+var { Promise } = _
+
+var tryErr = {
+    err: null
+};
 
 function tryCatch (step, key) {
     try {
