@@ -1,0 +1,24 @@
+import Promise from './yaku';
+import { IDeferred } from './Deferred';
+import './guard';
+import Observable from './Observable';
+export { Promise, IDeferred };
+declare var _default: {
+    all: (limit: any, list: any) => any;
+    any: (iterable: any) => Promise<{}>;
+    async: (generator: any) => (...args: any[]) => any;
+    callbackify: (fn: Function, self?: any) => () => any;
+    Deferred: <T>() => IDeferred<T>;
+    flow: (iterable: any) => (val: any) => any;
+    guard: any;
+    "if": (cond: boolean, trueFn: Function, falseFn: Function) => Promise<any>;
+    isPromise: (obj: any) => boolean;
+    never: () => Promise<{}>;
+    promisify: (fn: Function, self: any) => (a: any, b: any, c: any, d: any, e: any) => any;
+    sleep: (time: number, val?: any) => Promise<{}>;
+    Observable: typeof Observable;
+    retry: (initRetries: any, span: any, fn: any, self?: any) => () => any;
+    throw: (err: any) => void;
+    timeout: <T>(promise: Promise<T>, time: number, error?: any) => Promise<{}>;
+};
+export default _default;

@@ -1,6 +1,6 @@
 import Promise from './yaku'
 
-export interface Deferred<T> {
+export interface IDeferred<T> {
     resolve: Function
     reject: Function
     promise: Promise<T>
@@ -13,5 +13,5 @@ export default <T>() => {
         defer.resolve = resolve;
         return defer.reject = reject;
     });
-    return defer as Deferred<T>;
+    return defer as IDeferred<T>;
 };

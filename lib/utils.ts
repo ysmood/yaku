@@ -1,10 +1,11 @@
 // This file contains all the non-ES6-standard helpers based on promise.
 
+import Promise from './yaku'
 import all from './all'
 import any from './any'
 import async from './async'
 import callbackify from './callbackify'
-import Deferred from './Deferred'
+import Deferred, { IDeferred } from './Deferred'
 import flow from './flow'
 import './guard'
 import $if from './if'
@@ -16,6 +17,8 @@ import Observable from './Observable'
 import retry from './retry'
 import $throw from './throw'
 import timeout from './timeout'
+
+export { Promise, IDeferred }
 
 export default {
 
