@@ -1,6 +1,6 @@
 import _ from "./_";
 
-export default (fn: Function, self) => function () {
+export default (fn: Function, self?) => function () {
     var args;
     var cb;
     var j;
