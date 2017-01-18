@@ -1,10 +1,10 @@
-import _ from "./_";
+import Promise from './yaku'
 import genIterator from "./genIterator";
 
-export default (iterable: Iterable<any>) => {
+export default (iterable) => {
     var iter = genIterator(iterable);
 
-    return new _.Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         var countDown = 0;
         var reasons = [];
         var item;
@@ -17,7 +17,7 @@ export default (iterable: Iterable<any>) => {
 
         while (!(item = iter.next()).done) {
             countDown++;
-            _.Promise.resolve(item.value).then(resolve, onError);
+            Promise.resolve(item.value).then(resolve, onError);
         }
     });
 };

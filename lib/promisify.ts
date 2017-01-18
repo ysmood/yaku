@@ -1,4 +1,6 @@
 import _ from "./_";
+import Promise from './yaku'
+
 var isFn = _.isFunction;
 
 export default (fn: Function, self) => function (a, b, c, d, e) {
@@ -7,7 +9,7 @@ export default (fn: Function, self) => function (a, b, c, d, e) {
     var resolve;
     var reject;
 
-    var promise = new _.Promise((r, rj) => {
+    var promise = new Promise((r, rj) => {
         resolve = r;
         reject = rj;
     });

@@ -1,6 +1,3 @@
-import genIterator from "./genIterator";
-import Promise from './yaku'
-
 /**
  * Create a composable observable object.
  * Promise can't resolve multiple times, this class makes it possible, so
@@ -57,72 +54,42 @@ import Promise from './yaku'
  * ```
  */
 export default class Observable {
-    constructor (executor?: Function) {
-        var self = this;
-
-        genHandler(self);
-
-        self.subscribers = [];
-
-        executor && executor(self.next, self.error);
-    };
-
+    constructor(executor?: Function);
     /**
      * Emit a value.
      * @param  {Any} value
      * so that the event will go to `onError` callback.
      */
-    next: any = null
-
+    next: any;
     /**
      * Emit an error.
      * @param  {Any} value
      */
-    error: any = null
-
+    error: any;
     /**
      * The publisher observable of this.
      * @type {Observable}
      */
-    publisher: Observable = null
-
+    publisher: Observable;
     /**
      * All the subscribers subscribed this observable.
      * @type {Array}
      */
-    subscribers: Observable[] = null
-
+    subscribers: Observable[];
     /**
      * It will create a new Observable, like promise.
      * @param  {Function} onNext
      * @param  {Function} onError
      * @return {Observable}
      */
-    subscribe(onNext, onError) {
-        var self = this;
-        var subscriber = new Observable();
-        subscriber._onNext = onNext;
-        subscriber._onError = onError;
-        subscriber._nextErr = genNextErr(subscriber.next);
-
-        subscriber.publisher = self;
-        self.subscribers.push(subscriber);
-
-        return subscriber;
-    }
-
+    subscribe(onNext: any, onError: any): Observable;
     /**
      * Unsubscribe this.
      */
-    unsubscribe() {
-        var publisher = this.publisher;
-        publisher && publisher.subscribers.splice(publisher.subscribers.indexOf(this), 1);
-    }
-
-    private _onNext: Function
-    private _onError: Function
-    private _nextErr: Function
-
+    unsubscribe(): void;
+    private _onNext;
+    private _onError;
+    private _nextErr;
     /**
      * Merge multiple observables into one.
      * @version_added 0.9.6
@@ -145,47 +112,5 @@ export default class Observable {
      * })
      * ```
      */
-    static merge (iterable) {
-        var iter = genIterator(iterable);
-        return new Observable(next => {
-            var item;
-
-            function onError (e) {
-                next(Promise.reject(e));
-            }
-
-            while (!(item = iter.next()).done) {
-                item.value.subscribe(next, onError);
-            }
-        });
-    }
+    static merge(iterable: any): Observable;
 }
-
-function genHandler (self) {
-    self.next = val => {
-        var i = 0;
-        var len = self.subscribers.length;
-        var subscriber;
-        while (i < len) {
-            subscriber = self.subscribers[i++];
-            Promise.resolve(val).then(
-                subscriber._onNext,
-                subscriber._onError
-            ).then(
-                subscriber.next,
-                subscriber._nextErr
-            );
-        }
-    };
-
-    self.error = err => {
-        self.next(Promise.reject(err));
-    };
-}
-
-function genNextErr (next) {
-    return reason => {
-        next(Promise.reject(reason));
-    };
-}
-

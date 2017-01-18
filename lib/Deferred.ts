@@ -1,4 +1,4 @@
-import _ from "./_";
+import Promise from './yaku'
 
 export interface Deferred<T> {
     resolve: Function
@@ -9,7 +9,7 @@ export interface Deferred<T> {
 export default <T>() => {
     var defer;
     defer = {};
-    defer.promise = new _.Promise((resolve, reject) => {
+    defer.promise = new Promise((resolve, reject) => {
         defer.resolve = resolve;
         return defer.reject = reject;
     });

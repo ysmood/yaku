@@ -1,6 +1,4 @@
-import _ from "./_";
-
-var { Promise } = _
+import Promise from './yaku'
 
 var tryErr = {
     err: null

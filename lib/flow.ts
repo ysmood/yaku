@@ -1,6 +1,7 @@
 import _ from "./_";
 import genIterator from "./genIterator";
 import isPromise from "./isPromise";
+import Promise from './yaku'
 
 export default iterable => {
     var iter = genIterator(iterable);
@@ -16,12 +17,12 @@ export default iterable => {
                 var curr = task.value as Function;
                 return run(
                     isPromise(curr) ? curr :
-                        _.isFunction(curr) ? _.Promise.resolve(curr(val)) :
-                            _.Promise.resolve(curr)
+                        _.isFunction(curr) ? Promise.resolve(curr(val)) :
+                            Promise.resolve(curr)
                 );
             });
         }
 
-        return run(_.Promise.resolve(val));
+        return run(Promise.resolve(val));
     };
 };

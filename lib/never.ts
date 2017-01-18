@@ -1,2 +1,3 @@
-import _ from "./_";
-export default () => new _.Promise(() => {});
+import Promise from './yaku'
+
+export default () => new Promise(() => {});

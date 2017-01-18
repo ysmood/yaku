@@ -66,5 +66,5 @@ export default class Promise<R> implements Thenable<R> {
      */
     static race<R>(promises: (R | Thenable<R>)[]): Promise<R>;
 
-    static Symbol: typeof Symbol
+    static Symbol: any
 }

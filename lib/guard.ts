@@ -1,10 +1,10 @@
-import _ from "./_";
+import Promise from './yaku'
 
-_.Promise.prototype['guard'] = function (type, onRejected) {
+Promise.prototype['guard'] = function (type, onRejected) {
     return this["catch"](reason => {
         if (reason instanceof type && onRejected)
             return onRejected(reason);
         else
-            return _.Promise.reject(reason);
+            return Promise.reject(reason);
     });
 };

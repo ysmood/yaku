@@ -50,7 +50,7 @@ module.exports = function (task, option) {
     });
 
     task("lint", "lint js files", function () {
-        return kit.spawn("eslint", ["src/*.js", "test/*.js"]);
+        return kit.spawn("eslint", ["test/*.js"]);
     });
 
     task("all", ["lint"], "bundle all", function () {
