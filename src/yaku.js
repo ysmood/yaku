@@ -3,9 +3,11 @@
 
     var $undefined
     , $null = null
-    , root = typeof window === "object" ? window : global
-    , isLongStackTrace = false
+    , isBrowser = typeof window === "object"
+    , root = isBrowser ? window : global
     , process = root.process
+    , console = root.console
+    , isLongStackTrace = false
     , Arr = Array
     , Err = Error
 
@@ -343,12 +345,10 @@
      * ```
      */
     Yaku.unhandledRejection = function (reason, p) {
-        try {
-            root.console.error(
-                $unhandledRejectionMsg,
-                isLongStackTrace ? p.longStack : genStackInfo(reason, p)
-            );
-        } catch (e) {} // eslint-disable-line
+        console && console.error(
+            $unhandledRejectionMsg,
+            isLongStackTrace ? p.longStack : genStackInfo(reason, p)
+        );
     };
 
     /**
@@ -398,9 +398,9 @@
      * Promise.nextTick = fn => fn();
      * ```
      */
-    Yaku.nextTick = process ?
-        process.nextTick :
-        function (fn) { setTimeout(fn); };
+    Yaku.nextTick = isBrowser ?
+        function (fn) { setTimeout(fn); } :
+        process.nextTick;
 
     // ********************** Private **********************
 
