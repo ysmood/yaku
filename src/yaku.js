@@ -860,6 +860,7 @@
     try {
         module.exports = Yaku;
     } catch (e) {
+        /* istanbul ignore next */
         root.Yaku = Yaku;
     }
 })();
