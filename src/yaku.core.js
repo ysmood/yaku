@@ -8,7 +8,8 @@
 
     var $undefined
     , $null = null
-    , root = typeof window === "object" ? window : global
+    , isBrowser = typeof window === "object"
+    , root = isBrowser ? window : global
     , process = root.process
     , Arr = Array
 
@@ -36,9 +37,9 @@
     , $noop = function () {}
 
     , Symbol = root[$Symbol] || {}
-    , nextTick = process ?
-        process.nextTick :
-        function (fn) { setTimeout(fn); }
+    , nextTick = isBrowser ?
+        function (fn) { setTimeout(fn); } :
+        process.nextTick
     , speciesConstructor = function (O, D) {
         var C = O.constructor;
 
