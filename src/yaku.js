@@ -1,3 +1,8 @@
+/*
+ Yaku v0.17.9
+ (c) 2015 Yad Smood. http://ysmood.org
+ License MIT
+*/
 (function () {
     "use strict";
 
@@ -48,7 +53,7 @@
      * The first argument fulfills the promise, the second argument rejects it.
      * We can call these functions, once our operation is completed.
      */
-    var Yaku = module.exports = function (executor) {
+    var Yaku = function (executor) {
         var self = this,
             err;
 
@@ -852,4 +857,9 @@
         }
     }
 
+    try {
+        module.exports = Yaku;
+    } catch (e) {
+        root.Yaku = Yaku;
+    }
 })();

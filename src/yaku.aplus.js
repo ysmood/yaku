@@ -12,11 +12,15 @@
      * The first argument fulfills the promise, the second argument rejects it.
      * We can call these functions, once our operation is completed.
      */
-    var Yaku = module.exports = function (executor) {
+    var Yaku = function (executor) {
         executor(genSettler(this, $resolved), genSettler(this, $rejected));
     };
 
-    if (typeof window === "object") window["Yaku"] = Yaku;
+    try {
+        module.exports = Yaku;
+    } catch (e) {
+        window.Yaku = Yaku;
+    }
 
     /**
      * Appends fulfillment and rejection handlers to the promise,

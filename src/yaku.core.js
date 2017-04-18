@@ -55,7 +55,7 @@
      * The first argument fulfills the promise, the second argument rejects it.
      * We can call these functions, once our operation is completed.
      */
-    var Yaku = module.exports = function Promise (executor) {
+    var Yaku = function Promise (executor) {
         var self = this,
             err;
 
@@ -711,4 +711,9 @@
         }
     }
 
+    try {
+        module.exports = Yaku;
+    } catch (e) {
+        root.Yaku = Yaku;
+    }
 })();
