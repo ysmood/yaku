@@ -59,11 +59,10 @@ var Promise = require('yaku/lib/yaku.aplus');
 
 ## Browser
 
-Use something like [Browserify][] or [Webpack][], or download the `yaku.js` file from [release page][].
-Raw usage without:
+Raw usage:
 
 ```html
-<script type="text/javascript" src ="yaku.js"></script>
+<script type="text/javascript" src ="https://raw.githubusercontent.com/ysmood/yaku/master/src/yaku.js"></script>
 <script>
     // Yaku will be assigned to `window.Yaku`.
     var Promise = Yaku;
@@ -258,7 +257,6 @@ Edit the `docs/readme.jst.md` and execute `npm run no` to rebuild the project.
 [yaku.core]: src/yaku.core.js
 [yaku.aplus]: src/yaku.aplus.js
 [es6-shim]: https://github.com/paulmillr/es6-shim
-[release page]: https://github.com/ysmood/yaku/releases
 [docs/minPromiseAplus.js]: docs/minPromiseAplus.js
 [promises-aplus-tests]: https://github.com/promises-aplus/promises-tests
 [promises-es6-tests]: https://github.com/promises-es6/promises-es6
