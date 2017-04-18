@@ -62,7 +62,7 @@ var Promise = require('yaku/lib/yaku.aplus');
 Raw usage:
 
 ```html
-<script type="text/javascript" src ="https://raw.githubusercontent.com/ysmood/yaku/master/src/yaku.js"></script>
+<script type="text/javascript" src="https://raw.githubusercontent.com/ysmood/yaku/master/src/yaku.js"></script>
 <script>
     // Yaku will be assigned to `window.Yaku`.
     var Promise = Yaku;
