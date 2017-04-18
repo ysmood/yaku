@@ -48,7 +48,6 @@ module.exports = testSuit("long stack trace", function (it) {
             });
         });
     }).then(function () {
-
         return it("throw", "err", function () {
             return new Yaku(function (resolve) {
                 var err = function () {
@@ -58,6 +57,18 @@ module.exports = testSuit("long stack trace", function (it) {
 
                 process.on("uncaughtException", err);
                 yakuThrow("err");
+            });
+        });
+    }).then(function () {
+        return it("throw", "err", function () {
+            return new Yaku(function (resolve) {
+                var err = function () {
+                    resolve("err");
+                    process.removeListener("uncaughtException", err);
+                };
+
+                process.on("uncaughtException", err);
+                yakuThrow(new Error("err"));
             });
         });
     });
