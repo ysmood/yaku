@@ -1,4 +1,5 @@
 var webpack = require("webpack");
+var kit = require('nokit');
 var isProduction = process.env.NODE_ENV === "production";
 
 var self = module.exports = {
@@ -12,20 +13,20 @@ var self = module.exports = {
 
     output: {
         filename: "[name].js",
-        path: "./dist",
+        path: kit.path.join(process.cwd(), "dist"),
         pathinfo: true
     },
 
     module: {
-        loaders: [
+        rules: [
             {
                 test: /getPromise\.js$/,
-                loader: "./getPromiseBrowser"
+                use: [{
+                    loader: "./test/getPromiseBrowser"
+                }]
             }
         ]
-    },
-
-    debug: true
+    }
 };
 
 if (isProduction) {
