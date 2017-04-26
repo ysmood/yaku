@@ -1,6 +1,6 @@
 {
   "name": "yaku",
-  "version": "0.17.12",
+  "version": "0.18.0",
   "description": "A lightweight promise library",
   "main": "lib/yaku.js",
   "typings": "lib/yaku.d.ts",
@@ -38,7 +38,6 @@
     "lib",
     "dist/yaku.min.js",
     "dist/yaku.core.min.js",
-    "dist/yaku.browser.full.min.js",
     "dist/yaku.browser.global.min.js"
   ],
   "devDependencies": {
