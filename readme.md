@@ -132,10 +132,6 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
   > Because Regenerator use global Promise directly and don't have an api to set the Promise lib.
   > You have to import Yaku globally to make it use Yaku: `require("yaku/lib/global");`.
 
-- The name Yaku is weird?
-
-  > The name `yaku` comes from the word `約束(yaku soku)` which means promise.
-
 
 # Unhandled Rejection
 
