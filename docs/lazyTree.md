@@ -2,7 +2,7 @@
 
 > This is how Yaku was piled up.
 
-The base idea of promise is keeping all data and data handlers inside the promise world, promise will help to box them, proxy them and unbox them. You may have already heard of it before, most people like to call it [Monad][]. But this isn't all, you need to know another interesting idea to have a better understand on what abstraction promise does for you. I call it Lazy Tree, a dynamic tree constructed by promises.
+The base idea of promise is keeping all data and data handlers inside the promise world, promise will help to box them, proxy them and unbox them. You may have already heard of it before, most people like to call it [Monad][]. However, you could follow me to discover another interesting way to have a better understand on what abstraction promise does for you. I call it Lazy Tree, a dynamic tree constructed by promises.
 
 We are already familiar with the tree structure. In functional programming world, expressions domains the world, everything is just a mathematical concept, no need for space and time. But in the real world, things get dirty, we cannot throw the input into a function, and it magically give us the answer as if there's no side effect. The function will consume memory, the CPU will emit some radiation. Promise is something that glues the space, time and the real world.
 
@@ -48,8 +48,7 @@ There are some interesting constrains of this data structure:
 
 The tree is dynamically modified on runtime. As the dynamic process goes on,
 the tree's any node can be extended to any shape, of course it's append only,
-you cannot delete node of this tree. But if we can move faster than light,
-the process may be reversible.
+you cannot delete node of this tree.
 
 Another interesting thing about promise is that it has a built-in [Maybe Monad][monad],
 it's like a wormhole, it's a short-circuit between the rejected node and its children.
