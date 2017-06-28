@@ -6,6 +6,7 @@ var it = junit({
 
 require("./basic")(it);
 require("./utils")(it);
+require("./finally")(it);
 require("./unhandledRejection")(it)
 .then(it.run).then(function (res) {
     if (window.callPhantom) {
