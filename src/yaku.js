@@ -149,13 +149,15 @@
          * ```
          */
         "finally": function (onFinally) {
-            function eventually (value) {
+            return this.then(function (val) {
                 return Yaku.resolve(onFinally()).then(function () {
-                    return value;
+                    return val;
                 });
-            }
-
-            return this.then(eventually, eventually);
+            }, function (err) {
+                return Yaku.resolve(onFinally()).then(function () {
+                    throw err;
+                });
+            });
         },
 
         // The number of current promises that attach to this Yaku instance.

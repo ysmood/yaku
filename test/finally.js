@@ -26,6 +26,8 @@ module.exports = testSuit("basic", function (it) {
 
     it("finally reject", "error", function () {
         return Promise.reject("error")["finally"](function () {
+        }).catch(function (err) {
+            return err;
         });
     });
 });
