@@ -38,7 +38,9 @@
 
     , Symbol = root[$Symbol] || {}
     , nextTick = isBrowser ?
-        function (fn) { setTimeout(fn); } :
+        function (fn) {
+            window.Promise ? new window.Promise(function (resolve) { resolve(); }).then(fn) : setTimeout(fn);
+        } :
         process.nextTick
     , speciesConstructor = function (O, D) {
         var C = O.constructor;
