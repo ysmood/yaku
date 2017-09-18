@@ -406,7 +406,11 @@
      * ```
      */
     Yaku.nextTick = isBrowser ?
-        function (fn) { setTimeout(fn); } :
+        function (fn) {
+            root.Promise ?
+                new root.Promise(function (resolve) { resolve(); }).then(fn) :
+                setTimeout(fn);
+        } :
         process.nextTick;
 
     // ********************** Private **********************

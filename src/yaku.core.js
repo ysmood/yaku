@@ -39,7 +39,9 @@
     , Symbol = root[$Symbol] || {}
     , nextTick = isBrowser ?
         function (fn) {
-            window.Promise ? new window.Promise(function (resolve) { resolve(); }).then(fn) : setTimeout(fn);
+            root.Promise ?
+                new root.Promise(function (resolve) { resolve(); }).then(fn) :
+                setTimeout(fn);
         } :
         process.nextTick
     , speciesConstructor = function (O, D) {

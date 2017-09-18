@@ -4,6 +4,7 @@ for (k in global) {
     window[k] = global[k];
 }
 
+var nativePromise = global.Promise;
 window.process = null;
 window.Symbol = null;
 var Yaku = require("../src/yaku");
@@ -19,6 +20,13 @@ module.exports = testSuit("long stack trace", function (it) {
     return it("basic", "ok", function () {
         return Yaku.resolve().then(function () {
             return "ok";
+        });
+    }).then(function () {
+        return it("use window.Promise.then as nextTick", "ok", function () {
+            window.Promise = nativePromise;
+            return Yaku.resolve("ok");
+        }).then(function () {
+            window.Promise = null;
         });
     }).then(function () {
         return it("long stack trace with constructor", "err", function () {
