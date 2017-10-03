@@ -10,6 +10,7 @@
     , $null = null
     , isBrowser = typeof window === "object"
     , root = isBrowser ? window : global
+    , nativePromise = root.Promise
     , process = root.process
     , console = root.console
     , isLongStackTrace = false
@@ -57,7 +58,7 @@
         var self = this,
             err;
 
-        // "this._s" is the internal state of: pending, resolved or rejected
+        // "this._s" is the internao state of: pending, resolved or rejected
         // "this._v" is the internal value
 
         if (!isObject(self) || self._s !== $undefined)
@@ -407,8 +408,8 @@
      */
     Yaku.nextTick = isBrowser ?
         function (fn) {
-            root.Promise ?
-                new root.Promise(function (resolve) { resolve(); }).then(fn) :
+            nativePromise ?
+                new nativePromise(function (resolve) { resolve(); }).then(fn) :
                 setTimeout(fn);
         } :
         process.nextTick;

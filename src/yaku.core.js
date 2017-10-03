@@ -10,6 +10,7 @@
     , $null = null
     , isBrowser = typeof window === "object"
     , root = isBrowser ? window : global
+    , nativePromise = root.Promise
     , process = root.process
     , Arr = Array
 
@@ -39,8 +40,8 @@
     , Symbol = root[$Symbol] || {}
     , nextTick = isBrowser ?
         function (fn) {
-            root.Promise ?
-                new root.Promise(function (resolve) { resolve(); }).then(fn) :
+            nativePromise ?
+                new nativePromise(function (resolve) { resolve(); }).then(fn) :
                 setTimeout(fn);
         } :
         process.nextTick

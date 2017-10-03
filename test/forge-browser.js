@@ -29,6 +29,13 @@ module.exports = testSuit("long stack trace", function (it) {
             window.Promise = null;
         });
     }).then(function () {
+        return it("native Promise should be cache by yaku internally", "ok", function () {
+            window.Promise = Yaku;
+            return Yaku.resolve("ok");
+        }).then(function () {
+            window.Promise = null;
+        });
+    }).then(function () {
         return it("long stack trace with constructor", "err", function () {
             return new Yaku(function (r, rr) {
                 rr(new Error("err"));
