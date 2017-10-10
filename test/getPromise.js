@@ -1,3 +1,7 @@
+/**
+ * A helper used to get Yaku or a third-party Promise lib from npm.
+ */
+
 var kit = require("nokit");
 var spawnSync = require("child_process").spawnSync;
 var zlib = require("zlib");

@@ -1,3 +1,7 @@
+/**
+ * Test for ES6 specs
+ */
+
 var promisesES6Tests = require("promises-es6-tests");
 var assert = require("assert");
 var kit = require("nokit");

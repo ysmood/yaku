@@ -1,3 +1,7 @@
+/**
+ * Tests for unhandled rejection
+ */
+
 var Promise = require("../src/yaku");
 var testSuit = require("./testSuit");
 var sleep = require("../src/sleep");

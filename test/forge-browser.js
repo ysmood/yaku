@@ -1,3 +1,7 @@
+/**
+ * Test if Yaku works as expected on browser env.
+ */
+
 var k;
 global.window = {};
 for (k in global) {

@@ -1,3 +1,7 @@
+/**
+ * Phantomjs test
+ */
+
 var page = require("webpage").create();
 
 page.open("test/browser.html", function () {});

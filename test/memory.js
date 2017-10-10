@@ -1,3 +1,7 @@
+/**
+ * See https://github.com/ysmood/yaku/issues/37
+ */
+
 var Promise, count, p;
 
 Promise = require("../src/yaku");

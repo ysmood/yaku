@@ -1,3 +1,8 @@
+/**
+ * Here's some fundamental function tests for Promise, so it should work on different Promise libs,
+ * such as Bluebird, Q, or Yaku itself.
+ */
+
 var getPromise = require("../test/getPromise");
 var Promise = getPromise(process.env.shim);
 var testSuit = require("./testSuit");

@@ -1,3 +1,7 @@
+/**
+ * Test for `Promise.finally`
+ */
+
 var getPromise = require("../test/getPromise");
 var Promise = getPromise(process.env.shim);
 var testSuit = require("./testSuit");

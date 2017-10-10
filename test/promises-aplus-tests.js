@@ -1,3 +1,7 @@
+/**
+ * Tests for aplus specs
+ */
+
 var promisesAplusTests = require("promises-aplus-tests");
 var kit = require("nokit");
 var getPromise = require("./getPromise");

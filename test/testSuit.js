@@ -1,3 +1,6 @@
+/**
+ * Test helper for reducing boilerplate code
+ */
 
 // Keep the native out of the place.
 var root = typeof global === "object" ? global : window;

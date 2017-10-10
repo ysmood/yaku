@@ -1,4 +1,7 @@
 /*eslint-disable */
+/**
+ * For random idea experiment
+ */
 
 var Promise = Yaku = require("../src/yaku");
 

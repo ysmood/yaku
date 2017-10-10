@@ -1,3 +1,7 @@
+/**
+ * webpack entry for browser tests
+ */
+
 var junit = require("junit");
 
 var it = junit({

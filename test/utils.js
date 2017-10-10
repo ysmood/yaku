@@ -1,3 +1,6 @@
+/**
+ * Tests for utils in `src` folder, such as the `src/retry.js`, `src/async.js`, etc.
+ */
 
 var Yaku = require("../src/yaku");
 var utils = require("../src/utils");
