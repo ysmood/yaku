@@ -162,7 +162,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [Yaku.enableLongStackTrace](#yakuenablelongstacktrace)
   - [Yaku.nextTick](#yakunexttick)
 
-- #### require('yaku/lib/utils')
+- #### require('yaku/lib/utils') or any of them like require('yaku/lib/retry')
   - [all(limit, list)](#alllimit-list)
   - [any(iterable)](#anyiterable)
   - [async(gen)](#asyncgen)
