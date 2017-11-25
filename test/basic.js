@@ -88,6 +88,15 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
+    it("resolve another promise with an extra resolve", "ok", function () {
+        var val = Promise.resolve("ok");
+
+        return new Promise(function (resolve) {
+            resolve(val);
+            resolve("no");
+        });
+    });
+
     it("constructor throw", "val", function () {
         return new Promise(function () {
             throw "val";

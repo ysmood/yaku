@@ -550,7 +550,11 @@
      * @return {Function} `(value) -> undefined` A resolve or reject function.
      */
     function genSettler (self, state) {
+        var isCalled = false;
         return function (value) {
+            if (isCalled) return;
+            isCalled = true;
+
             if (state === $resolved)
                 settleWithX(self, value);
             else
