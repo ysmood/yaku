@@ -20,7 +20,7 @@ I write this lib to research one of my data structure ideas: [docs/lazyTree.md][
 
 # Features
 
-- One of the best for mobile, gzipped file is only 1.9KB
+- One of the best for mobile, gzipped file is only 2.0KB
 - Supports "uncaught rejection" and "long stack trace", [Comparison][docs/debugHelperComparison.md]
 - Works on IE5+ and other major browsers
 - 100% statement and branch test coverage
