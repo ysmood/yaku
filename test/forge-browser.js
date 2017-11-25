@@ -3,7 +3,7 @@
  */
 
 var k;
-global.window = {};
+global.window = { Promise: Promise };
 for (k in global) {
     window[k] = global[k];
 }

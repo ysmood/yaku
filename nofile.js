@@ -70,6 +70,7 @@ module.exports = function (task, option) {
     task("test", "run all tests", [
         "test-basic", "test-yaku", "test-browser",
         "test-forge-browser",
+        "test-forge-old-browser",
         "test-aplus", "test-es6",
         "coverage"
     ], true);
@@ -111,6 +112,14 @@ module.exports = function (task, option) {
             "--dir", "coverage/forge-browser", "--", "-g", opts.grep, "-b", "off"];
 
         return kit.spawn("istanbul", junitOpts.concat(["test/forge-browser.js"]));
+    });
+
+    task("test-forge-old-browser", "forge browser without Promise env and test", function (opts) {
+        var junitOpts = ["cover", "junit",
+            "--print", "none",
+            "--dir", "coverage/forge-old-browser", "--", "-g", opts.grep, "-b", "off"];
+
+        return kit.spawn("istanbul", junitOpts.concat(["test/forge-old-browser.js"]));
     });
 
     task("test-aplus", "run aplus tests", function (opts) {
