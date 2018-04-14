@@ -4,6 +4,7 @@
 
 var k;
 global.window = { Promise: Promise };
+global.self = window;
 for (k in global) {
     window[k] = global[k];
 }

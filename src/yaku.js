@@ -8,8 +8,8 @@
 
     var $undefined
     , $null = null
-    , isNode = require("detect-node")
-    , root = isNode ? global : self
+    , isBrowser = typeof self === "object"
+    , root = isBrowser ? self : global
     , nativePromise = root.Promise
     , process = root.process
     , console = root.console
@@ -406,13 +406,13 @@
      * Promise.nextTick = fn => fn();
      * ```
      */
-    Yaku.nextTick = isNode ?
-        process.nextTick :
+    Yaku.nextTick = isBrowser ?
         function (fn) {
             nativePromise ?
                 new nativePromise(function (resolve) { resolve(); }).then(fn) :
                 setTimeout(fn);
-        };
+        } :
+        process.nextTick;
 
     // ********************** Private **********************
 

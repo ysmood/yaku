@@ -8,8 +8,8 @@
 
     var $undefined
     , $null = null
-    , isNode = require("detect-node")
-    , root = isNode ? global : self
+    , isBrowser = typeof self === "object"
+    , root = isBrowser ? self : global
     , nativePromise = root.Promise
     , process = root.process
     , Arr = Array
@@ -38,13 +38,13 @@
     , $noop = function () {}
 
     , Symbol = root[$Symbol] || {}
-    , nextTick = isNode ?
-        process.nextTick :
+    , nextTick = isBrowser ?
         function (fn) {
             nativePromise ?
                 new nativePromise(function (resolve) { resolve(); }).then(fn) :
                 setTimeout(fn);
-        }
+        } :
+        process.nextTick
     , speciesConstructor = function (O, D) {
         var C = O.constructor;
 

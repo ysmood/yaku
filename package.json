@@ -45,7 +45,6 @@
     "co": "4.6.0",
     "core-js": "2.4.1",
     "coveralls": "2.13.0",
-    "detect-node": "2.0.3",
     "es6-promise": "4.1.0",
     "es6-shim": "0.35.3",
     "eslint": "3.19.0",
