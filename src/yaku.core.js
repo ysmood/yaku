@@ -8,8 +8,8 @@
 
     var $undefined
     , $null = null
-    , isBrowser = typeof window === "object"
-    , root = isBrowser ? window : global
+    , isBrowser = typeof self === "object"
+    , root = isBrowser ? self : global
     , nativePromise = root.Promise
     , process = root.process
     , Arr = Array
