@@ -1,3 +1,7 @@
+- v0.19
+
+  - #58 add hash helper
+
 - v0.18
 
   -	#47 remove 'browser.full.js', we should use module instead

@@ -170,6 +170,7 @@ For more spec read [Unhandled Rejection Tracking Browser Events](https://github.
   - [Deferred](#deferred)
   - [flow(list)](#flowlist)
   - [guard(type, onRejected)](#guardtype-onrejected)
+  - [hash(dict)](#hashdict)
   - [if(cond, trueFn, falseFn)](#ifcond-truefn-falsefn)
   - [isPromise(obj)](#ispromiseobj)
   - [never()](#never)
@@ -739,7 +740,28 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[if(cond, trueFn, falseFn)](src/utils.js?source#L207)**
+- ### **[hash(dict)](src/utils.js?source#L206)**
+
+    Just like `Promise.all`, but you pass in a key-value dict,
+    after every value is resolved, it will resolve a k-v dict.
+
+    - **<u>param</u>**: `dict` { _Object_ }
+
+    - **<u>return</u>**: { _Promise_ }
+
+        ```js
+        var hash = require('yaku/lib/hash');
+        var sleep = require('yaku/lib/sleep');
+
+        hash({
+            a: sleep(100, 'a'),
+            b: sleep(200, 'b')
+        }).then((dict) => { // will resolve after 200ms, not 300ms
+            console.log(dict.a, dict.b)
+        })
+        ```
+
+- ### **[if(cond, trueFn, falseFn)](src/utils.js?source#L226)**
 
     if-else helper
 
@@ -764,7 +786,7 @@ var source = require("yaku/lib/source");
         })
         ```
 
-- ### **[isPromise(obj)](src/utils.js?source#L215)**
+- ### **[isPromise(obj)](src/utils.js?source#L234)**
 
     **deprecate** Check if an object is a promise-like object.
     Don't use it to coercive a value to Promise, instead use `Promise.resolve`.
@@ -773,7 +795,7 @@ var source = require("yaku/lib/source");
 
     - **<u>return</u>**: { _Boolean_ }
 
-- ### **[never()](src/utils.js?source#L221)**
+- ### **[never()](src/utils.js?source#L240)**
 
     Create a promise that never ends.
 
@@ -781,7 +803,7 @@ var source = require("yaku/lib/source");
 
         A promise that will end the current pipeline.
 
-- ### **[promisify(fn, self)](src/utils.js?source#L250)**
+- ### **[promisify(fn, self)](src/utils.js?source#L269)**
 
     Convert a node callback style function to a function that returns
     promise when the last callback is not supplied.
@@ -816,7 +838,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[sleep(time, val)](src/utils.js?source#L263)**
+- ### **[sleep(time, val)](src/utils.js?source#L282)**
 
     Create a promise that will wait for a while before resolution.
 
@@ -837,13 +859,13 @@ var source = require("yaku/lib/source");
         sleep(1000).then(() => console.log('after one second'));
         ```
 
-- ### **[Observable](src/utils.js?source#L269)**
+- ### **[Observable](src/utils.js?source#L288)**
 
     Read the `Observable` section.
 
     - **<u>type</u>**: { _Function_ }
 
-- ### **[retry(countdown, span, fn, this)](src/utils.js?source#L319)**
+- ### **[retry(countdown, span, fn, this)](src/utils.js?source#L338)**
 
     Retry a function until it resolves before a mount of times, or reject with all
     the error states.
@@ -914,7 +936,7 @@ var source = require("yaku/lib/source");
         );
         ```
 
-- ### **[throw(err)](src/utils.js?source#L333)**
+- ### **[throw(err)](src/utils.js?source#L352)**
 
     Throw an error to break the program.
 
@@ -930,7 +952,7 @@ var source = require("yaku/lib/source");
         });
         ```
 
-- ### **[timeout(promise, time, reason)](src/utils.js?source#L351)**
+- ### **[timeout(promise, time, reason)](src/utils.js?source#L370)**
 
     Create a promise that will reject after a while if the passed in promise
     doesn't settle first.
