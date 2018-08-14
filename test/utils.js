@@ -671,4 +671,10 @@ module.exports = testSuit("basic", function (it) {
         utils.never();
     });
 
+    it("hash", { a: "a", b: "b" }, function () {
+        return utils.hash({
+            a: utils.sleep(20, "a"),
+            b: utils.sleep(10, "b")
+        });
+    });
 });

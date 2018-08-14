@@ -187,6 +187,25 @@ module.exports = {
     guard: require("./guard"),
 
     /**
+     * Just like `Promise.all`, but you pass in a key-value dict,
+     * after every value is resolved, it will resolve a k-v dict.
+     * @param  {Object}   dict
+     * @return {Promise}
+     * ```js
+     * var hash = require('yaku/lib/hash');
+     * var sleep = require('yaku/lib/sleep');
+     *
+     * hash({
+     *     a: sleep(100, 'a'),
+     *     b: sleep(200, 'b')
+     * }).then((dict) => { // will resolve after 200ms, not 300ms
+     *     console.log(dict.a, dict.b)
+     * })
+     * ```
+     */
+    hash: require("./hash"),
+
+    /**
      * if-else helper
      * @param  {Promise} cond
      * @param  {Function} trueFn
