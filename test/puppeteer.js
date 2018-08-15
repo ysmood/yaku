@@ -5,7 +5,7 @@
 var puppeteer = require('puppeteer');
 var kit = require('nokit');
 
-module.exports = puppeteer.launch().then(function (browser) {
+module.exports = puppeteer.launch({args: ['--no-sandbox']}).then(function (browser) {
     return browser.newPage().then(function (page) {
         return page.goto('file://' + kit.path.resolve('test/browser.html?puppeteer=true'))
             .then(function () {
