@@ -68,6 +68,7 @@ module.exports = function (task, option) {
     });
 
     task('test', 'run all tests', [
+        'code',
         'test-basic', 'test-yaku', 'test-browser',
         'test-forge-browser',
         'test-forge-old-browser',
