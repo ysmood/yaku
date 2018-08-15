@@ -2,9 +2,9 @@
 var name = process.argv[2];
 var isCountTest = process.argv[3];
 
-var getPromise = require("../test/getPromise");
+var getPromise = require('../test/getPromise');
 var Promise = getPromise(name);
-var testCount = require("./testCount");
+var testCount = require('./testCount');
 
 /**
  * The test will run 10 ^ 5 promises.
@@ -13,12 +13,12 @@ var testCount = require("./testCount");
  */
 
 var ver = (function () {
-    if (name.indexOf("yaku") > -1)
-        return require("../package.json").version;
-    else if (name === "native")
+    if (name.indexOf('yaku') > -1)
+        return require('../package.json').version;
+    else if (name === 'native')
         return process.version.slice(1);
     else
-        return require("../node_modules/" + name + "/package.json").version;
+        return require('../node_modules/' + name + '/package.json').version;
 })();
 
 var countDown = Math.pow(10, 5);
@@ -35,14 +35,14 @@ function logResult () {
     var mem = process.memoryUsage();
 
     return console.log( // eslint-disable-line
-        "| [" + name + "][]@" + ver
-        + " | " + (isCountTest === "on" ? testCount(name) : "disabled")
-        + " | " + getPromise.map[name].coverage
-        + " | " + (initTime + resolutionTime) + "ms"
-        + " / " + (Math.floor(mem.rss / 1024 / 1024)) + "MB"
-        + " | " + getPromise.map[name].optionalHelper
-        + " | " + getPromise.map[name].helper
-        + " | " + getPromise.map[name].size + "KB |"
+        '| [' + name + '][]@' + ver
+        + ' | ' + (isCountTest === 'on' ? testCount(name) : 'disabled')
+        + ' | ' + getPromise.map[name].coverage
+        + ' | ' + (initTime + resolutionTime) + 'ms'
+        + ' / ' + (Math.floor(mem.rss / 1024 / 1024)) + 'MB'
+        + ' | ' + getPromise.map[name].optionalHelper
+        + ' | ' + getPromise.map[name].helper
+        + ' | ' + getPromise.map[name].size + 'KB |'
     );
 }
 

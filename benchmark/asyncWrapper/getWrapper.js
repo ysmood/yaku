@@ -1,18 +1,18 @@
 var map = {
     yaku: function () {
         return {
-            Promise: require("../../src/yaku"),
-            async: require("../../src/async")
+            Promise: require('../../src/yaku'),
+            async: require('../../src/async')
         };
     },
     co: function () {
         return {
             Promise: global.Promise,
-            async: require("co").wrap
+            async: require('co').wrap
         };
     },
     bluebird: function () {
-        var Promise = require("bluebird");
+        var Promise = require('bluebird');
         return {
             Promise: Promise,
             async: Promise.coroutine

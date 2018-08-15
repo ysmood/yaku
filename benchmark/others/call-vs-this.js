@@ -1,6 +1,6 @@
 var bar, foo, obj, utils;
 
-utils = require("./utils");
+utils = require('./utils');
 
 foo = function () {
     return this.count++;

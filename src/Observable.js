@@ -1,5 +1,5 @@
-var _ = require("./_");
-var genIterator = require("./genIterator");
+var _ = require('./_');
+var genIterator = require('./genIterator');
 var Promise = _.Promise;
 
 /**

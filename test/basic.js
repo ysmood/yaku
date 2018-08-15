@@ -3,14 +3,14 @@
  * such as Bluebird, Q, or Yaku itself.
  */
 
-var getPromise = require("../test/getPromise");
+var getPromise = require('../test/getPromise');
 var Promise = getPromise(process.env.shim);
-var testSuit = require("./testSuit");
-var setPrototypeOf = require("setprototypeof");
+var testSuit = require('./testSuit');
+var setPrototypeOf = require('setprototypeof');
 
 var Symbol = global.Symbol || {};
 if (!Symbol.species)
-    Symbol.species = "Symbol(species)";
+    Symbol.species = 'Symbol(species)';
 
 function sleep (time) {
     return new Promise(function (resolve) {
@@ -18,12 +18,12 @@ function sleep (time) {
     });
 }
 
-module.exports = testSuit("basic", function (it) {
+module.exports = testSuit('basic', function (it) {
 
-    it("resolve order", ["DEHAFGBC", "DEHAFGBC"], function () {
+    it('resolve order', ['DEHAFGBC', 'DEHAFGBC'], function () {
         return new Promise(function (assertResolve) {
             var assertRes = [];
-            var result = "";
+            var result = '';
             var resolve, resolve2;
 
             var p = new Promise(function (r) {
@@ -32,38 +32,38 @@ module.exports = testSuit("basic", function (it) {
 
             resolve({
                 then: function () {
-                    result += "A";
+                    result += 'A';
                     throw Error();
                 }
             });
 
-            p["catch"](function () {
-                result += "B";
+            p['catch'](function () {
+                result += 'B';
             });
-            p["catch"](function () {
-                result += "C";
+            p['catch'](function () {
+                result += 'C';
                 assertRes.push(result);
             });
 
             var p2 = new Promise(function (r) {
                 resolve2 = r;
             });
-            resolve2(Object.defineProperty({}, "then", {
+            resolve2(Object.defineProperty({}, 'then', {
                 get: function () {
-                    result += "D";
+                    result += 'D';
                     throw Error();
                 }
             }));
-            result += "E";
-            p2["catch"](function () {
-                result += "F";
+            result += 'E';
+            p2['catch'](function () {
+                result += 'F';
             });
-            p2["catch"](function () {
-                result += "G";
+            p2['catch'](function () {
+                result += 'G';
             });
-            result += "H";
+            result += 'H';
             setTimeout(function () {
-                if (~result.indexOf("C")) {
+                if (~result.indexOf('C')) {
                     assertRes.push(result);
                 }
 
@@ -72,82 +72,82 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("resolve", "val", function () {
+    it('resolve', 'val', function () {
         return new Promise(function (resolve) {
-            return resolve("val");
+            return resolve('val');
         });
     });
 
-    it("resolve promise like value", "val", function () {
+    it('resolve promise like value', 'val', function () {
         return new Promise(function (resolve) {
             return resolve({
                 then: function (fulfil) {
-                    return fulfil("val");
+                    return fulfil('val');
                 }
             });
         });
     });
 
-    it("resolve another promise with an extra resolve", "ok", function () {
-        var val = Promise.resolve("ok");
+    it('resolve another promise with an extra resolve', 'ok', function () {
+        var val = Promise.resolve('ok');
 
         return new Promise(function (resolve) {
             resolve(val);
-            resolve("no");
+            resolve('no');
         });
     });
 
-    it("constructor throw", "val", function () {
+    it('constructor throw', 'val', function () {
         return new Promise(function () {
-            throw "val";
-        })["catch"](function (e) {
+            throw 'val';
+        })['catch'](function (e) {
             return e;
         });
     });
 
-    it("resolve static", "val", function () {
-        return Promise.resolve("val");
+    it('resolve static', 'val', function () {
+        return Promise.resolve('val');
     });
 
-    it("resolve promise", "val", function () {
-        return Promise.resolve(Promise.resolve("val"));
+    it('resolve promise', 'val', function () {
+        return Promise.resolve(Promise.resolve('val'));
     });
 
-    it("reject", "val", function () {
-        return Promise.reject("val")["catch"](function (val) {
+    it('reject', 'val', function () {
+        return Promise.reject('val')['catch'](function (val) {
             return val;
         });
     });
 
-    it("catch", "val", function () {
+    it('catch', 'val', function () {
         return new Promise(function (nil, reject) {
-            return reject("val");
-        })["catch"](function (val) {
+            return reject('val');
+        })['catch'](function (val) {
             return val;
         });
     });
 
-    it("circular chain", TypeError, function () {
+    it('circular chain', TypeError, function () {
         var p = Promise.resolve().then(function () {
             return p;
         });
 
-        return p["catch"](function (err) {
+        return p['catch'](function (err) {
             return err.constructor;
         });
     });
 
-    it("chain", "ok", function () {
+    it('chain', 'ok', function () {
         return Promise.resolve().then(function () {
             return new Promise(function (r) {
                 return setTimeout(function () {
-                    return r("ok");
+                    return r('ok');
                 }, 10);
             });
         });
     });
 
-    it("when context is null", "Invalid this", function () {
+    it('when context is null', 'Invalid this', function () {
         try {
             Promise.call(null);
         } catch (err) {
@@ -155,7 +155,7 @@ module.exports = testSuit("basic", function (it) {
         }
     });
 
-    it("when executor is null", "Invalid argument", function () {
+    it('when executor is null', 'Invalid argument', function () {
         try {
             new Promise(null);
         } catch (err) {
@@ -163,7 +163,7 @@ module.exports = testSuit("basic", function (it) {
         }
     });
 
-    it("when yaku.prototype.then's context is not yaku", TypeError, function () {
+    it('when yaku.prototype.then\'s context is not yaku', TypeError, function () {
         try {
             var p = new Promise(function () {});
             p.then.call({});
@@ -172,11 +172,11 @@ module.exports = testSuit("basic", function (it) {
         }
     });
 
-    it("all with empty", [], function () {
+    it('all with empty', [], function () {
         return Promise.all([]);
     });
 
-    it("all with es5 array", [1, 2, 3], function () {
+    it('all with es5 array', [1, 2, 3], function () {
         function es5Array () {
             var arr = [];
             arr.push.apply(arr, arguments);
@@ -192,27 +192,27 @@ module.exports = testSuit("basic", function (it) {
         return Promise.all(a);
     });
 
-    it("all reject", "err", function () {
+    it('all reject', 'err', function () {
         return Promise.all([
-            Promise.reject("err")
-        ])["catch"](function (err) { return err; });
+            Promise.reject('err')
+        ])['catch'](function (err) { return err; });
     });
 
-    it("all with null", true, function () {
-        return Promise.all(null)["catch"](function (err) {
+    it('all with null', true, function () {
+        return Promise.all(null)['catch'](function (err) {
             return err instanceof TypeError;
         });
     });
 
-    it("all with array like", true, function () {
+    it('all with array like', true, function () {
         return Promise.all({
-            "0": 1, "1": 2, "2": 3, length: 3
-        })["catch"](function (err) {
+            '0': 1, '1': 2, '2': 3, length: 3
+        })['catch'](function (err) {
             return err instanceof TypeError;
         });
     });
 
-    it("all", [1, "test", "x", 10, 0], function () {
+    it('all', [1, 'test', 'x', 10, 0], function () {
         function randomPromise (i) {
             return new Promise(function (r) {
                 return setTimeout(function () {
@@ -222,7 +222,7 @@ module.exports = testSuit("basic", function (it) {
         }
 
         return Promise.all([
-            randomPromise(1), randomPromise("test"), Promise.resolve("x"), new Promise(function (r) {
+            randomPromise(1), randomPromise('test'), Promise.resolve('x'), new Promise(function (r) {
                 return setTimeout(function () {
                     return r(10);
                 }, 1);
@@ -232,7 +232,7 @@ module.exports = testSuit("basic", function (it) {
         ]);
     });
 
-    it("all with custom Symbol.iterator", [1, 2, 3], function () {
+    it('all with custom Symbol.iterator', [1, 2, 3], function () {
         var arr = [];
 
         if (!Symbol.iterator)
@@ -246,7 +246,7 @@ module.exports = testSuit("basic", function (it) {
         return Promise.all(arr);
     });
 
-    it("all with iterator like", [1, 2, 3], function () {
+    it('all with iterator like', [1, 2, 3], function () {
         var arr = {
             list: [3, 2, 1],
             next: function () {
@@ -261,25 +261,25 @@ module.exports = testSuit("basic", function (it) {
         return Promise.all(arr);
     });
 
-    it("all with iterator like, iteration error", "error", function () {
+    it('all with iterator like, iteration error', 'error', function () {
         var arr = {
             next: function () {
-                throw "error";
+                throw 'error';
             }
         };
         arr[Symbol.iterator] = function () { return this; };
 
-        return Promise.all(arr)["catch"](function (err) {
+        return Promise.all(arr)['catch'](function (err) {
             return err;
         });
     });
 
-    it("all with iterator like, iteration", ["ok", "ok", "ok"], function () {
+    it('all with iterator like, iteration', ['ok', 'ok', 'ok'], function () {
         var iter = {
             count: 3,
             next: function () {
                 return {
-                    value: "ok",
+                    value: 'ok',
                     done: !this.count--
                 };
             }
@@ -287,7 +287,7 @@ module.exports = testSuit("basic", function (it) {
         return Promise.all(iter);
     });
 
-    it("all with iterator like, resolve error", "clean", function () {
+    it('all with iterator like, resolve error', 'clean', function () {
         function SubPromise (it) {
             var self = new Promise(it);
             setPrototypeOf(self, SubPromise.prototype);
@@ -301,8 +301,8 @@ module.exports = testSuit("basic", function (it) {
         return new Promise(function (resolve) {
             var arr = {
                 count: 2,
-                "return": function () {
-                    resolve("clean");
+                'return': function () {
+                    resolve('clean');
                 },
                 next: function () {
                     return {
@@ -312,31 +312,31 @@ module.exports = testSuit("basic", function (it) {
             };
             arr[Symbol.iterator] = function () { return this; };
 
-            SubPromise.resolve = function () { throw "err"; };
+            SubPromise.resolve = function () { throw 'err'; };
 
-            SubPromise.all(arr)["catch"](function () {});
+            SubPromise.all(arr)['catch'](function () {});
         });
     });
 
-    it("race with empty should never resolve", "ok", function () {
+    it('race with empty should never resolve', 'ok', function () {
         return new Promise(function (resolve) {
             Promise.race([]).then(function () {
-                resolve("err");
+                resolve('err');
             });
 
             sleep(30).then(function () {
-                resolve("ok");
+                resolve('ok');
             });
         });
     });
 
-    it("race with null", true, function () {
-        return Promise.race(null)["catch"](function (err) {
+    it('race with null', true, function () {
+        return Promise.race(null)['catch'](function (err) {
             return err instanceof TypeError;
         });
     });
 
-    it("race", 0, function () {
+    it('race', 0, function () {
         return Promise.race([
             new Promise(function (r) {
                 return setTimeout(function () {
@@ -351,7 +351,7 @@ module.exports = testSuit("basic", function (it) {
         ]);
     });
 
-    it("race reject", "err", function () {
+    it('race reject', 'err', function () {
         return Promise.race([
             new Promise(function (r) {
                 return setTimeout(function () {
@@ -359,12 +359,12 @@ module.exports = testSuit("basic", function (it) {
                 });
             }),
             new Promise(function (r, rr) {
-                return rr("err");
+                return rr('err');
             })
-        ])["catch"](function (err) { return err; });
+        ])['catch'](function (err) { return err; });
     });
 
-    it("race with custom Symbol.iterator", 1, function () {
+    it('race with custom Symbol.iterator', 1, function () {
         var arr = [];
 
         if (!Symbol.iterator)
@@ -378,7 +378,7 @@ module.exports = testSuit("basic", function (it) {
         return Promise.race(arr);
     });
 
-    it("race with iterator like", 1, function () {
+    it('race with iterator like', 1, function () {
         var arr = {
             list: [3, 2, 1],
             next: function () {
@@ -393,20 +393,20 @@ module.exports = testSuit("basic", function (it) {
         return Promise.race(arr);
     });
 
-    it("race with iterator like, iteration error", "error", function () {
+    it('race with iterator like, iteration error', 'error', function () {
         var arr = {
             next: function () {
-                throw "error";
+                throw 'error';
             }
         };
         arr[Symbol.iterator] = function () { return this; };
 
-        return Promise.race(arr)["catch"](function (err) {
+        return Promise.race(arr)['catch'](function (err) {
             return err;
         });
     });
 
-    it("race with iterator like, resolve error", "clean", function () {
+    it('race with iterator like, resolve error', 'clean', function () {
         function SubPromise (it) {
             var self;
             self = new Promise(it);
@@ -421,8 +421,8 @@ module.exports = testSuit("basic", function (it) {
         return new Promise(function (resolve) {
             var arr = {
                 count: 2,
-                "return": function () {
-                    resolve("clean");
+                'return': function () {
+                    resolve('clean');
                 },
                 next: function () {
                     return {
@@ -432,18 +432,18 @@ module.exports = testSuit("basic", function (it) {
             };
             arr[Symbol.iterator] = function () { return this; };
 
-            SubPromise.resolve = function () { throw "err"; };
+            SubPromise.resolve = function () { throw 'err'; };
 
-            SubPromise.race(arr)["catch"](function () {});
+            SubPromise.race(arr)['catch'](function () {});
         });
     });
 
-    it("subclass", ["subclass", "subclass", "subclass", "subclass", "subclass", true, true, 5, 6], function () {
+    it('subclass', ['subclass', 'subclass', 'subclass', 'subclass', 'subclass', true, true, 5, 6], function () {
         function SubPromise (it) {
             var self;
             self = new Promise(it);
             setPrototypeOf(self, SubPromise.prototype);
-            self.mine = "subclass";
+            self.mine = 'subclass';
             return self;
         }
 
@@ -481,8 +481,8 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("subclass with forged constructor", "ok", function () {
-        Symbol.species = "Symbol(species)";
+    it('subclass with forged constructor', 'ok', function () {
+        Symbol.species = 'Symbol(species)';
 
         var SubPromise = function () {};
         var ret;
@@ -491,7 +491,7 @@ module.exports = testSuit("basic", function (it) {
         SubPromise[Symbol.species] = function (executor) {
             executor(function () {}, function () {});
 
-            ret = "ok";
+            ret = 'ok';
         };
 
         var p = Promise.resolve();
@@ -503,8 +503,8 @@ module.exports = testSuit("basic", function (it) {
         return ret;
     });
 
-    it("subclass with forged constructor error", TypeError, function () {
-        Symbol.species = "Symbol(species)";
+    it('subclass with forged constructor error', TypeError, function () {
+        Symbol.species = 'Symbol(species)';
 
         var SubPromise = function () {};
 
@@ -529,8 +529,8 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("subclass with forged constructor executor without handler", TypeError, function () {
-        Symbol.species = "Symbol(species)";
+    it('subclass with forged constructor executor without handler', TypeError, function () {
+        Symbol.species = 'Symbol(species)';
 
         var SubPromise = function () {};
 
@@ -550,18 +550,18 @@ module.exports = testSuit("basic", function (it) {
         }
     });
 
-    it("subclass with null constructor", "ok", function () {
-        Symbol.species = "Symbol(species)";
+    it('subclass with null constructor', 'ok', function () {
+        Symbol.species = 'Symbol(species)';
         var p = Promise.resolve();
 
         p.constructor = null;
 
         return p.then(function () {
-            return "ok";
+            return 'ok';
         });
     });
 
-    it("subclass PromiseCapability promise.then", true, function () {
+    it('subclass PromiseCapability promise.then', true, function () {
         var promise, FakePromise1, FakePromise2;
         promise = new Promise(function (it){ it(42); });
 
@@ -577,13 +577,13 @@ module.exports = testSuit("basic", function (it) {
         return promise.then(function () {}) instanceof FakePromise2;
     });
 
-    it("subclass PromiseCapability fake constructor promise.then", "ok", function () {
+    it('subclass PromiseCapability fake constructor promise.then', 'ok', function () {
         var promise = new Promise(function (it){ it(42); });
 
         promise.constructor = function () { };
 
         return promise.then(function () {
-            return "ok";
+            return 'ok';
         });
     });
 

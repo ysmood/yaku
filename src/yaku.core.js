@@ -4,52 +4,52 @@
  */
 
 (function () {
-    "use strict";
+    'use strict';
 
     var $undefined
-    , $null = null
-    , isBrowser = typeof self === "object"
-    , root = isBrowser ? self : global
-    , nativePromise = root.Promise
-    , process = root.process
-    , Arr = Array
+        , $null = null
+        , isBrowser = typeof self === 'object'
+        , root = isBrowser ? self : global
+        , nativePromise = root.Promise
+        , process = root.process
+        , Arr = Array
 
-    , $rejected = 0
-    , $resolved = 1
-    , $pending = 2
+        , $rejected = 0
+        , $resolved = 1
+        , $pending = 2
 
-    , $Symbol = "Symbol"
-    , $iterator = "iterator"
-    , $species = "species"
-    , $speciesKey = $Symbol + "(" + $species + ")"
-    , $return = "return"
+        , $Symbol = 'Symbol'
+        , $iterator = 'iterator'
+        , $species = 'species'
+        , $speciesKey = $Symbol + '(' + $species + ')'
+        , $return = 'return'
 
-    , $unhandled = "_uh"
+        , $unhandled = '_uh'
 
-    , $invalidThis = "Invalid this"
-    , $invalidArgument = "Invalid argument"
-    , $promiseCircularChain = "Chaining cycle detected for promise"
-    , $rejectionHandled = "rejectionHandled"
-    , $unhandledRejection = "unhandledRejection"
+        , $invalidThis = 'Invalid this'
+        , $invalidArgument = 'Invalid argument'
+        , $promiseCircularChain = 'Chaining cycle detected for promise'
+        , $rejectionHandled = 'rejectionHandled'
+        , $unhandledRejection = 'unhandledRejection'
 
-    , $tryCatchFn
-    , $tryCatchThis
-    , $tryErr = { e: $null }
-    , $noop = function () {}
+        , $tryCatchFn
+        , $tryCatchThis
+        , $tryErr = { e: $null }
+        , $noop = function () {}
 
-    , Symbol = root[$Symbol] || {}
-    , nextTick = isBrowser ?
-        function (fn) {
-            nativePromise ?
-                new nativePromise(function (resolve) { resolve(); }).then(fn) :
-                setTimeout(fn);
-        } :
-        process.nextTick
-    , speciesConstructor = function (O, D) {
-        var C = O.constructor;
+        , Symbol = root[$Symbol] || {}
+        , nextTick = isBrowser ?
+            function (fn) {
+                nativePromise ?
+                    new nativePromise(function (resolve) { resolve(); }).then(fn) :
+                    setTimeout(fn);
+            } :
+            process.nextTick
+        , speciesConstructor = function (O, D) {
+            var C = O.constructor;
 
-        return C ? (C[getSpecies()] || D) : D;
-    }
+            return C ? (C[getSpecies()] || D) : D;
+        }
     ;
 
     /**
@@ -86,7 +86,7 @@
         }
     };
 
-    Yaku["default"] = Yaku;
+    Yaku['default'] = Yaku;
 
     extendPrototype(Yaku, {
         /**
@@ -133,7 +133,7 @@
          * });
          * ```
          */
-        "catch": function (onRejected) {
+        'catch': function (onRejected) {
             return this.then($undefined, onRejected);
         },
 
@@ -154,7 +154,7 @@
          * });
          * ```
          */
-        "finally": function (onFinally) {
+        'finally': function (onFinally) {
             return this.then(function (val) {
                 return Yaku.resolve(onFinally()).then(function () {
                     return val;
@@ -229,19 +229,19 @@
      */
     Yaku.race = function race (iterable) {
         var self = this
-        , p = newCapablePromise(self)
+            , p = newCapablePromise(self)
 
-        , resolve = function (val) {
-            settlePromise(p, $resolved, val);
-        }
+            , resolve = function (val) {
+                settlePromise(p, $resolved, val);
+            }
 
-        , reject = function (val) {
-            settlePromise(p, $rejected, val);
-        }
+            , reject = function (val) {
+                settlePromise(p, $rejected, val);
+            }
 
-        , ret = genTryCatcher(each)(iterable, function (v) {
-            self.resolve(v).then(resolve, reject);
-        });
+            , ret = genTryCatcher(each)(iterable, function (v) {
+                self.resolve(v).then(resolve, reject);
+            });
 
         if (ret === $tryErr) return self.reject(ret.e);
 
@@ -285,9 +285,9 @@
      */
     Yaku.all = function all (iterable) {
         var self = this
-        , p1 = newCapablePromise(self)
-        , res = []
-        , ret
+            , p1 = newCapablePromise(self)
+            , res = []
+            , ret
         ;
 
         function reject (reason) {
@@ -338,11 +338,11 @@
     }
 
     function isObject (obj) {
-        return obj && typeof obj === "object";
+        return obj && typeof obj === 'object';
     }
 
     function isFunction (obj) {
-        return typeof obj === "function";
+        return typeof obj === 'function';
     }
 
     function isInstanceOf (a, b) {
@@ -393,7 +393,7 @@
          * @private
          */
         var fnQueue = Arr(initQueueSize)
-        , fnQueueLen = 0;
+            , fnQueueLen = 0;
 
         /**
          * Run all queued functions.
@@ -427,10 +427,10 @@
      */
     function each (iterable, fn) {
         var len
-        , i = 0
-        , iter
-        , item
-        , ret
+            , i = 0
+            , iter
+            , item
+            , ret
         ;
 
         if (!iterable) throw genTypeError($invalidArgument);
@@ -512,7 +512,7 @@
     });
 
     function emitEvent (name, p) {
-        var browserEventName = "on" + name.toLowerCase()
+        var browserEventName = 'on' + name.toLowerCase()
             , browserHandler = root[browserEventName];
 
         if (process && process.listeners(name).length)
@@ -599,8 +599,8 @@
             node._umark = true;
 
         var i = 0
-        , len = node._pCount
-        , child;
+            , len = node._pCount
+            , child;
 
         while (i < len) {
             child = node[i++];
@@ -622,7 +622,7 @@
      */
     function settlePromise (p, state, value) {
         var i = 0
-        , len = p._pCount;
+            , len = p._pCount;
 
         // 2.1.2
         // 2.1.3

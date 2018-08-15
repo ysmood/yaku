@@ -88,10 +88,10 @@
      */
     function addHandler (p1, p2, onFulfilled, onRejected) {
         // 2.2.1
-        if (typeof onFulfilled === "function") {
+        if (typeof onFulfilled === 'function') {
             p2._onFulfilled = onFulfilled;
         }
-        if (typeof onRejected === "function") {
+        if (typeof onRejected === 'function') {
             p2._onRejected = onRejected;
         }
 
@@ -177,14 +177,14 @@
     function settleWithX (p, x) {
         // 2.3.1
         if (x === p && x) {
-            settlePromise(p, $rejected, new TypeError("promise_circular_chain"));
+            settlePromise(p, $rejected, new TypeError('promise_circular_chain'));
             return;
         }
 
         // 2.3.2
         // 2.3.3
         var xthen, type = typeof x;
-        if (x !== null && (type === "function" || type === "object")) {
+        if (x !== null && (type === 'function' || type === 'object')) {
             try {
                 // 2.3.2.1
                 xthen = x.then;
@@ -193,7 +193,7 @@
                 settlePromise(p, $rejected, err);
                 return;
             }
-            if (typeof xthen === "function") {
+            if (typeof xthen === 'function') {
                 settleXthen(p, x, xthen);
             } else {
                 // 2.3.3.4

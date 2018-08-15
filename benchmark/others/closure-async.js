@@ -14,8 +14,8 @@ closure = function () {
     async = function (fn) {
         return list[len++] = fn;
     };
-    process.on("exit", function () {
-        return console.timeEnd("closure");
+    process.on('exit', function () {
+        return console.timeEnd('closure');
     });
     foo = function () {
         var a, b;
@@ -34,7 +34,7 @@ closure = function () {
         }
         return results;
     });
-    console.time("closure");
+    console.time('closure');
     i = countDown;
     results = [];
     while (i--) {

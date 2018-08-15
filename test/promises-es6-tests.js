@@ -2,10 +2,10 @@
  * Test for ES6 specs
  */
 
-var promisesES6Tests = require("promises-es6-tests");
-var assert = require("assert");
-var kit = require("nokit");
-var getPromise = require("./getPromise");
+var promisesES6Tests = require('promises-es6-tests');
+var assert = require('assert');
+var kit = require('nokit');
+var getPromise = require('./getPromise');
 var opts = JSON.parse(process.argv[2]);
 
 var Promise = getPromise(opts.shim);
@@ -31,4 +31,4 @@ var adapter = {
     }
 };
 
-kit.promisify(promisesES6Tests)(adapter)["catch"](kit.throw);
+kit.promisify(promisesES6Tests)(adapter)['catch'](kit.throw);

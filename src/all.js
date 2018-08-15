@@ -1,6 +1,6 @@
-var _ = require("./_");
+var _ = require('./_');
 var Promise = _.Promise;
-var genIterator = require("./genIterator");
+var genIterator = require('./genIterator');
 
 var tryErr = {};
 
@@ -26,7 +26,7 @@ module.exports = function (limit, list) {
 
         function genNext () {
             running--;
-            return step("next");
+            return step('next');
         }
 
         function genThrow (reason) {
@@ -54,7 +54,7 @@ module.exports = function (limit, list) {
             }
         }
 
-        var ret = tryCatch(step, "next");
+        var ret = tryCatch(step, 'next');
 
         if (ret === tryErr)
             reject(ret.err);

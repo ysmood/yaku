@@ -7,7 +7,7 @@
   "scripts": {
     "no": "no",
     "test": "no test test-core",
-    "prepublish": "no clean build"
+    "prepublishOnly": "no clean build"
   },
   "repository": {
     "type": "git",
@@ -41,64 +41,26 @@
     "dist/yaku.browser.global.min.js"
   ],
   "devDependencies": {
-    "bluebird": "3.5.0",
+    "bluebird": "3.5.1",
     "co": "4.6.0",
-    "core-js": "2.4.1",
-    "coveralls": "2.13.0",
-    "es6-promise": "4.1.0",
+    "core-js": "2.5.7",
+    "coveralls": "3.0.2",
+    "es6-promise": "4.2.4",
     "es6-shim": "0.35.3",
-    "eslint": "3.19.0",
+    "eslint": "5.3.0",
     "istanbul": "0.4.5",
     "junit": "1.4.9",
-    "mocha": "3.2.0",
+    "mocha": "^5.2.0",
     "my-promise": "1.1.0",
-    "nokit": "0.23.26",
-    "phantomjs-prebuilt": "2.1.14",
+    "nokit": "0.27.7",
     "pinkie": "2.0.4",
     "promises-aplus-tests": "*",
     "promises-es6-tests": "*",
-    "q": "1.5.0",
-    "setprototypeof": "1.0.3",
-    "uglify-js": "2.8.22",
-    "webpack": "2.4.1"
-  },
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": 3
-    },
-    "env": {
-      "browser": true,
-      "node": true,
-      "es6": true
-    },
-    "extends": "eslint:recommended",
-    "rules": {
-      "indent": [
-        2,
-        4
-      ],
-      "linebreak-style": [
-        2,
-        "unix"
-      ],
-      "semi": [
-        2,
-        "always"
-      ],
-      "quotes": [
-        2,
-        "double"
-      ],
-      "no-cond-assign": 0,
-      "no-trailing-spaces": 2,
-      "space-before-function-paren": [
-        2,
-        "always"
-      ],
-      "eqeqeq": [
-        2,
-        "allow-null"
-      ]
-    }
+    "puppeteer": "^1.7.0",
+    "q": "1.5.1",
+    "setprototypeof": "1.1.0",
+    "uglify-js": "3.4.7",
+    "webpack": "4.16.5",
+    "webpack-cli": "^3.1.0"
   }
 }

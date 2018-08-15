@@ -43,7 +43,7 @@ module.exports = {
      * .then(() => kit.log('all done!'));
      * ```
      */
-    all: require("./all"),
+    all: require('./all'),
 
     /**
      * Similar with the `Promise.race`, but only rejects when every entry rejects.
@@ -62,7 +62,7 @@ module.exports = {
      * });
      * ```
      */
-    any: require("./any"),
+    any: require('./any'),
 
     /**
      * Generator based async/await wrapper.
@@ -82,7 +82,7 @@ module.exports = {
      * });
      * ```
      */
-    async: require("./async"),
+    async: require('./async'),
 
     /**
      * If a function returns promise, convert it to
@@ -91,13 +91,13 @@ module.exports = {
      * @param  {Any} self The `this` to bind to the fn.
      * @return {Function}
      */
-    callbackify: require("./callbackify"),
+    callbackify: require('./callbackify'),
 
     /**
      * **deprecate** Create a `jQuery.Deferred` like object.
      * It will cause some buggy problems, please don't use it.
      */
-    Deferred: require("./Deferred"),
+    Deferred: require('./Deferred'),
 
     /**
      * Creates a function that is the composition of the provided functions.
@@ -155,7 +155,7 @@ module.exports = {
      * walker('test.com');
      * ```
      */
-    flow: require("./flow"),
+    flow: require('./flow'),
 
     /**
      * Enable a helper to catch specific error type.
@@ -184,7 +184,7 @@ module.exports = {
      * });
      * ```
      */
-    guard: require("./guard"),
+    guard: require('./guard'),
 
     /**
      * Just like `Promise.all`, but you pass in a key-value dict,
@@ -203,7 +203,7 @@ module.exports = {
      * })
      * ```
      */
-    hash: require("./hash"),
+    hash: require('./hash'),
 
     /**
      * if-else helper
@@ -223,7 +223,7 @@ module.exports = {
       * })
      * ```
      */
-    "if": require("./if"),
+    'if': require('./if'),
 
     /**
      * **deprecate** Check if an object is a promise-like object.
@@ -231,13 +231,13 @@ module.exports = {
      * @param  {Any}  obj
      * @return {Boolean}
      */
-    isPromise: require("./isPromise"),
+    isPromise: require('./isPromise'),
 
     /**
      * Create a promise that never ends.
      * @return {Promise} A promise that will end the current pipeline.
      */
-    never: require("./never"),
+    never: require('./never'),
 
     /**
      * Convert a node callback style function to a function that returns
@@ -266,7 +266,7 @@ module.exports = {
      * });
      * ```
      */
-    promisify: require("./promisify"),
+    promisify: require('./promisify'),
 
     /**
      * Create a promise that will wait for a while before resolution.
@@ -279,13 +279,13 @@ module.exports = {
      * sleep(1000).then(() => console.log('after one second'));
      * ```
      */
-    sleep: require("./sleep"),
+    sleep: require('./sleep'),
 
     /**
      * Read the `Observable` section.
      * @type {Function}
      */
-    Observable: require("./Observable"),
+    Observable: require('./Observable'),
 
     /**
      * Retry a function until it resolves before a mount of times, or reject with all
@@ -335,7 +335,7 @@ module.exports = {
      * );
      * ```
      */
-    retry: require("./retry"),
+    retry: require('./retry'),
 
     /**
      * Throw an error to break the program.
@@ -349,7 +349,7 @@ module.exports = {
      * });
      * ```
      */
-    "throw": require("./throw"),
+    'throw': require('./throw'),
 
     /**
      * Create a promise that will reject after a while if the passed in promise
@@ -367,5 +367,5 @@ module.exports = {
      * });
      * ```
      */
-    timeout: require("./timeout")
+    timeout: require('./timeout')
 };

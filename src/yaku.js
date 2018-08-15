@@ -4,46 +4,46 @@
  License MIT
 */
 (function () {
-    "use strict";
+    'use strict';
 
     var $undefined
-    , $null = null
-    , isBrowser = typeof self === "object"
-    , root = isBrowser ? self : global
-    , nativePromise = root.Promise
-    , process = root.process
-    , console = root.console
-    , isLongStackTrace = false
-    , Arr = Array
-    , Err = Error
+        , $null = null
+        , isBrowser = typeof self === 'object'
+        , root = isBrowser ? self : global
+        , nativePromise = root.Promise
+        , process = root.process
+        , console = root.console
+        , isLongStackTrace = false
+        , Arr = Array
+        , Err = Error
 
-    , $rejected = 1
-    , $resolved = 2
-    , $pending = 3
+        , $rejected = 1
+        , $resolved = 2
+        , $pending = 3
 
-    , $Symbol = "Symbol"
-    , $iterator = "iterator"
-    , $species = "species"
-    , $speciesKey = $Symbol + "(" + $species + ")"
-    , $return = "return"
+        , $Symbol = 'Symbol'
+        , $iterator = 'iterator'
+        , $species = 'species'
+        , $speciesKey = $Symbol + '(' + $species + ')'
+        , $return = 'return'
 
-    , $unhandled = "_uh"
-    , $promiseTrace = "_pt"
-    , $settlerTrace = "_st"
+        , $unhandled = '_uh'
+        , $promiseTrace = '_pt'
+        , $settlerTrace = '_st'
 
-    , $invalidThis = "Invalid this"
-    , $invalidArgument = "Invalid argument"
-    , $fromPrevious = "\nFrom previous "
-    , $promiseCircularChain = "Chaining cycle detected for promise"
-    , $unhandledRejectionMsg = "Uncaught (in promise)"
-    , $rejectionHandled = "rejectionHandled"
-    , $unhandledRejection = "unhandledRejection"
+        , $invalidThis = 'Invalid this'
+        , $invalidArgument = 'Invalid argument'
+        , $fromPrevious = '\nFrom previous '
+        , $promiseCircularChain = 'Chaining cycle detected for promise'
+        , $unhandledRejectionMsg = 'Uncaught (in promise)'
+        , $rejectionHandled = 'rejectionHandled'
+        , $unhandledRejection = 'unhandledRejection'
 
-    , $tryCatchFn
-    , $tryCatchThis
-    , $tryErr = { e: $null }
-    , $noop = function () {}
-    , $cleanStackReg = /^.+\/node_modules\/yaku\/.+\n?/mg
+        , $tryCatchFn
+        , $tryCatchThis
+        , $tryErr = { e: $null }
+        , $noop = function () {}
+        , $cleanStackReg = /^.+\/node_modules\/yaku\/.+\n?/mg
     ;
 
     /**
@@ -82,7 +82,7 @@
         }
     };
 
-    Yaku["default"] = Yaku;
+    Yaku['default'] = Yaku;
 
     extend(Yaku.prototype, {
         /**
@@ -129,7 +129,7 @@
          * });
          * ```
          */
-        "catch": function (onRejected) {
+        'catch': function (onRejected) {
             return this.then($undefined, onRejected);
         },
 
@@ -149,7 +149,7 @@
          * });
          * ```
          */
-        "finally": function (onFinally) {
+        'finally': function (onFinally) {
             return this.then(function (val) {
                 return Yaku.resolve(onFinally()).then(function () {
                     return val;
@@ -221,19 +221,19 @@
      */
     Yaku.race = function (iterable) {
         var self = this
-        , p = newCapablePromise(self)
+            , p = newCapablePromise(self)
 
-        , resolve = function (val) {
-            settlePromise(p, $resolved, val);
-        }
+            , resolve = function (val) {
+                settlePromise(p, $resolved, val);
+            }
 
-        , reject = function (val) {
-            settlePromise(p, $rejected, val);
-        }
+            , reject = function (val) {
+                settlePromise(p, $rejected, val);
+            }
 
-        , ret = genTryCatcher(each)(iterable, function (v) {
-            self.resolve(v).then(resolve, reject);
-        });
+            , ret = genTryCatcher(each)(iterable, function (v) {
+                self.resolve(v).then(resolve, reject);
+            });
 
         if (ret === $tryErr) return self.reject(ret.e);
 
@@ -277,9 +277,9 @@
      */
     Yaku.all = function (iterable) {
         var self = this
-        , p1 = newCapablePromise(self)
-        , res = []
-        , ret
+            , p1 = newCapablePromise(self)
+            , res = []
+            , ret
         ;
 
         function reject (reason) {
@@ -436,11 +436,11 @@
     }
 
     function isObject (obj) {
-        return obj && typeof obj === "object";
+        return obj && typeof obj === 'object';
     }
 
     function isFunction (obj) {
-        return typeof obj === "function";
+        return typeof obj === 'function';
     }
 
     function isInstanceOf (a, b) {
@@ -495,7 +495,7 @@
          * @private
          */
         var fnQueue = Arr(initQueueSize)
-        , fnQueueLen = 0;
+            , fnQueueLen = 0;
 
         /**
          * Run all queued functions.
@@ -529,10 +529,10 @@
      */
     function each (iterable, fn) {
         var len
-        , i = 0
-        , iter
-        , item
-        , ret
+            , i = 0
+            , iter
+            , item
+            , ret
         ;
 
         if (!iterable) throw genTypeError($invalidArgument);
@@ -574,7 +574,7 @@
     }
 
     function genTraceInfo (noTitle) {
-        return (noTitle ? "" : $fromPrevious) + new Err().stack;
+        return (noTitle ? '' : $fromPrevious) + new Err().stack;
     }
 
 
@@ -619,7 +619,7 @@
     });
 
     function emitEvent (name, p) {
-        var browserEventName = "on" + name.toLowerCase()
+        var browserEventName = 'on' + name.toLowerCase()
             , browserHandler = root[browserEventName];
 
         if (process && process.listeners(name).length)
@@ -712,8 +712,8 @@
             node._umark = true;
 
         var i = 0
-        , len = node._c
-        , child;
+            , len = node._c
+            , child;
 
         while (i < len) {
             child = node[i++];
@@ -725,7 +725,7 @@
         var stackInfo = [];
 
         function push (trace) {
-            return stackInfo.push(trace.replace(/^\s+|\s+$/g, ""));
+            return stackInfo.push(trace.replace(/^\s+|\s+$/g, ''));
         }
 
         if (isLongStackTrace) {
@@ -737,14 +737,14 @@
             (function iter (node) {
                 if (node && $promiseTrace in node) {
                     iter(node._next);
-                    push(node[$promiseTrace] + "");
+                    push(node[$promiseTrace] + '');
                     iter(node._p);
                 }
             })(p);
         }
 
         return (reason && reason.stack ? reason.stack : reason) +
-            ("\n" + stackInfo.join("\n")).replace($cleanStackReg, "");
+            ('\n' + stackInfo.join('\n')).replace($cleanStackReg, '');
     }
 
     function callHanler (handler, value) {
@@ -761,7 +761,7 @@
      */
     function settlePromise (p, state, value) {
         var i = 0
-        , len = p._c;
+            , len = p._c;
 
         // 2.1.2
         // 2.1.3

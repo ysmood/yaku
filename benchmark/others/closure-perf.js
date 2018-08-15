@@ -36,8 +36,8 @@ test = function (name, fn) {
     return console.timeEnd(name);
 };
 
-test("foo", foo);
+test('foo', foo);
 
-test("foo_", foo_);
+test('foo_', foo_);
 
-test("bar", bar);
+test('bar', bar);

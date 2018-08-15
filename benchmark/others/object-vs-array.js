@@ -1,6 +1,6 @@
 var utils;
 
-utils = require("./utils");
+utils = require('./utils');
 
 console.log(utils.run(3, function () {
     return [1, 2, 3, 4];

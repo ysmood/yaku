@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
-var Promise = require("../lib/yaku.js");
+var Promise = require('../lib/yaku.js');
 
 new Promise(function (resolve) {
     setTimeout(function () {
         resolve();
     });
 }).then(function () {
-    global.console.log("done");
+    global.console.log('done');
 });

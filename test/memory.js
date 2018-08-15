@@ -4,7 +4,7 @@
 
 var Promise, count, p;
 
-Promise = require("../src/yaku");
+Promise = require('../src/yaku');
 
 p = Promise.resolve();
 
@@ -16,7 +16,7 @@ setInterval(function () {
             return setTimeout(function () {
                 count++;
                 return r({
-                    data: "ok"
+                    data: 'ok'
                 });
             });
         });

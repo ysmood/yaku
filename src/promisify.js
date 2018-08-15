@@ -1,10 +1,10 @@
-var _ = require("./_");
+var _ = require('./_');
 var isFn = _.isFunction;
 
 module.exports = function (fn, self) {
     return function (a, b, c, d, e) {
         var len = arguments.length
-        , args, promise, resolve, reject;
+            , args, promise, resolve, reject;
 
         promise = new _.Promise(function (r, rj) {
             resolve = r;

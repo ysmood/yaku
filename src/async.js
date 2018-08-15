@@ -1,4 +1,4 @@
-var Promise = require("./_").Promise;
+var Promise = require('./_').Promise;
 
 var tryErr = {};
 
@@ -16,11 +16,11 @@ module.exports = function (generator) {
         var gen = generator.apply(this, arguments);
 
         function genNext (val) {
-            return step("next", val);
+            return step('next', val);
         }
 
         function genThrow (val) {
-            return step("throw", val);
+            return step('throw', val);
         }
 
         function step (key, val) {
@@ -33,7 +33,7 @@ module.exports = function (generator) {
             }
         }
 
-        var ret = tryCatch(step, "next");
+        var ret = tryCatch(step, 'next');
 
         if (ret === tryErr)
             return Promise.reject(ret.err);

@@ -1,6 +1,6 @@
 var A, a, utils;
 
-utils = require("./utils");
+utils = require('./utils');
 
 A = (function () {
     var bar1;

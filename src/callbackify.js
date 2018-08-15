@@ -1,4 +1,4 @@
-var _ = require("./_");
+var _ = require('./_');
 
 module.exports = function (fn, self) {
     return function () {
@@ -16,6 +16,6 @@ module.exports = function (fn, self) {
 
         return fn.apply(self, args).then(function (val) {
             cb(null, val);
-        })["catch"](cb);
+        })['catch'](cb);
     };
 };

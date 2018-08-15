@@ -1,4 +1,4 @@
-var _ = require("./_");
+var _ = require('./_');
 
 // Hack: we don't create new object to pass the newly iterated object.
 var $ArrIterContainer = {};
@@ -36,7 +36,7 @@ function genIterator (obj) {
             return obj;
         }
     }
-    throw new TypeError("invalid_argument");
+    throw new TypeError('invalid_argument');
 }
 
 module.exports = genIterator;

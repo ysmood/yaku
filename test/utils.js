@@ -2,14 +2,14 @@
  * Tests for utils in `src` folder, such as the `src/retry.js`, `src/async.js`, etc.
  */
 
-var Yaku = require("../src/yaku");
-var utils = require("../src/utils");
-var testSuit = require("./testSuit");
+var Yaku = require('../src/yaku');
+var utils = require('../src/utils');
+var testSuit = require('./testSuit');
 
 
-module.exports = testSuit("basic", function (it) {
+module.exports = testSuit('basic', function (it) {
 
-    it("all", void 0, function () {
+    it('all', void 0, function () {
         var list = [
             0,
             null,
@@ -21,7 +21,7 @@ module.exports = testSuit("basic", function (it) {
         return utils.all(list);
     });
 
-    it("all fake iterator", void 0, function () {
+    it('all fake iterator', void 0, function () {
         var obj = {
             next: function () {
                 return {
@@ -32,14 +32,14 @@ module.exports = testSuit("basic", function (it) {
         return utils.all(obj);
     });
 
-    it("all no iterator err", TypeError, function () {
+    it('all no iterator err', TypeError, function () {
         var obj = {};
-        return utils.all(obj)["catch"](function (err) {
+        return utils.all(obj)['catch'](function (err) {
             return err.constructor;
         });
     });
 
-    it("all limit 2", void 0, function () {
+    it('all limit 2', void 0, function () {
         function es5Array () {
             var arr = [];
             arr.push.apply(arr, arguments);
@@ -64,13 +64,13 @@ module.exports = testSuit("basic", function (it) {
         return utils.all(2, list);
     });
 
-    it("all limit null", TypeError, function () {
-        return utils.all(2, null)["catch"](function (err) {
+    it('all limit null', TypeError, function () {
+        return utils.all(2, null)['catch'](function (err) {
             return err.constructor;
         });
     });
 
-    it("all throw error", "err", function () {
+    it('all throw error', 'err', function () {
         var iter = {
             i: 0,
             next: function () {
@@ -78,7 +78,7 @@ module.exports = testSuit("basic", function (it) {
                     function () {
                         return utils.sleep(10, 1);
                     }, function () {
-                        throw "err";
+                        throw 'err';
                     }, function () {
                         return utils.sleep(10, 3);
                     }
@@ -87,12 +87,12 @@ module.exports = testSuit("basic", function (it) {
                 return { done: !fn, value: fn && fn() };
             }
         };
-        return utils.all(2, iter)["catch"](function (err) {
+        return utils.all(2, iter)['catch'](function (err) {
             return err;
         });
     });
 
-    it("all reject error", "err", function () {
+    it('all reject error', 'err', function () {
         var iter = {
             i: 0,
             next: function () {
@@ -100,7 +100,7 @@ module.exports = testSuit("basic", function (it) {
                     function () {
                         return utils.sleep(10, 1);
                     }, function () {
-                        return Yaku.reject("err");
+                        return Yaku.reject('err');
                     }, function () {
                         return utils.sleep(10, 3);
                     }
@@ -109,40 +109,40 @@ module.exports = testSuit("basic", function (it) {
                 return { done: !fn, value: fn && fn() };
             }
         };
-        return utils.all(2, iter)["catch"](function (err) {
+        return utils.all(2, iter)['catch'](function (err) {
             return err;
         });
     });
 
-    it("any one resolved", 0, function () {
+    it('any one resolved', 0, function () {
         return utils.any([
             Yaku.reject(1),
             Yaku.resolve(0)
         ]);
     });
 
-    it("any all rejected", [0, 1], function () {
+    it('any all rejected', [0, 1], function () {
         return utils.any([
             Yaku.reject(0),
             Yaku.reject(1)
-        ])["catch"](function (v) {
+        ])['catch'](function (v) {
             return v;
         });
     });
 
-    it("timeout", "time out", function () {
-        return utils.timeout(utils.sleep(50), 10)["catch"](function (err) {
+    it('timeout', 'time out', function () {
+        return utils.timeout(utils.sleep(50), 10)['catch'](function (err) {
             return err.message;
         });
     });
 
-    it("timeout custom error", "error", function () {
-        return utils.timeout(utils.sleep(50), 10, "error")["catch"](function (err) {
+    it('timeout custom error', 'error', function () {
+        return utils.timeout(utils.sleep(50), 10, 'error')['catch'](function (err) {
             return err;
         });
     });
 
-    it("async basic", false, function () {
+    it('async basic', false, function () {
         function gen () {
             return { i: 0, next: function () {
                 var done = this.i++ >= 10;
@@ -160,16 +160,16 @@ module.exports = testSuit("basic", function (it) {
         return utils.async(gen)();
     });
 
-    it("async error", "err", function () {
+    it('async error', 'err', function () {
         function gen () {
             return {
                 next: function () {
                     return {
                         done: false,
-                        value: Yaku.reject("err")
+                        value: Yaku.reject('err')
                     };
                 },
-                "throw": function (err) {
+                'throw': function (err) {
                     return {
                         done: true,
                         value: err
@@ -181,13 +181,13 @@ module.exports = testSuit("basic", function (it) {
         return utils.async(gen)();
     });
 
-    it("async throw", "err", function () {
+    it('async throw', 'err', function () {
         function gen () {
             return {
                 next: function () {
-                    throw "err";
+                    throw 'err';
                 },
-                "throw": function (err) {
+                'throw': function (err) {
                     return {
                         done: true,
                         value: err
@@ -196,19 +196,19 @@ module.exports = testSuit("basic", function (it) {
             };
         }
 
-        return utils.async(gen)()["catch"](function (v) { return v; });
+        return utils.async(gen)()['catch'](function (v) { return v; });
     });
 
-    it("async reject", "err", function () {
+    it('async reject', 'err', function () {
         function gen () {
             return {
                 next: function () {
                     return {
                         done: false,
-                        value: Yaku.reject("err")
+                        value: Yaku.reject('err')
                     };
                 },
-                "throw": function (err) {
+                'throw': function (err) {
                     return {
                         done: true,
                         value: Yaku.reject(err)
@@ -218,46 +218,46 @@ module.exports = testSuit("basic", function (it) {
             };
         }
 
-        return utils.async(gen)()["catch"](function (v) { return v; });
+        return utils.async(gen)()['catch'](function (v) { return v; });
     });
 
-    it("Deferred resolve", "ok", function () {
+    it('Deferred resolve', 'ok', function () {
         var defer = utils.Deferred();
 
-        defer.resolve("ok");
+        defer.resolve('ok');
 
         return defer.promise;
     });
 
-    it("Deferred reject", "err", function () {
+    it('Deferred reject', 'err', function () {
         var defer = utils.Deferred();
 
-        defer.reject("err");
+        defer.reject('err');
 
-        return defer.promise["catch"](function (err) {
+        return defer.promise['catch'](function (err) {
             return err;
         });
     });
 
-    it("flow array", "bc", function () {
+    it('flow array', 'bc', function () {
         return (utils.flow([
-            "a", Yaku.resolve("b"), function (v) {
-                return v + "c";
+            'a', Yaku.resolve('b'), function (v) {
+                return v + 'c';
             }
         ]))(0);
     });
 
-    it("flow error", "err", function () {
+    it('flow error', 'err', function () {
         return (utils.flow([
-            "a", Yaku.resolve("b"), function () {
-                throw "err";
+            'a', Yaku.resolve('b'), function () {
+                throw 'err';
             }
-        ]))(0)["catch"](function (err) {
+        ]))(0)['catch'](function (err) {
             return err;
         });
     });
 
-    it("flow iter", [0, 1, 2, 3], function () {
+    it('flow iter', [0, 1, 2, 3], function () {
         var list;
         list = [];
         return utils.flow({ next: function (v) {
@@ -274,9 +274,9 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("promisify promise with this", "OK0", function () {
+    it('promisify promise with this', 'OK0', function () {
         var obj = {
-            val: "OK",
+            val: 'OK',
             foo: function (val, cb) {
                 return setTimeout(function (val) {
                     return cb(null, val);
@@ -286,7 +286,7 @@ module.exports = testSuit("basic", function (it) {
         return utils.promisify(obj.foo, obj)(0);
     });
 
-    it("promisify promise arguments with callback", [void 0, 1, 3, 6, 10, 15, 21], function () {
+    it('promisify promise arguments with callback', [void 0, 1, 3, 6, 10, 15, 21], function () {
         return Yaku.all([
             utils.promisify(function (cb) {
                 return cb(null);
@@ -312,7 +312,7 @@ module.exports = testSuit("basic", function (it) {
         ]);
     });
 
-    it("promisify promise arguments", [void 0, 1, 3, 6, 10, 15, 21], function () {
+    it('promisify promise arguments', [void 0, 1, 3, 6, 10, 15, 21], function () {
         return new Yaku(function (resolve, reject) {
             var ret = [];
 
@@ -354,17 +354,17 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("promisify promise err", "err", function () {
+    it('promisify promise err', 'err', function () {
         var fn;
         fn = utils.promisify(function (a, cb) {
             return setTimeout(function () {
                 return cb(a);
             });
         });
-        return fn("err")["catch"](function (v) { return v; });
+        return fn('err')['catch'](function (v) { return v; });
     });
 
-    it("promisify callback", 1, function () {
+    it('promisify callback', 1, function () {
         var fn;
         fn = utils.promisify(function (val, cb) {
             return setTimeout(function () {
@@ -378,12 +378,12 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("callbackify callback", "ok", function () {
+    it('callbackify callback', 'ok', function () {
         var fn = utils.callbackify(function (v) {
             return Yaku.resolve(v);
         });
         return new Yaku(function (resolve, reject) {
-            fn("ok", function (err, val) {
+            fn('ok', function (err, val) {
                 if (err) reject(err);
 
                 resolve(val);
@@ -391,16 +391,16 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("callbackify callback none fn", "ok", function () {
+    it('callbackify callback none fn', 'ok', function () {
         var fn = utils.callbackify(function (v) {
             return Yaku.resolve(v);
         });
-        return fn("ok");
+        return fn('ok');
     });
 
-    it("callbackify callback only", "ok", function () {
+    it('callbackify callback only', 'ok', function () {
         var fn = utils.callbackify(function () {
-            return Yaku.resolve("ok");
+            return Yaku.resolve('ok');
         });
         return new Yaku(function (resolve, reject) {
             fn(function (err, val) {
@@ -411,7 +411,7 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("Observable", "out: 9", function () {
+    it('Observable', 'out: 9', function () {
         var one, three, tmr, two, x;
         one = new utils.Observable();
         x = 1;
@@ -425,7 +425,7 @@ module.exports = testSuit("basic", function (it) {
         });
 
         three = two.subscribe(function (v) {
-            return "out: " + v;
+            return 'out: ' + v;
         });
 
         return new Yaku(function (r) {
@@ -440,14 +440,14 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("Observable error", "error", function () {
+    it('Observable error', 'error', function () {
         var one, three, tmr, two, x;
         one = new utils.Observable();
         x = 1;
         tmr = setInterval(function () {
             one.next(x++);
             if (x === 2) {
-                return one.error("error");
+                return one.error('error');
             }
         }, 0);
 
@@ -456,7 +456,7 @@ module.exports = testSuit("basic", function (it) {
         });
 
         three = two.subscribe(function (v) {
-            return "out: " + v;
+            return 'out: ' + v;
         });
 
         return new Yaku(function (r) {
@@ -467,9 +467,9 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("Observable error within clousure", "error", function () {
+    it('Observable error within clousure', 'error', function () {
         var one = new utils.Observable(function (next, error) {
-            setTimeout(error, 10, "error");
+            setTimeout(error, 10, 'error');
         });
         return new Yaku(function (r) {
             return one.subscribe((function () {}), function (err) {
@@ -478,18 +478,18 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("Observable subscribers", "ok", function () {
+    it('Observable subscribers', 'ok', function () {
         var one, tmr;
         tmr = null;
         one = new utils.Observable(function (next) {
             return tmr = setInterval(function () {
-                return next("err");
+                return next('err');
             }, 0);
         });
         return new Yaku(function (r) {
             setTimeout(function () {
                 clearInterval(tmr);
-                return r("ok");
+                return r('ok');
             }, 10);
             one.subscribe(function (v) {
                 return r(v);
@@ -498,39 +498,39 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("Observable unsubscribe null publisher", null, function () {
+    it('Observable unsubscribe null publisher', null, function () {
         var o = new utils.Observable();
         o.unsubscribe();
         return o.publisher;
     });
 
-    it("Observable unsubscribe", "ok", function () {
+    it('Observable unsubscribe', 'ok', function () {
         return new Yaku(function (r) {
             var one = new utils.Observable(function (next) {
                 setTimeout(next, 1);
             });
 
             var two = one.subscribe(function () {
-                r("err");
+                r('err');
             });
 
             setTimeout(function () {
-                return r("ok");
+                return r('ok');
             }, 10);
 
             two.unsubscribe();
         });
     });
 
-    it("Observable merge", ["one", "two"], function () {
+    it('Observable merge', ['one', 'two'], function () {
         return new Yaku(function (r) {
             var flag = false;
 
-            var one = new utils.Observable(function (next) { setTimeout(next, 0, "one"); });
+            var one = new utils.Observable(function (next) { setTimeout(next, 0, 'one'); });
             var two = new utils.Observable(function (next) {
                 setTimeout(function () {
                     flag = true;
-                    next("two");
+                    next('two');
                 }, 0);
             });
 
@@ -544,7 +544,7 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("Observable merge error", 0, function () {
+    it('Observable merge error', 0, function () {
         var src = new utils.Observable(function (next) {
             setTimeout(next, 10, 0);
         });
@@ -559,122 +559,122 @@ module.exports = testSuit("basic", function (it) {
         });
     });
 
-    it("retry once", "ok", function () {
+    it('retry once', 'ok', function () {
         var fn;
         fn = function (val) {
             return val;
         };
-        return utils.retry(3, fn)("ok");
+        return utils.retry(3, fn)('ok');
     });
 
-    it("retry with span", "ok", function () {
+    it('retry with span', 'ok', function () {
         var fn;
         fn = function (val) {
             return val;
         };
-        return utils.retry(3, 30, fn)("ok");
+        return utils.retry(3, 30, fn)('ok');
     });
 
-    it("retry 2 times", "ok", function () {
+    it('retry 2 times', 'ok', function () {
         var count, fn;
         count = 0;
         fn = function (v) {
             if (count < 2) {
-                throw "err" + count++;
+                throw 'err' + count++;
             } else {
                 return v;
             }
         };
-        return utils.retry(5, fn)("ok");
+        return utils.retry(5, fn)('ok');
     });
 
-    it("retry 3 times", ["err0", "err1", "err2"], function () {
+    it('retry 3 times', ['err0', 'err1', 'err2'], function () {
         var count, fn;
         count = 0;
         fn = function () {
-            throw "err" + count++;
+            throw 'err' + count++;
         };
-        return utils.retry(3, fn)()["catch"](function (errs) {
+        return utils.retry(3, fn)()['catch'](function (errs) {
             return errs;
         });
     });
 
-    it("retry multiple call", [1, 2, 3, 4, 5], function () {
+    it('retry multiple call', [1, 2, 3, 4, 5], function () {
         var fn = utils.retry(2, 10, function (v) {
             return v;
         });
         return Yaku.all([fn(1), fn(2), fn(3), fn(4), fn(5)]);
     });
 
-    it("retry with function", ["err3", "err2", "err1"], function () {
+    it('retry with function', ['err3', 'err2', 'err1'], function () {
         var retry = 3;
         var fn = utils.retry(function () {
             return --retry;
         }, function () {
-            throw "err" + retry;
+            throw 'err' + retry;
         });
-        return fn(1)["catch"](function (ret) { return ret; });
+        return fn(1)['catch'](function (ret) { return ret; });
     });
 
-    it("guard basic", "err", function () {
-        return Yaku.reject(new TypeError("err"))
-        .then(function () {
-            return Yaku.reject();
-        })
-        .guard(TypeError, function (err) {
-            return err.message;
-        });
+    it('guard basic', 'err', function () {
+        return Yaku.reject(new TypeError('err'))
+            .then(function () {
+                return Yaku.reject();
+            })
+            .guard(TypeError, function (err) {
+                return err.message;
+            });
     });
 
-    it("guard basic", TypeError, function () {
-        return Yaku.reject(new TypeError("err"))
-        .guard(SyntaxError, function (err) {
-            return err.message;
-        })["catch"](function (err) {
-            return err.constructor;
-        });
+    it('guard basic', TypeError, function () {
+        return Yaku.reject(new TypeError('err'))
+            .guard(SyntaxError, function (err) {
+                return err.message;
+            })['catch'](function (err) {
+                return err.constructor;
+            });
     });
 
-    it("guard catch general error", "err", function () {
-        return Yaku.reject(new TypeError("err"))
-        .then(function () {
-            return Yaku.reject();
-        })
-        .guard(Error, function (err) {
-            return err.message;
-        });
+    it('guard catch general error', 'err', function () {
+        return Yaku.reject(new TypeError('err'))
+            .then(function () {
+                return Yaku.reject();
+            })
+            .guard(Error, function (err) {
+                return err.message;
+            });
     });
 
-    it("if true", "true", function () {
+    it('if true', 'true', function () {
         return utils.if(utils.sleep(100, true), function () {
-            return "true";
+            return 'true';
         }, function () {
-            return "false";
+            return 'false';
         });
     });
 
-    it("if false", "false", function () {
+    it('if false', 'false', function () {
         return utils.if(false, function () {
-            return "true";
+            return 'true';
         }, function () {
-            return "false";
+            return 'false';
         });
     });
 
-    it("if only true", "true", function () {
+    it('if only true', 'true', function () {
         return utils.if(utils.sleep(100, true), function () {
-            return "true";
+            return 'true';
         });
     });
 
-    it("never", void 0, function () {
+    it('never', void 0, function () {
         utils.never();
     });
 
-    it("hash", { a: "a", b: "b" }, function () {
+    it('hash', { a: 'a', b: 'b' }, function () {
         return utils.hash({
-            a: utils.sleep(20, "a"),
-            b: utils.sleep(10, "b")
+            a: utils.sleep(20, 'a'),
+            b: utils.sleep(10, 'b')
         });
     });
 });

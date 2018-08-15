@@ -1,5 +1,5 @@
-var _ = require("./_");
-var sleep = require("./sleep");
+var _ = require('./_');
+var sleep = require('./sleep');
 var $retryError = {};
 
 module.exports = function (initRetries, span, fn, self) {
@@ -28,7 +28,7 @@ module.exports = function (initRetries, span, fn, self) {
         }
 
         function attempt (c) {
-            return _.Promise.resolve(c).then(tryFn)["catch"](onError);
+            return _.Promise.resolve(c).then(tryFn)['catch'](onError);
         }
 
         return attempt(true);

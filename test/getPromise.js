@@ -2,131 +2,131 @@
  * A helper used to get Yaku or a third-party Promise lib from npm.
  */
 
-var kit = require("nokit");
-var spawnSync = require("child_process").spawnSync;
-var zlib = require("zlib");
+var kit = require('nokit');
+var spawnSync = require('child_process').spawnSync;
+var zlib = require('zlib');
 
 var map = {
     yaku: function () {
-        var Promise = require("../src/yaku");
-        map.yaku.optionalHelper = "✓";
-        map.yaku.coverage = "100% 100%";
-        map.yaku.helper = propSize(Promise) + propSize(Promise.prototype) + propSize(require("../src/utils"));
-        setSize("yaku", "dist/yaku.min.js");
+        var Promise = require('../src/yaku');
+        map.yaku.optionalHelper = '✓';
+        map.yaku.coverage = '100% 100%';
+        map.yaku.helper = propSize(Promise) + propSize(Promise.prototype) + propSize(require('../src/utils'));
+        setSize('yaku', 'dist/yaku.min.js');
         return Promise;
     },
 
-    "yaku.core": function () {
-        var Promise = require("../src/yaku.core");
-        map["yaku.core"].optionalHelper = "✓";
-        map["yaku.core"].coverage = "100% 100%";
-        map["yaku.core"].helper = propSize(Promise) + propSize(Promise.prototype) + propSize(require("../src/utils"));
-        setSize("yaku.core", "dist/yaku.core.min.js");
+    'yaku.core': function () {
+        var Promise = require('../src/yaku.core');
+        map['yaku.core'].optionalHelper = '✓';
+        map['yaku.core'].coverage = '100% 100%';
+        map['yaku.core'].helper = propSize(Promise) + propSize(Promise.prototype) + propSize(require('../src/utils'));
+        setSize('yaku.core', 'dist/yaku.core.min.js');
         return Promise;
     },
 
-    "yaku.aplus": function () {
-        var Promise = require("../src/yaku.aplus");
-        map["yaku.aplus"].optionalHelper = "✓";
-        map["yaku.aplus"].coverage = "100% 100%";
-        map["yaku.aplus"].helper = propSize(Promise) + propSize(Promise.prototype);
-        setSize("yaku.aplus", "dist/yaku.aplus.min.js");
+    'yaku.aplus': function () {
+        var Promise = require('../src/yaku.aplus');
+        map['yaku.aplus'].optionalHelper = '✓';
+        map['yaku.aplus'].coverage = '100% 100%';
+        map['yaku.aplus'].helper = propSize(Promise) + propSize(Promise.prototype);
+        setSize('yaku.aplus', 'dist/yaku.aplus.min.js');
         return Promise;
     },
 
     bluebird: function () {
-        var Promise = require("bluebird");
-        map.bluebird.optionalHelper = "partial";
-        map.bluebird.coverage = "99% 96%";
+        var Promise = require('bluebird');
+        map.bluebird.optionalHelper = 'partial';
+        map.bluebird.coverage = '99% 96%';
         map.bluebird.helper = propSize(Promise) + propSize(Promise.prototype);
-        setSize("bluebird", "node_modules/bluebird/js/browser/bluebird.core.min.js");
+        setSize('bluebird', 'node_modules/bluebird/js/browser/bluebird.core.min.js');
         return Promise;
     },
 
-    "es6-promise": function () {
-        var Promise = require("es6-promise").Promise;
-        map["es6-promise"].optionalHelper = "x";
-        map["es6-promise"].coverage = "? ?";
-        map["es6-promise"].helper = propSize(Promise) + propSize(Promise.prototype);
-        setSize("es6-promise", "node_modules/es6-promise/dist/es6-promise.min.js");
+    'es6-promise': function () {
+        var Promise = require('es6-promise').Promise;
+        map['es6-promise'].optionalHelper = 'x';
+        map['es6-promise'].coverage = '? ?';
+        map['es6-promise'].helper = propSize(Promise) + propSize(Promise.prototype);
+        setSize('es6-promise', 'node_modules/es6-promise/dist/es6-promise.min.js');
         return Promise;
     },
 
     pinkie: function () {
-        var Promise = require("pinkie");
-        map["pinkie"].optionalHelper = "v";
-        map["pinkie"].coverage = "? ?";
-        map["pinkie"].helper = propSize(Promise) + propSize(Promise.prototype);
-        spawnSync("node_modules/.bin/uglifyjs", [
-            "-mc", "-o", "dist/pinkie.js", "node_modules/pinkie/index.js"
+        var Promise = require('pinkie');
+        map['pinkie'].optionalHelper = 'v';
+        map['pinkie'].coverage = '? ?';
+        map['pinkie'].helper = propSize(Promise) + propSize(Promise.prototype);
+        spawnSync('node_modules/.bin/uglifyjs', [
+            '-mc', '-o', 'dist/pinkie.js', 'node_modules/pinkie/index.js'
         ]);
-        setSize("pinkie", "dist/pinkie.js");
+        setSize('pinkie', 'dist/pinkie.js');
         return Promise;
     },
 
     native: function () {
         var Promise = global.Promise;
-        map.native.optionalHelper = "x";
-        map.native.coverage = "? ?";
+        map.native.optionalHelper = 'x';
+        map.native.coverage = '? ?';
         map.native.helper = propSize(Promise) + propSize(Promise.prototype);
         map.native.size = 0;
         return Promise;
     },
 
-    "core-js": function () {
-        var Promise = require("core-js/fn/promise");
-        map["core-js"].optionalHelper = "x";
-        map["core-js"].coverage = "? ?";
-        map["core-js"].helper = propSize(Promise) + propSize(Promise.prototype);
+    'core-js': function () {
+        var Promise = require('core-js/fn/promise');
+        map['core-js'].optionalHelper = 'x';
+        map['core-js'].coverage = '? ?';
+        map['core-js'].helper = propSize(Promise) + propSize(Promise.prototype);
 
-        spawnSync("webpack");
-        spawnSync("node_modules/.bin/uglifyjs", [
-            "-mc", "-o", "dist/coreJsPromise.min.js", "dist/coreJsPromise.js"
+        spawnSync('webpack');
+        spawnSync('node_modules/.bin/uglifyjs', [
+            '-mc', '-o', 'dist/coreJsPromise.min.js', 'dist/coreJsPromise.js'
         ]);
-        setSize("core-js", "dist/coreJsPromise.min.js");
+        setSize('core-js', 'dist/coreJsPromise.min.js');
 
         return Promise;
     },
 
-    "es6-shim": function () {
-        require("es6-shim");
+    'es6-shim': function () {
+        require('es6-shim');
 
         var Promise = global.Promise;
-        map["es6-shim"].optionalHelper = "x";
-        map["es6-shim"].coverage = "? ?";
-        map["es6-shim"].helper = propSize(Promise) + propSize(Promise.prototype);
-        setSize("es6-shim", "node_modules/es6-shim/es6-shim.min.js");
+        map['es6-shim'].optionalHelper = 'x';
+        map['es6-shim'].coverage = '? ?';
+        map['es6-shim'].helper = propSize(Promise) + propSize(Promise.prototype);
+        setSize('es6-shim', 'node_modules/es6-shim/es6-shim.min.js');
 
         return Promise;
     },
 
     q: function () {
-        var Promise = require("q");
+        var Promise = require('q');
 
-        map.q.optionalHelper = "x";
-        map.q.coverage = "? ?";
+        map.q.optionalHelper = 'x';
+        map.q.coverage = '? ?';
         map.q.helper = propSize(Promise) + propSize(Promise.prototype);
 
-        spawnSync("node_modules/.bin/uglifyjs", [
-            "-mc", "-o", "node_modules/q/q.min.js", "node_modules/q/q.js"
+        spawnSync('node_modules/.bin/uglifyjs', [
+            '-mc', '-o', 'node_modules/q/q.min.js', 'node_modules/q/q.js'
         ]);
-        setSize("q", "node_modules/q/q.min.js");
+        setSize('q', 'node_modules/q/q.min.js');
 
         return Promise;
     },
 
-    "my-promise": function () {
-        var Promise = require("my-promise").Promise;
+    'my-promise': function () {
+        var Promise = require('my-promise').Promise;
 
-        map["my-promise"].optionalHelper = "x";
-        map["my-promise"].coverage = "? ?";
-        map["my-promise"].helper = propSize(Promise) + propSize(Promise.prototype);
+        map['my-promise'].optionalHelper = 'x';
+        map['my-promise'].coverage = '? ?';
+        map['my-promise'].helper = propSize(Promise) + propSize(Promise.prototype);
 
-        spawnSync("webpack");
-        spawnSync("node_modules/.bin/uglifyjs", [
-            "-mc", "-o", "dist/my-promise.min.js", "dist/my-promise.js"
+        spawnSync('webpack');
+        spawnSync('node_modules/.bin/uglifyjs', [
+            '-mc', '-o', 'dist/my-promise.min.js', 'dist/my-promise.js'
         ]);
-        setSize("my-promise", "dist/my-promise.min.js");
+        setSize('my-promise', 'dist/my-promise.min.js');
 
         return Promise;
     }
@@ -141,7 +141,7 @@ module.exports.map = map;
 function propSize (obj) {
     return Object.getOwnPropertyNames(obj).filter(function (name) {
         // filter the hidden helpers
-        return name.indexOf("_") !== 0;
+        return name.indexOf('_') !== 0;
     }).length;
 }
 

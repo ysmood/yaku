@@ -2,9 +2,9 @@
  * Tests for aplus specs
  */
 
-var promisesAplusTests = require("promises-aplus-tests");
-var kit = require("nokit");
-var getPromise = require("./getPromise");
+var promisesAplusTests = require('promises-aplus-tests');
+var kit = require('nokit');
+var getPromise = require('./getPromise');
 
 var opts = JSON.parse(process.argv[2]);
 
@@ -22,4 +22,4 @@ var adapter = {
     }
 };
 
-kit.promisify(promisesAplusTests)(adapter, opts)["catch"](kit.throw);
+kit.promisify(promisesAplusTests)(adapter, opts)['catch'](kit.throw);

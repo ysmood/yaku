@@ -1,6 +1,6 @@
-var _ = require("./_");
-var genIterator = require("./genIterator");
-var isPromise = require("./isPromise");
+var _ = require('./_');
+var genIterator = require('./genIterator');
+var isPromise = require('./isPromise');
 
 module.exports = function (iterable) {
     var iter = genIterator(iterable);
