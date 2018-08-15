@@ -82,27 +82,28 @@ Raw usage:
 These comparisons only reflect some limited truth, no one is better than all others on all aspects.
 There are tons of Promises/A+ implementations, you can see them [here](https://promisesaplus.com/implementations). Only some of the famous ones were tested.
 
+You can reproduce it on your own machine with `npm run no -- benchmark`.
+
 ```
-Date: Sat Dec 17 2016 22:15:40 GMT+0800 (CST)
-Node v7.2.1
+Date: Wed Aug 15 2018 23:06:02 GMT+0900 (Japan Standard Time)
+Node v10.8.0
 OS   darwin
 Arch x64
 CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
-```
 
 | name | unit tests | coverage | 1ms async task | optional helpers | helpers | gzip |
 | ---- | ---------- | -------- | -------------- | ---------------- | ------- | ---- |
-| [yaku][]@0.17.4 | ✓ | 100% 100% | 221ms / 108MB | ✓ | 34 | 1.9KB |
-| [yaku.core][]@0.17.4 | ✓ | 100% 100% | 217ms / 108MB | ✓ | 28 | 1.6KB |
-| [yaku.aplus][]@0.17.4 | x (90 failed) | 100% 100% | 262ms / 116MB | ✓ | 7 | 0.5KB |
-| [bluebird][]@3.4.6 | x (34 failed) | 99% 96% | 207ms / 81MB | partial | 102 | 15.9KB |
-| [es6-promise][]@4.0.5 | x (52 failed) | ? ? | 432ms / 114MB | x | 12 | 2.4KB |
-| [pinkie][]@2.0.4 | x (44 failed) | ? ? | 313ms / 135MB | ✓ | 10 | 1.2KB |
-| [native][]@7.2.1 | ✓ | ? ? | 376ms / 134MB | x | 10 | 0KB |
-| [core-js][]@2.4.1 | x (9 failed) | ? ? | 394ms / 142MB | x | 10 | 5KB |
-| [es6-shim][]@0.35.2 | ✓ | ? ? | 390ms / 136MB | x | 10 | 15.5KB |
-| [q][]@1.4.1 | x (42 failed) | ? ? | 1432ms / 370MB | x | 74 | 4.6KB |
-| [my-promise][]@1.1.0 | x (10 failed) | ? ? | 786ms / 232MB | x | 10 | 3.9KB |
+| [yaku][]@0.19.1 | ✓ | 100% 100% | 274ms / 112MB | ✓ | 35 | 1.9KB |
+| [yaku.core][]@0.19.1 | ✓ | 100% 100% | 292ms / 110MB | ✓ | 29 | 1.6KB |
+| [yaku.aplus][]@0.19.1 | x (91 failed) | 100% 100% | 328ms / 126MB | ✓ | 7 | 0.5KB |
+| [bluebird][]@3.5.1 | x (33 failed) | 99% 96% | 183ms / 88MB | partial | 103 | 16.1KB |
+| [es6-promise][]@4.2.4 | x (48 failed) | ? ? | 510ms / 106MB | x | 13 | 2.4KB |
+| [pinkie][]@2.0.4 | x (45 failed) | ? ? | 284ms / 138MB | v | 10 | 1.2KB |
+| [native][]@10.8.0 | ✓ | ? ? | 133ms / 86MB | x | 11 | 0KB |
+| [core-js][]@2.5.7 | x (5 failed) | ? ? | 239ms / 99MB | x | 13 | 4.8KB |
+| [es6-shim][]@0.35.3 | ✓ | ? ? | 161ms / 87MB | x | 11 | 15.6KB |
+| [q][]@1.5.1 | x (21 failed) | ? ? | 896ms / 326MB | x | 74 | 4.7KB |
+| [my-promise][]@1.1.0 | x (10 failed) | ? ? | 583ms / 224MB | x | 10 | 4KB |
 
 - **unit test**: [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
 
@@ -111,7 +112,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 - **helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
 
-- **1ms async task**: `npm run no -- benchmark`, the smaller the better (total time / memory rss).
+- **1ms async task**: the smaller the better (total time / memory rss).
 
 - **promises-es6-tests**: If you want to test `bluebird` against promises-es6-tests,
   run `npm run no -- test-es6 --shim bluebird`.
