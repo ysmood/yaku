@@ -41,6 +41,7 @@
     "dist/yaku.browser.global.min.js"
   ],
   "devDependencies": {
+    "ajv": "^6.5.2",
     "bluebird": "3.5.1",
     "co": "4.6.0",
     "core-js": "2.5.7",
