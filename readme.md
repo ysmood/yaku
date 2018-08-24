@@ -90,6 +90,7 @@ Node v10.8.0
 OS   darwin
 Arch x64
 CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
+```
 
 | name | unit tests | coverage | 1ms async task | optional helpers | helpers | gzip |
 | ---- | ---------- | -------- | -------------- | ---------------- | ------- | ---- |
@@ -104,6 +105,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 | [es6-shim][]@0.35.3 | ✓ | ? ? | 161ms / 87MB | x | 11 | 15.6KB |
 | [q][]@1.5.1 | x (21 failed) | ? ? | 896ms / 326MB | x | 74 | 4.7KB |
 | [my-promise][]@1.1.0 | x (10 failed) | ? ? | 583ms / 224MB | x | 10 | 4KB |
+
 
 - **unit test**: [promises-aplus-tests][], [promises-es6-tests][], and even the [core-js tests][].
 
