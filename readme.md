@@ -114,7 +114,7 @@ CPU  Intel(R) Core(TM) i7-4850HQ CPU @ 2.30GHz
 - **helpers**: extra methods that help with your promise programming, such as
   async flow control helpers, debug helpers. For more details: [docs/debugHelperComparison.md][].
 
-- **1ms async task**: the smaller the better (total time / memory rss).
+- **1ms async task**: `npm run no -- benchmark`, the smaller the better (total time / memory rss).
 
 - **promises-es6-tests**: If you want to test `bluebird` against promises-es6-tests,
   run `npm run no -- test-es6 --shim bluebird`.
