@@ -26,8 +26,9 @@ I write this lib to research one of my data structure ideas: [docs/lazyTree.md][
 - 100% statement and branch test coverage
 - Better CPU and memory performance than the native Promise
 - Well commented source code with every Promises/A+ spec
-- Highly modularized extra helpers, no pollution to its pure ES6 implements
+- Highly modularized extra helpers, no pollution to its pure ES6 implementation
 - Supports ES7 `finally`
+- Composable observable helper
 
 
 
