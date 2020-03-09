@@ -308,6 +308,50 @@
         return p;
     };
 
+    /**
+     * The `Promise.allSettled(iterable)` method returns a promise that resolves after all
+     * of the given promises have either resolved or rejected, with an array of objects that
+     * each describes the outcome of each promise.
+     * @param  {iterable} iterable An iterable object, such as an Array.
+     * @return {Yaku} A promise resolves a list of objects. For each object, a status string is present.
+     * If the status is fulfilled, then a value is present. If the status is rejected, then a reason is present.
+     * The value (or reason) reflects what value each promise was fulfilled (or rejected) with.
+     * @example
+     * ```js
+     * var Promise = require('yaku');
+     * Promise.allSettled([
+     *     Promise.resolve(3),
+     *     new Promise((resolve, reject) => setTimeout(reject, 100, 'foo'))
+     * ])
+     * .then((values) => {
+     *     console.log(values); // => [{status: "fulfilled", value: 3}, {status: "rejected", reason: "foo"}]
+     * });
+     * ```
+     */
+    Yaku.allSettled = function (iterable) {
+        var self = this
+            , p = newCapablePromise(self)
+            , res = []
+            , ret
+        ;
+
+        ret = genTryCatcher(each)(iterable, function (item, i) {
+            self.resolve(item).then(function (value) {
+                res[i] = { status: 'fulfilled', value: value };
+                if (!--ret) settlePromise(p, $resolved, res);
+            }, function (value) {
+                res[i] = { status: 'rejected', reason: value };
+                if (!--ret) settlePromise(p, $resolved, res);
+            });
+        });
+
+        if (ret === $tryErr) return self.reject(ret.e);
+
+        if (!ret) settlePromise(p, $resolved, []);
+
+        return p;
+    };
+
     // To support browsers that don't support `Object.defineProperty`.
     genTryCatcher(function () {
         Object.defineProperty(Yaku, getSpecies(), {

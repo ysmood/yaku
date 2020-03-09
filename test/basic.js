@@ -318,6 +318,36 @@ module.exports = testSuit('basic', function (it) {
         });
     });
 
+    it('allSettled ends with resolve', [{status: 'fulfilled', value: 3}], function () {
+        return Promise.allSettled([
+            Promise.resolve(3)
+        ]);
+    });
+
+    it('allSettled ends with reject', [{status: 'fulfilled', value: 3}, {status: 'rejected', reason: 'foo'}], function () {
+        return Promise.allSettled([
+            Promise.resolve(3),
+            new Promise(function (resolve, reject) { setTimeout(reject, 100, 'foo'); })
+        ]);
+    });
+
+    it('allSettled empty', [], function () {
+        return Promise.allSettled([]);
+    });
+
+    it('allSettled with iterator like, iteration error', 'error', function () {
+        var arr = {
+            next: function () {
+                throw 'error';
+            }
+        };
+        arr[Symbol.iterator] = function () { return this; };
+
+        return Promise.allSettled(arr)['catch'](function (err) {
+            return err;
+        });
+    });
+
     it('race with empty should never resolve', 'ok', function () {
         return new Promise(function (resolve) {
             Promise.race([]).then(function () {
