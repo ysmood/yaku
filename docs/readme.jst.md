@@ -14,7 +14,7 @@ Yaku passed all the tests of [promises-aplus-tests][], [promises-es6-tests][], a
 I am not an optimization freak, I try to keep the source code readable and maintainable.
 I write this lib to research one of my data structure ideas: [docs/lazyTree.md][].
 
-[![NPM version](https://badge.fury.io/js/yaku.svg)](http://badge.fury.io/js/yaku) [![Build Status](https://travis-ci.org/ysmood/yaku.svg)](https://travis-ci.org/ysmood/yaku) [![Deps Up to Date](https://david-dm.org/ysmood/yaku.svg?style=flat)](https://david-dm.org/ysmood/yaku) [![Coverage Status](https://coveralls.io/repos/ysmood/yaku/badge.svg?branch=master&service=github)](https://coveralls.io/github/ysmood/yaku?branch=master)
+[![NPM version](https://badge.fury.io/js/yaku.svg)](http://badge.fury.io/js/yaku) [![Build Status](https://travis-ci.org/ysmood/yaku.svg)](https://travis-ci.org/ysmood/yaku) [![Coverage Status](https://coveralls.io/repos/ysmood/yaku/badge.svg?branch=master&service=github)](https://coveralls.io/github/ysmood/yaku?branch=master)
 
 
 
