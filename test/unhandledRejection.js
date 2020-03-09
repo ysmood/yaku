@@ -108,6 +108,13 @@ module.exports = testSuit('unhandledRejection', function (it) {
                     });
                 });
 
+            }).then(function () {
+
+                return it('unhandled rejection with long stack trace', undefined, function () {
+                    Promise.reject('err');
+                    return sleep(300);
+                });
+
             });
 
     } else {
@@ -219,6 +226,13 @@ module.exports = testSuit('unhandledRejection', function (it) {
                     })['catch'](function (err) {
                         return [err.longStack.match(/From previous/g).length, err.custom];
                     });
+                });
+
+            }).then(function () {
+
+                return it('unhandled rejection with long stack trace', undefined, function () {
+                    Promise.reject('err');
+                    return sleep(300);
                 });
 
             });
