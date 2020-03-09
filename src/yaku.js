@@ -277,27 +277,27 @@
      */
     Yaku.all = function (iterable) {
         var self = this
-            , p1 = newCapablePromise(self)
+            , p = newCapablePromise(self)
             , res = []
             , ret
         ;
 
         function reject (reason) {
-            settlePromise(p1, $rejected, reason);
+            settlePromise(p, $rejected, reason);
         }
 
         ret = genTryCatcher(each)(iterable, function (item, i) {
             self.resolve(item).then(function (value) {
                 res[i] = value;
-                if (!--ret) settlePromise(p1, $resolved, res);
+                if (!--ret) settlePromise(p, $resolved, res);
             }, reject);
         });
 
         if (ret === $tryErr) return self.reject(ret.e);
 
-        if (!ret) settlePromise(p1, $resolved, []);
+        if (!ret) settlePromise(p, $resolved, []);
 
-        return p1;
+        return p;
     };
 
     /**
