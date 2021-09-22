@@ -393,6 +393,22 @@
         return a instanceof b;
     }
 
+    function isArray(obj) {
+        if (Array.isArray && Array.isArray(obj)) {
+            return true;
+        }
+
+        if (isInstanceOf(obj, Arr)) {
+            return true;
+        }
+
+        if (Object.prototype.toString.call(obj) === "[object Array]") {
+            return true;
+        }
+
+        return false;
+    }
+    
     function ensureType (obj, fn, msg) {
         if (!fn(obj)) throw genTypeError(msg);
     }
@@ -485,7 +501,7 @@
         else if (isFunction(iterable.next)) {
             iter = iterable;
         }
-        else if (isInstanceOf(iterable, Arr)) {
+        else if (isArray(iterable)) {
             len = iterable.length;
             while (i < len) {
                 fn(iterable[i], i++);
